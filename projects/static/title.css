@@ -1,0 +1,18 @@
+/* Content Blocks */
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #f9f9f9;
+    border-radius: 10px; 
+    padding: 20px;
+  }
+  
+  /* Other Blocks */  
+  .title h2 {
+    font-size: 24px; 
+  }
+  
+  .other p {
+    font-size: 14px;
+    color: #555;
+  }

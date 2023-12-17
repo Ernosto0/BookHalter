@@ -1,0 +1,56 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookAi - Your Intelligent Book Assistant</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+
+    <!-- Display the form -->
+    <h1>Welcome to BookAi</h1>
+    <form id="myForm">
+        {% csrf_token %}
+        <button type="submit">Get Book Recommendations</button>
+    </form>
+
+    <!-- Text for Result -->
+    <p id="resultText"></p>
+
+    <!-- Include jQuery (make sure to include it in your project) -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Inline JavaScript to handle form submission -->
+    <script>
+        $(document).ready(function() {
+            $('#myForm').submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting in the traditional way
+
+                // Make an AJAX request to the Django server
+                $.ajax({
+                    type: 'POST',
+                    url: '/get_result/',  // Update this URL with your Django view endpoint
+                    data: {
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response) {
+                        // Update the text element with the result from the server
+                        $('#resultText').text(response.result);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+        $('#myForm').submit(function(event) {
+        event.preventDefault(); 
+        window.location.href = "{% url 'recommended_books' %}";
+});
+    </script>
+</body>
+</html>
