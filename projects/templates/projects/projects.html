@@ -15,9 +15,12 @@
     <h1>Welcome to BookAi</h1>
     <form id="myForm">
         {% csrf_token %}
-        <button type="submit">Get Book Recommendations</button>
-    </form>
 
+    </form>
+    <form method="GET" action="{% url 'recommended_books' %}">
+        <input type="text" name="user_query" id="user_input" placeholder="Enter your query">
+        <button type="submit" href="{% url 'recommended_books' %}">Get Book Recommendations</button> 
+    </form>
     <!-- Text for Result -->
     <p id="resultText"></p>
 
@@ -52,5 +55,17 @@
         window.location.href = "{% url 'recommended_books' %}";
 });
     </script>
+
+<!-- <script>
+    function getRecommendations() {
+      $.ajax({
+        url: "{% url 'recommended_books' %}",
+        success: function(response) {
+          $('#result').html(response);
+        }
+      });
+      event.preventDefault();
+    }
+</script> -->
 </body>
 </html>
