@@ -1,0 +1,91 @@
+/* Font */
+body {
+    font-family: 'Georgia', serif;
+  }
+  
+  /* Page Container */
+  .page {
+    max-width: 800px; 
+    margin: 0 auto;
+    background: #f9f9f9;
+    border-radius: 10px;
+  }
+  
+  /* Header */
+  .header {
+    background: #1e3a52;
+    color: #fff; 
+    padding: 20px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;  
+  }
+  
+  .header h2 {
+    font-size: 28px;
+  }
+  
+  /* Book Container */
+  .book {
+    background: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+  } 
+  
+  /* Book Title */
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  /* Book Metadata */  
+  .author, 
+  .votes,
+  .ratio {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Description */
+  .description {
+    margin-top: 10px;
+    font-style: italic;
+    color: #333;
+  }
+  
+  /* No Books Found */
+  .no-books {
+    padding: 20px;
+    text-align: center; 
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 600px) {
+  
+    .page {
+      border-radius: 0;
+    }
+    
+    .header {
+      border-radius: 0; 
+    }
+    
+  }
+  
+  /* Content Blocks */
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #f9f9f9;
+    border-radius: 10px; 
+    padding: 20px;
+  }
+  
+  /* Other Blocks */  
+  .title h2 {
+    font-size: 24px; 
+  }
+  
+  .other p {
+    font-size: 14px;
+    color: #555;
+  }

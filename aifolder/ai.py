@@ -5,10 +5,12 @@ from aifolder import aimessage as aim
 from aifolder import extract_book_data as ed
 from projects.management.commands import addbooks
 def gpt_main(request):
+    with open('C:/Users/Çınar/Desktop/django_first/aifolder/openaikey.txt', 'r') as file:
+        key = file.read()
     recomended_books = []
-    openai.api_key = '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'
+    openai.api_key = key
     while True:
-        message = f"Make 5 book suggestions based on the parameters of the user: {aim.userdata}"
+        message = f"Make 2 book suggestions based on the parameters of the user: {aim.userdata}"
 
         if message:
             aim.aqmessages.append(
