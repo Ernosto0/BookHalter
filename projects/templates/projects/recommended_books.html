@@ -37,6 +37,8 @@
                         <p class="votes"><strong>Total Votes:</strong> {{ book.total_votes }}</p>
                         <p class="ratio"><strong>Vote Ratio:</strong> {{ book.vote_ratio }}</p>
                         <p class="description">{{ book.description }}</p>
+                        <a href="{% url 'book-detail' book.id %}">{{ book.name }}</a>
+
                     </div>
                 {% endfor %}
             </div>

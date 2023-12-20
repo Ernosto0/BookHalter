@@ -10,7 +10,7 @@ def gpt_main(request):
     recomended_books = []
     openai.api_key = key
     while True:
-        message = f"Make 2 book suggestions based on the parameters of the user: {aim.userdata}"
+        message = f"Make 5 book suggestions based on the parameters of the user: {request}"
 
         if message:
             aim.aqmessages.append(
@@ -18,7 +18,6 @@ def gpt_main(request):
             )
             chat = openai.chat.completions.create(
                 model="gpt-4", messages= aim.aqmessages # type: ignore
-   
             )
         reply = chat.choices[0].message.content # type: ignore
         print(reply)

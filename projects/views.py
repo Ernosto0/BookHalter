@@ -17,8 +17,8 @@ def project(request, pk):
     hello = "hello"
     return render(request,'projects/single-project.html',{'hello': hello})
 
-def book_detail(request, pk):
-    book = []
+def book_detail(request, book_id):
+    book = get_object_or_404(Books, pk=book_id)
     context = {
         'book': book
     }
