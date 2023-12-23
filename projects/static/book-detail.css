@@ -1,0 +1,41 @@
+.page {
+    max-width: 800px;
+    margin: 0 auto; 
+    background: #f9f9f9;
+    border-radius: 10px;
+  }
+  
+  /* Header */
+  .header {
+    background: #1e3a52;
+    color: #fff;
+    padding: 20px; 
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px; 
+  }
+  
+  /* Book Container */
+  .book {
+    background: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;  
+  }
+  
+  /* Book Title */
+  .title h1 {
+    font-size: 18px;
+    font-weight: bold;  
+  }
+  
+  /* Book Metadata */
+  .author {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Description */
+  .description {
+    margin-top: 10px;
+    font-style: italic;
+    color: #333;
+  }
