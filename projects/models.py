@@ -18,6 +18,18 @@ class Project(models.Model):
         return self.title
 
 
+
+
+class User(models.Model):
+    nick = models.CharField(max_length=200)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=25)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+
+    def __str__(self):
+        return self.nick
+    
+
 class Review(models.Model):
     VOTE_TYPE = (
         ('up', 'Up Vote'),
@@ -47,7 +59,7 @@ class Books(models.Model):
     tags = models.ManyToManyField('tag', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    vote_total = models.IntegerField(default=0, null=True, blank=True)
+    vote_total = models.IntegerField(default=0, null=True, blank=True,)
     vote_ratio = models.IntegerField(default=0, null=True, blank=True)
     featured_image = models.ImageField(null=True, blank=True, default='book.png')
 

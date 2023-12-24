@@ -34,3 +34,33 @@ def recommended_books(request):
     books = getbook.search_books_in_database(context)
     html = render(request, 'projects/recommended_books.html', {'books': books})
     return HttpResponse(html, content_type='text/html')
+
+def vote(request):
+    try:
+        print("Vote function called")
+        # rest of code
+    except Exception as e:
+        print("Error:", e)
+    book_id = request.POST.get('book_id')
+    vote = request.POST.get('vote')
+    
+    book = Books.objects.get(pk=book_id)
+    if book.vote_total is None:
+        book.vote_total = 0
+    
+    if vote == 'up':
+        book.vote_total +=  1
+    else:
+        book.vote_total -= 1
+    total_books = book.objects.count()
+    if total_books > 0:
+        book.vote_ratio = int((book.vote_total / total_books) * 100)
+    else:
+        book.vote_ratio = 0
+
+    book.save()
+    
+    return JsonResponse({
+        'vote_total': book.vote_total,
+        'vote_ratio': book.vote_ratio
+    })

@@ -1,7 +1,9 @@
 import openai
 import json
-from extract_book_data import extract_book_and_author as ed
+from aifolder.extract_book_data import extract_book_and_author as ed
 from projects.management.commands import addbooks 
+
+
 functions = [
 {
         "type": "function",
@@ -122,8 +124,8 @@ def make_suggestion(data):
             messages.append(
                 {"role": "user", "content": one_message},
             )
-            chat = openai.ChatCompletion.create( #type: ignore
-                model="gpt-4", messages=messages
+            chat = openai.chat.completions.create( #type: ignore
+                model="gpt-4", messages=messages #type: ignore
             )
         print(chat)#type: ignore
         reply = chat.choices[0].message.content#type: ignore
@@ -132,51 +134,50 @@ def make_suggestion(data):
 
         print(reply)
         return recomended_books
-def main():
+def gpt_main(user_query):
 
     while True:
-        message = input("Enter your command: ")
+        message = user_query
 
         if message:
             messages.append(
                 {"role": "user", "content": message},
             )
-            chat = openai.ChatCompletion.create(#type: ignore
-                model="gpt-4", messages=messages, tools=functions,
+            chat = openai.chat.completions.create(#type: ignore
+                model="gpt-4", messages=messages, tools=functions, #type: ignore
             )
         recomennded_books = []
         tool_calls = chat.choices[0].message.tool_calls#type: ignore
-        for tool_call in tool_calls:
-            function_name = tool_call["function"]["name"]
-            arguments_data = tool_call["function"]["arguments"]
+        for tool_call in tool_calls: #type: ignore
+            function_name = tool_call.function.name
+            arguments_data = tool_call.function.arguments
             arguments = json.loads(arguments_data)
 
             if function_name == "by_book_titles":
                 book_names = arguments["Book title or titles"]
                 recomennded_books=by_book_titles(book_names)
+                print(recomennded_books)
                 addbooks.add_books( recomennded_books)
+                return recomennded_books
             elif function_name == "by_book_authors":
                 authors = arguments["book author or authors"]
                 recomennded_books= by_book_authors(authors)
                 addbooks.add_books( recomennded_books)
+                return recomennded_books
             elif function_name == "by_book_authors_and_titles":
                 book_names = arguments["Book title or titles"]
                 authors = arguments["book author or authors"]
                 summed_data = f"The book i like: {book_names}. The author i like: {authors}"
                 recomennded_books=by_book_titles_and_authors(summed_data)
                 addbooks.add_books( recomennded_books)
+                return recomennded_books
             elif function_name == "by_users_description":
                 description = arguments["Users Description"]
                 recomennded_books=by_users_description(description)
                 addbooks.add_books( recomennded_books)
+                return recomennded_books
         reply = chat.choices[0].message.content # type: ignore
         print(chat)#type: ignore
-        messages.append({"role": "assistant", "content": reply})
-        addbooks.add_books( recomennded_books)
+        messages.append({"role": "assistant", "content": reply}) #type: ignore
+
         return recomennded_books
-
-
-
-
-if __name__ == '__main__':
-    main()

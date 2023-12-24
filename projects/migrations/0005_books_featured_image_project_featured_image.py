@@ -15,9 +15,4 @@ class Migration(migrations.Migration):
             name='featured_image',
             field=models.ImageField(blank=True, default='book.png', null=True, upload_to=''),
         ),
-        migrations.AddField(
-            model_name='project',
-            name='featured_image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
-        ),
     ]

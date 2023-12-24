@@ -4,6 +4,45 @@
 <head>
     <link rel="stylesheet" type="text/css" href="{% static 'book-detail.css' %}">
 </head>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    
+
+    $(document).ready(function() {
+        var book_id = "{{ book.id }}";
+        
+        $('#vote-up').click(function() {
+            $.ajax({
+                url: '{% url "vote" %}',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'book_id': book_id,
+                    'vote': 'up'
+                },
+                success: function(data) {
+                    $('#vote-total').text(data.vote_total);
+                    $('#vote-ratio').text(data.vote_ratio + '%');     
+                }
+            });
+        });
+        
+        $('#vote-down').click(function() {
+            $.ajax({
+                url: '{% url "vote" %}',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'book_id': book_id,
+                    'vote': 'down'
+                },
+                success: function(data) {
+                    $('#vote-total').text(data.vote_total);
+                    $('#vote-ratio').text(data.vote_ratio + '%');     
+                }
+            });
+        });
+    }); 
+    </script>
 <div class="page">
     <div class="header">
         <h2>{{ book.name }}</h2>
@@ -13,7 +52,12 @@
             <h1>Title: {{ book.name }}</h1>
         </div>
         <p class="author">Author: {{ book.author }}</p>
+        <img src="{{book.featured_image.url}}">
         <p class="description">Description: {{ book.description }}</p>
+        <button id="vote-up">Vote Up</button>
+        <button id="vote-down">Vote Down</button>
+        <p id="vote-total">{{ book.vote_total }}</p>
+        <p id="vote-ratio">{{ book.vote_ratio }}%</p>
         <!-- Other fields as needed -->
     </div>
 </div>
