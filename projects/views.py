@@ -1,7 +1,7 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse
 from aifolder import ai
-from .models import Project, Books
+from .models import Project, Books, Comment
 from .management.commands import getbook
 def projects(request):
     
@@ -64,3 +64,12 @@ def vote(request):
         'vote_total': book.vote_total,
         'vote_ratio': book.vote_ratio
     })
+
+def post_comment(request, book_id):
+    if request.method == 'POST':
+        comment_text = request.POST['comment_text']
+        user = request.user  # Assuming you have user authentication set up
+        book = Books.objects.get(id=book_id)
+        comment = Comment(book=book, user=user, comment_text=comment_text)
+        comment.save()
+    return redirect('book-detail', book_id=book_id)

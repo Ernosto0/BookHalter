@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from users.models import User
 # Create your models here.
 
 class Project(models.Model):
@@ -17,33 +18,6 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
-
-
-
-class User(models.Model):
-    nick = models.CharField(max_length=200)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=25)
-    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-
-    def __str__(self):
-        return self.nick
-    
-
-class Review(models.Model):
-    VOTE_TYPE = (
-        ('up', 'Up Vote'),
-        ('down', 'Down Vote'),
-    )
-    #owner =
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    body = models.TextField(null=True, blank=True)
-    value = models.CharField(max_length=200, choices=VOTE_TYPE)
-    created = models.DateTimeField(auto_now_add=True)
-    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    
-    def __str__(self):
-        return self.value
 
 class Tag(models.Model):
     name = models.CharField(max_length=2000)
@@ -63,3 +37,17 @@ class Books(models.Model):
     vote_ratio = models.IntegerField(default=0, null=True, blank=True)
     featured_image = models.ImageField(null=True, blank=True, default='book.png')
 
+class Comment(models.Model):
+    VOTE_TYPE = (
+        ('up', 'Up Vote'),
+        ('down', 'Down Vote'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Books, on_delete=models.CASCADE)
+    body = models.TextField(null=True, blank=True)
+    comment_text = models.CharField(max_length=200, choices=VOTE_TYPE)
+    created = models.DateTimeField(auto_now_add=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    
+    def __str__(self):
+        return f'Comment by {self.user.nick}'
