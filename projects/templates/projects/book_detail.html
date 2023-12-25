@@ -42,6 +42,14 @@
             });
         });
     }); 
+
+    $('form').submit(function() {
+        if ($('input[name="comment_text"]').val() == '') {
+            alert('Please enter a comment');
+            return false;
+        } 
+        return true;
+        });
     </script>
 <div class="page">
     <div class="header">
@@ -64,8 +72,9 @@
             <input type="submit" value="Post Comment">
         </form>
         {% for comment in book.comment_set.all %}
-        <p>{{ comment.comment_text }}</p>
+            <p>{{ comment.user.username }}: {{ comment.comment_text }}</p>  
         {% endfor %}
+  
         
         <!-- Other fields as needed -->
     </div>

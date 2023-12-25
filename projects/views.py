@@ -66,6 +66,7 @@ def vote(request):
     })
 
 def post_comment(request, book_id):
+    print("COMMENT SECTION")
     if request.method == 'POST':
         comment_text = request.POST['comment_text']
         user = request.user  # Assuming you have user authentication set up
