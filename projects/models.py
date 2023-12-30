@@ -3,7 +3,7 @@ from django.conf import settings
 
 import uuid
 
-from users.models import User
+
 # Create your models here.
 
 class Project(models.Model):

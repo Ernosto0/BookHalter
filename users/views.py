@@ -1,8 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.views import LoginView as AuthLoginView
+from django.contrib.auth.forms import UserCreationForm
 
-# Create your views here.
+
+
 
 
 def profiles(request):
     return render(request, 'users/profiles.html')
 
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirect to login page after registration
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
