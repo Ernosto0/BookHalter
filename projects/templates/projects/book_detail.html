@@ -1,82 +1,48 @@
 {% extends 'main.html' %}
 {% load static %}
+
 {% block content %}
 <head>
     <link rel="stylesheet" type="text/css" href="{% static 'book-detail.css' %}">
 </head>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<script>
-    
-
-    $(document).ready(function() {
-        var book_id = "{{ book.id }}";
-        
-        $('#vote-up').click(function() {
-            $.ajax({
-                url: '{% url "vote" %}',
-                data: {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    'book_id': book_id,
-                    'vote': 'up'
-                },
-                success: function(data) {
-                    $('#vote-total').text(data.vote_total);
-                    $('#vote-ratio').text(data.vote_ratio + '%');     
-                }
-            });
-        });
-        
-        $('#vote-down').click(function() {
-            $.ajax({
-                url: '{% url "vote" %}',
-                data: {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    'book_id': book_id,
-                    'vote': 'down'
-                },
-                success: function(data) {
-                    $('#vote-total').text(data.vote_total);
-                    $('#vote-ratio').text(data.vote_ratio + '%');     
-                }
-            });
-        });
-    }); 
-
-    $('form').submit(function() {
-        if ($('input[name="comment_text"]').val() == '') {
-            alert('Please enter a comment');
-            return false;
-        } 
-        return true;
-        });
-    </script>
 <div class="page">
     <div class="header">
         <h2>{{ book.name }}</h2>
     </div>
-    <div class="book">
-        <div class="title">
+    <div class="book-detail">
+        <div class="book-title">
             <h1>Title: {{ book.name }}</h1>
         </div>
-        <p class="author">Author: {{ book.author }}</p>
-        <img src="{{book.featured_image.url}}">
-        <p class="description">Description: {{ book.description }}</p>
-        <button id="vote-up">Vote Up</button>
-        <button id="vote-down">Vote Down</button>
-        <p id="vote-total">{{ book.vote_total }}</p>
-        <p id="vote-ratio">{{ book.vote_ratio }}%</p>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="comment_text">
-            <input type="submit" value="Post Comment">
-        </form>
-        {% for comment in book.comment_set.all %}
-            <p>{{ comment.user.username }}: {{ comment.comment_text }}</p>  
-        {% endfor %}
-  
-        
-        <!-- Other fields as needed -->
+        <p class="book-author">Author: {{ book.author }}</p>
+        <img class="book-image" src="{{ book.featured_image.url }}" alt="Book Image">
+        <p class="book-description">Description: {{ book.description }}</p>
+        <!-- Voting form -->
+        <div class="voting-section">
+            <form method="post" action="{% url 'vote'  %}">
+                {% csrf_token %}
+                <button type="submit" name="vote" value="up" class="vote-button vote-up">Vote Up</button>
+                <button type="submit" name="vote" value="down" class="vote-button vote-down">Vote Down</button>
+            </form>
+            <p id="vote-total">Votes: {{ book.vote_total }}</p>
+            <p id="vote-ratio">Rating: {{ book.vote_ratio }}%</p>
+        </div>
+        <!-- Comment form -->
+        <div class="comment-section">
+            <h3>Add a Comment</h3>
+            <form method="POST" action="{% url 'post_comment' book.id %}" class="comment-form">
+                {% csrf_token %}
+                <textarea name="comment" class="comment-textarea" placeholder="Write your comment here..."></textarea>
+                <button type="submit" class="comment-submit">Add comment</button> 
+            </form>
+            <div class="comments-list">
+                {% for comment in book.comment_set.all %}
+                    <div class="comment">
+                        <p class="comment-user">{{ comment.user.username|default:"Anonymous" }} says:</p>
+                        <p class="comment-body">{{ comment.body }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

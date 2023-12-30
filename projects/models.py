@@ -1,5 +1,8 @@
 from django.db import models
+from django.conf import settings
+
 import uuid
+
 from users.models import User
 # Create your models here.
 
@@ -42,7 +45,9 @@ class Comment(models.Model):
         ('up', 'Up Vote'),
         ('down', 'Down Vote'),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # anonymous users for easier tests 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     body = models.TextField(null=True, blank=True)
     comment_text = models.CharField(max_length=200, choices=VOTE_TYPE)
@@ -50,4 +55,4 @@ class Comment(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
     
     def __str__(self):
-        return f'Comment by {self.user.nick}'
+        return f'Comment by a users'

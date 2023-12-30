@@ -1,5 +1,8 @@
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
+
 from aifolder import ai
 from .models import Project, Books, Comment
 from .management.commands import getbook
@@ -35,16 +38,13 @@ def recommended_books(request):
     html = render(request, 'projects/recommended_books.html', {'books': books})
     return HttpResponse(html, content_type='text/html')
 
-def vote(request):
-    try:
-        print("Vote function called")
-        # rest of code
-    except Exception as e:
-        print("Error:", e)
-    book_id = request.POST.get('book_id')
+
+# @login_required
+def vote(request, book_id):
+    bookid = get_object_or_404(Books, id=book_id)
     vote = request.POST.get('vote')
     
-    book = Books.objects.get(pk=book_id)
+    book = Books.objects.get(pk=bookid)
     if book.vote_total is None:
         book.vote_total = 0
     
@@ -65,12 +65,30 @@ def vote(request):
         'vote_ratio': book.vote_ratio
     })
 
+
+# @login_required
 def post_comment(request, book_id):
-    print("COMMENT SECTION")
     if request.method == 'POST':
-        comment_text = request.POST['comment_text']
-        user = request.user  # Assuming you have user authentication set up
-        book = Books.objects.get(id=book_id)
-        comment = Comment(book=book, user=user, comment_text=comment_text)
+        comment_text = request.POST.get('comment', '')  # Safely get the comment text or default to empty string
+        book = get_object_or_404(Books, id=book_id)  # Get the book object or return 404 if not found
+
+        # Create a new comment instance
+        comment = Comment(
+            book=book,
+            body=comment_text,  # Assuming 'body' is the field for the comment text
+            comment_text='up',  # Assuming you want a default vote type, change as needed
+            created=timezone.now(),  # Set the created time to now
+        )
+
+        # Check if the user is authenticated, if so, assign the user to the comment
+        if request.user.is_authenticated:
+            comment.user = request.user
+
+        # Save the comment to the database
         comment.save()
-    return redirect('book-detail', book_id=book_id)
+
+        # Redirect back to the book detail page
+        return redirect('book-detail', book_id=book_id)
+    else:
+        # If not a POST request, return a bad request response
+        return HttpResponse(status=400)
