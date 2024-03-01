@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView
 
+class MyLoginView(LoginView):
+    template_name = 'users/login.html'
 
 
 

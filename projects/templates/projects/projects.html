@@ -14,6 +14,15 @@
 
     <!-- Display the form -->
     <h1>Welcome to BookAi</h1>
+
+        <!-- Check if the user is authenticated and display their username -->
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}!</p>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+
+
     <div class="rectangle">
         Your long text goes here. It will automatically wrap to the next line when it reaches the end of the rectangle's width. You can adjust the width of the rectangle by changing the width property in the CSS.
     </div>

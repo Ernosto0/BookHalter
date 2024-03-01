@@ -1,9 +1,8 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.db import models
-from django.contrib.auth.forms import UserCreationForm, AbstractUser # type: ignore
+# from django.contrib.auth.models import AbstractUser
+# from django.db import models
 
 
 
 
-class User(AbstractUser):
-    pass
+# class User(AbstractUser):
+#     pass

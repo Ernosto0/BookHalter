@@ -2,9 +2,10 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from aifolder import ai
-from .models import Project, Books, Comment
+from .models import Project, Books, Comment, Vote
 from .management.commands import getbook
 def projects(request):
     
@@ -19,6 +20,9 @@ def projects(request):
 def project(request, pk):
     hello = "hello"
     return render(request,'projects/single-project.html',{'hello': hello})
+
+def home(request):
+    return render(request, 'projects.html')
 
 def book_detail(request, book_id):
     book = get_object_or_404(Books, pk=book_id)
@@ -39,26 +43,56 @@ def recommended_books(request):
     return HttpResponse(html, content_type='text/html')
 
 
-# @login_required
+@login_required
 def vote(request, book_id):
-    bookid = get_object_or_404(Books, id=book_id)
-    vote = request.POST.get('vote')
+    book = get_object_or_404(Books, id=book_id)
+    vote_type = request.POST.get('vote')
     
-    book = Books.objects.get(pk=bookid)
+   
+    
+    current_vote = Vote.objects.filter(user=request.user, book=book).first()
     if book.vote_total is None:
         book.vote_total = 0
-    
-    if vote == 'up':
-        book.vote_total +=  1
+        book.upvotes_count = 0
+    if current_vote:
+        # If the user is submitting the same vote, it's considered a retraction
+        if current_vote.vote_type == vote_type:
+            current_vote.delete()
+            if vote_type == 'up':
+                book.vote_total -= 1
+                
+            else:
+                book.vote_total += 1
+                
+        else:
+            # Change the vote and adjust book vote_total accordingly
+            current_vote.vote_type = vote_type
+            current_vote.save()
+            if vote_type == 'up':
+                book.vote_total += 2  # One to cancel out the downvote, one to add the upvote
+            else:
+                book.vote_total -= 2  # One to cancel out the upvote, one to add the downvote
     else:
-        book.vote_total -= 1
-    total_books = book.objects.count()
-    if total_books > 0:
-        book.vote_ratio = int((book.vote_total / total_books) * 100)
-    else:
-        book.vote_ratio = 0
+        # If no current vote, create a new one and adjust book vote_total
+        Vote.objects.create(user=request.user, book=book, vote_type=vote_type)
+        if vote_type == 'up':
+            book.vote_total += 1
+        else:
+            book.vote_total -= 1
 
-    book.save()
+
+    # Calculate the ratio
+            
+    # upvotes_count = book.upvotes_count
+
+    # total_votes_count = abs(book.vote_total)
+
+    # if total_votes_count > 0:
+    #     book.vote_ratio = int((upvotes_count / total_votes_count) * 100)
+    # else:
+    #     book.vote_ratio = 0
+
+    #     book.save()
     
     return JsonResponse({
         'vote_total': book.vote_total,
@@ -66,29 +100,25 @@ def vote(request, book_id):
     })
 
 
-# @login_required
+@login_required
 def post_comment(request, book_id):
     if request.method == 'POST':
-        comment_text = request.POST.get('comment', '')  # Safely get the comment text or default to empty string
+        comment_text = request.POST.get('comment', '')  # Get the comment text or default to empty string
         book = get_object_or_404(Books, id=book_id)  # Get the book object or return 404 if not found
 
         # Create a new comment instance
         comment = Comment(
             book=book,
-            body=comment_text,  # Assuming 'body' is the field for the comment text
-            comment_text='up',  # Assuming you want a default vote type, change as needed
+            body=comment_text,  # Use the comment text from the form
             created=timezone.now(),  # Set the created time to now
+            user=request.user  # Assign the logged-in user to the comment
         )
-
-        # Check if the user is authenticated, if so, assign the user to the comment
-        if request.user.is_authenticated:
-            comment.user = request.user
 
         # Save the comment to the database
         comment.save()
 
         # Redirect back to the book detail page
-        return redirect('book-detail', book_id=book_id)
+        return redirect('book-detail', book_id=book_id)  # Ensure this URL name matches your urls.py
     else:
         # If not a POST request, return a bad request response
         return HttpResponse(status=400)

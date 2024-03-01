@@ -15,23 +15,24 @@ SECRET_KEY = 'django-insecure-azt#=ee98660lx7=56l)f17)a_6ttrd)yg1r2_eb1el@pfv^vi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+LOGIN_REDIRECT_URL = '/'
+
+
+LOGIN_URL = '/login/'
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'projects.apps.ProjectsConfig',
-
-    
+    'users.apps.UsersConfig'
 ]
 
 MIDDLEWARE = [

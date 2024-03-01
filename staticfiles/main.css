@@ -1,27 +1,90 @@
-
 body {
     font-family: 'Arial', sans-serif;
-    margin: 20px;
-    padding: 20px;
     background-color: #f8f8f8;
     text-align: center;
-}
-
-form {
-    margin-top: 20px;
-}
-
-button {
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
+  }
+  
+  form {
+    background-color: #fff;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  input[type="text"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+  }
+  
+  button {
+    width: 100%;
     background-color: #4CAF50;
     color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
     border: none;
-    border-radius: 5px;
-}
-
-p {
-    margin-top: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  p {
+    margin-top: 30px;
     font-size: 18px;
+  }
+  
+  h2 {
+    position: relative;
+    top: 50px;
+    margin-top: 40px;
+    font-size: 15px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: translate(555px, 25px);
+    
+  }
+
+  h1 {
+    position: relative;
+    top: 20px; 
+    margin-top: 40px;
+    font-size: 32px;
+    color: #239b27;
+  }
+  
+  .rectangle {
+    
+    max-width: 501px; /* Matches the form width */
+    margin: 20px auto; /* Centers the rectangle and adds vertical spacing */
+    padding: 30px; /* Matches the form padding */
+    background-color: #fff; /* Matches the form background color */
+    border-radius: 10px; /* Matches the form border radius */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Matches the form box shadow */
+    border: 2px solid #ccc; /* Lighter border color to match the input fields */
+    text-align: left; /* Aligns text to the left */
+    word-wrap: break-word; /* Ensures the text wraps inside the box */
+    white-space: pre-wrap; /* Maintains spacing and line breaks as in the source */
+  }
+
+  .user-greeting {
+    color: #239b27; /* Green color to match your h1 */
+    font-size: 20px; /* Slightly smaller than your h1 for differentiation */
+    margin-top: 20px; /* Space above the greeting */
+    font-weight: bold; /* Make it stand out */
 }

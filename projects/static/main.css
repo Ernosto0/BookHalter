@@ -81,3 +81,10 @@ body {
     word-wrap: break-word; /* Ensures the text wraps inside the box */
     white-space: pre-wrap; /* Maintains spacing and line breaks as in the source */
   }
+
+  .user-greeting {
+    color: #239b27; /* Green color to match your h1 */
+    font-size: 20px; /* Slightly smaller than your h1 for differentiation */
+    margin-top: 20px; /* Space above the greeting */
+    font-weight: bold; /* Make it stand out */
+}

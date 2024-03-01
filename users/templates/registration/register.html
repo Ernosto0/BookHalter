@@ -1,11 +1,13 @@
-<!-- registration/register.html -->
-{% extends 'base.html' %}
+<!-- templates/registration/register.html -->
+
+{% extends "main.html" %}  <!-- Extend your base template if you have one -->
 
 {% block content %}
-<h2>Register</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+    <h2>Sign up</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Sign up</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
 {% endblock %}
