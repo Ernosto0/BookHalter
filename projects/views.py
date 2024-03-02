@@ -6,16 +6,13 @@ from django.contrib.auth.models import User
 
 from aifolder import ai
 from .models import Project, Books, Comment, Vote
-from .management.commands import getbook
+from .management.commands import getbook, get_upvoted_book
 def projects(request):
     
     projects = Project.objects.all()
     tags = Project.objects.values('tags').distinct()
     return render(request,'projects/projects.html')
 
-# def get_result(request):
-#     respond = ai.gpt_main()
-#     return JsonResponse({'result':respond}, safe=False)
 
 def project(request, pk):
     hello = "hello"
@@ -35,9 +32,11 @@ def book_detail(request, book_id):
 def recommended_books(request):
     books = []
     context = []    
+    upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+    print(upvoted_books)
     user_query = request.GET.get('user_query')
     print(user_query)
-    context = ai.gpt_main(user_query)
+    context = ai.gpt_main(user_query, upvoted_books)
     books = getbook.search_books_in_database(context)
     html = render(request, 'projects/recommended_books.html', {'books': books})
     return HttpResponse(html, content_type='text/html')
@@ -118,7 +117,7 @@ def post_comment(request, book_id):
         comment.save()
 
         # Redirect back to the book detail page
-        return redirect('book-detail', book_id=book_id)  # Ensure this URL name matches your urls.py
+        return redirect('book-detail', book_id=book_id)  
     else:
         # If not a POST request, return a bad request response
         return HttpResponse(status=400)

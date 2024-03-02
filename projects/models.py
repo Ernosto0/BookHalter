@@ -64,3 +64,4 @@ class Vote(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     vote_type = models.CharField(max_length=4, choices=(('up', 'Upvote'), ('down', 'Downvote')))
+    

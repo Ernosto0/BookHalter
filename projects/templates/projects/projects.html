@@ -39,7 +39,7 @@
     <!-- Text for Result -->
     <p id="resultText"></p>
 
-    <!-- Include jQuery (make sure to include it in your project) -->
+    <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <!-- Inline JavaScript to handle form submission -->
@@ -71,17 +71,6 @@
 });
     </script>
 
-<!-- <script>
-    function getRecommendations() {
-      $.ajax({
-        url: "{% url 'recommended_books' %}",
-        success: function(response) {
-          $('#result').html(response);
-        }
-      });
-      event.preventDefault();
-    }
-</script> -->
 </body>
 </html>
 {% endblock %}

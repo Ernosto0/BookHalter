@@ -4,6 +4,7 @@ from aifolder.extract_book_data import extract_book_and_author as ed
 from projects.management.commands import addbooks 
 
 
+
 functions = [
 {
         "type": "function",
@@ -82,7 +83,12 @@ functions = [
     },
 ]
 
-openai.api_key = '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'
+with open('openaikey.txt', 'r') as file:
+    # Read the entire content of the file
+    content = file.read()
+    
+
+openai.api_key = content
 
 messages = [
     {
@@ -105,20 +111,20 @@ messages = [
 ]
 
 
-def by_book_titles(book_names):
-    return make_suggestion(book_names)
-def by_book_authors(authors):
-    return make_suggestion(authors)
-def by_book_titles_and_authors(summed_data):
-    return make_suggestion(summed_data)
+def by_book_titles(book_names, upvote_books):
+    return make_suggestion(book_names, upvote_books)
+def by_book_authors(authors, upvote_books):
+    return make_suggestion(authors, upvote_books)
+def by_book_titles_and_authors(summed_data, upvote_books):
+    return make_suggestion(summed_data, upvote_books)
 
-def by_users_description(desc):
-    return make_suggestion(desc)
+def by_users_description(desc, upvote_books):
+    return make_suggestion(desc, upvote_books)
 
 
-def make_suggestion(data):
+def make_suggestion(data, upvote_books):
     while True:
-        one_message = f"Make 5 book suggestions based on the parameters of the user: {data}"
+        one_message = f"Make 5 book suggestions based on the parameters of the user: {data} and list of user's favorite books {upvote_books}"
 
         if one_message:
             messages.append(
@@ -130,11 +136,11 @@ def make_suggestion(data):
         print(chat)#type: ignore
         reply = chat.choices[0].message.content#type: ignore
 
-        recomended_books = ed(reply)
+        recommended_books = ed(reply)
 
         print(reply)
-        return recomended_books
-def gpt_main(user_query):
+        return recommended_books
+def gpt_main(user_query, upvote_books):
 
     while True:
         message = user_query
@@ -146,7 +152,7 @@ def gpt_main(user_query):
             chat = openai.chat.completions.create(#type: ignore
                 model="gpt-4", messages=messages, tools=functions, #type: ignore
             )
-        recomennded_books = []
+        recommended_books = []
         tool_calls = chat.choices[0].message.tool_calls#type: ignore
         for tool_call in tool_calls: #type: ignore
             function_name = tool_call.function.name
@@ -155,29 +161,29 @@ def gpt_main(user_query):
 
             if function_name == "by_book_titles":
                 book_names = arguments["Book title or titles"]
-                recomennded_books=by_book_titles(book_names)
-                print(recomennded_books)
-                addbooks.add_books( recomennded_books)
-                return recomennded_books
+                recommended_books=by_book_titles(book_names, upvote_books)
+                print(recommended_books)
+                addbooks.add_books( recommended_books)
+                return recommended_books
             elif function_name == "by_book_authors":
                 authors = arguments["book author or authors"]
-                recomennded_books= by_book_authors(authors)
-                addbooks.add_books( recomennded_books)
-                return recomennded_books
+                recommended_books= by_book_authors(authors, upvote_books)
+                addbooks.add_books( recommended_books)
+                return recommended_books
             elif function_name == "by_book_authors_and_titles":
                 book_names = arguments["Book title or titles"]
                 authors = arguments["book author or authors"]
                 summed_data = f"The book i like: {book_names}. The author i like: {authors}"
-                recomennded_books=by_book_titles_and_authors(summed_data)
-                addbooks.add_books( recomennded_books)
-                return recomennded_books
+                recommended_books=by_book_titles_and_authors(summed_data, upvote_books)
+                addbooks.add_books( recommended_books)
+                return recommended_books
             elif function_name == "by_users_description":
                 description = arguments["Users Description"]
-                recomennded_books=by_users_description(description)
-                addbooks.add_books( recomennded_books)
-                return recomennded_books
+                recommended_books=by_users_description(description, upvote_books)
+                addbooks.add_books( recommended_books)
+                return recommended_books
         reply = chat.choices[0].message.content # type: ignore
         print(chat)#type: ignore
         messages.append({"role": "assistant", "content": reply}) #type: ignore
 
-        return recomennded_books
+        return recommended_books

@@ -1,0 +1,125 @@
+.page {
+    max-width: 800px;
+    margin: 0 auto; 
+    background: #f9f9f9;
+    border-radius: 10px;
+  }
+  
+  /* Header */
+  .header {
+    background: #1e3a52;
+    color: #fff;
+    padding: 20px; 
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px; 
+  }
+  
+  /* Book Container */
+  .book-detail {
+    background: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;  
+  }
+  
+  /* Book Title */
+  .book-title {
+    font-size: 18px;
+    font-weight: bold;  
+  }
+  
+  /* Book Metadata */
+  .book-author {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Description */
+  .book-description {
+    margin-top: 10px;
+    font-style: italic;
+    color: #333;
+  }
+
+  .voting-section {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .vote-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .vote-up {
+    background: #4caf50;
+    color: #fff;
+  }
+  
+  .vote-down {
+    background: #f44336; 
+    color: #fff;
+  }
+  
+  .vote p {
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+  }
+  
+  /* Comments */
+  .comments h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;  
+  }
+  
+  .comments-textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .comment-section {
+    margin-top: 30px;
+}
+
+.comment-form {
+    margin-bottom: 20px;
+}
+
+  .comments-submit {
+    background: #1e3a52;
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+  }
+  
+  .comments p {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .comments-list {
+    margin-top: 20px;
+}
+
+.comment {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.comment-user {
+    font-weight: bold;
+}
+
+.comment-body {
+    margin-top: 5px;
+}
