@@ -83,7 +83,7 @@ functions = [
     },
 ]
 
-with open('openaikey.txt', 'r') as file:
+with open('C:/project_bookai/aifolder/openaikey.txt', 'r') as file:
     # Read the entire content of the file
     content = file.read()
     
@@ -124,12 +124,13 @@ def by_users_description(desc, upvote_books):
 
 def make_suggestion(data, upvote_books):
     while True:
-        one_message = f"Make 5 book suggestions based on the parameters of the user: {data} and list of user's favorite books {upvote_books}"
+        one_message = f"Make 15 book suggestions based on the parameters of the user: {data} and list of user's favorite books {upvote_books}"
 
         if one_message:
             messages.append(
                 {"role": "user", "content": one_message},
             )
+
             chat = openai.chat.completions.create( #type: ignore
                 model="gpt-4", messages=messages #type: ignore
             )

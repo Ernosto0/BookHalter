@@ -19,19 +19,26 @@
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}!</p>
     {% else %}
-        <a href="{% url 'login' %}">Login</a>
+        
     {% endif %}
 
 
     <div class="rectangle">
         Your long text goes here. It will automatically wrap to the next line when it reaches the end of the rectangle's width. You can adjust the width of the rectangle by changing the width property in the CSS.
     </div>
-    <a href="{% url 'login' %}">Login</a>
+    
 
     <form id="myForm">
-        {% csrf_token %}
-
+        <div class="button-container">
+            <div class="login-button">
+                <a href="{% url 'login' %}">Login</a>
+            </div>
+            <div class="register-button">
+                <a href="{% url 'register' %}">Register</a>
+            </div>
+        </div>
     </form>
+    
     <form method="GET" action="{% url 'recommended_books' %}">
         <input type="text" name="user_query" id="user_input" placeholder="Enter your query">
         <button type="submit" href="{% url 'recommended_books' %}">Get Book Recommendations</button> 

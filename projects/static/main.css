@@ -87,4 +87,33 @@ body {
     font-size: 20px; /* Slightly smaller than your h1 for differentiation */
     margin-top: 20px; /* Space above the greeting */
     font-weight: bold; /* Make it stand out */
-}
+    
+  }
+
+  .button-container {
+      display: flex;
+      justify-content : space-between; /* This will place one item on each end */
+      max-width: 500px;
+      margin: 0 auto; /* Centering the container */
+    }
+    
+  .login-button a,
+  .register-button a {
+      display: block;
+      font-size: 20px; /* Larger font size */
+      padding: 10px;
+      margin: 5px;
+      text-decoration: none;
+      color: #4CAF50; /* Your button color */
+      border: 2px solid #4CAF50; /* Your button color */
+      border-radius: 4px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+  .login-button a:hover,
+  .register-button a:hover {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+  
