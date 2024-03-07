@@ -90,26 +90,31 @@ with open('C:/project_bookai/aifolder/openaikey.txt', 'r') as file:
 
 openai.api_key = content
 
+
+output_example = """Based on your interest in Martin Eden by Jack London, I would suggest exploring these titles:\n
+1. Sister Carrie by Theodore Dreiser.
+2. The Red Badge of Courage by Stephen Crane.
+3. The Jungle by Upton Sinclair.
+4. The Call of the Wild by Jack London.
+5. McTeague by Frank Norris.\n
+All of these authors share Jack London's knack for raw, naturalistic storytelling that dives deep into the human spirit. Just as Martin Eden, these books will transport you back in time, while tackling profound themes. I hope you enjoy them."""
+
+
 messages = [
     {
-        "role": "system",
-        "content": "Don't make assumptions about what values to plug into functions. Dont chat with user. Just run "
-                   "the suitable function."
+        "role": "assistant",
+        "content": "Don't make assumptions about what values to plug into functions. Run the suitable function."
     },
     {
         "role": "system",
-        "content": f"You are an intelligent book suggester Ai and you know about books. Your task is suggesting books "
-                   f"for the users. You are not going to chat with users. Don't add any extra text. Your task is to "
-                   f"recommend books based on the user's input.Your responses should be in this format: "
-                   f"{'title by author'} (without 'f' symbols). If the user's message is: 'Make suggestions based on "
-                   f"my parameters,' do that: Make book suggestions based on the parameters of the user data ("
-                   f"This user data could be book names or author names are both. You need to make best book "
-                   f"suggestions for people that like these book and authors. Dont suggest same author's books "
-                   f"constantly.).Dont say 'and' between two books. ADD"
-                   f"a '.' after book name. Dont add quotation mark between book name."
+        f"content": f"You are an intelligent book suggester AI and you know about books. Your task is to suggest books "
+                   "for the users based on their input. After providing book suggestions, craft a friendly and "
+                   "informative response to the user, incorporating these suggestions. Your book recommendations "
+                   "should be in the format: 'title by author'. Avoid suggesting the same author's books repeatedly. "
+                   "Do not use quotation marks around book names, and do not use 'and' between book names. Each book "
+                   "name should be followed by a period. Example output must be like this: " + output_example
     }
 ]
-
 
 def by_book_titles(book_names, upvote_books):
     return make_suggestion(book_names, upvote_books)
@@ -124,7 +129,7 @@ def by_users_description(desc, upvote_books):
 
 def make_suggestion(data, upvote_books):
     while True:
-        one_message = f"Make 15 book suggestions based on the parameters of the user: {data} and list of user's favorite books {upvote_books}"
+        one_message = f"Make 5 book suggestions based on the parameters of the user: {data} First, suggest 5 book Then, provide a friendly and engaging response to the user as if you are a knowledgeable book assistant."
 
         if one_message:
             messages.append(
@@ -164,24 +169,24 @@ def gpt_main(user_query, upvote_books):
                 book_names = arguments["Book title or titles"]
                 recommended_books=by_book_titles(book_names, upvote_books)
                 print(recommended_books)
-                addbooks.add_books( recommended_books)
+                addbooks.add_books(recommended_books[0])
                 return recommended_books
             elif function_name == "by_book_authors":
                 authors = arguments["book author or authors"]
                 recommended_books= by_book_authors(authors, upvote_books)
-                addbooks.add_books( recommended_books)
+                addbooks.add_books(recommended_books[0])
                 return recommended_books
             elif function_name == "by_book_authors_and_titles":
                 book_names = arguments["Book title or titles"]
                 authors = arguments["book author or authors"]
                 summed_data = f"The book i like: {book_names}. The author i like: {authors}"
                 recommended_books=by_book_titles_and_authors(summed_data, upvote_books)
-                addbooks.add_books( recommended_books)
+                addbooks.add_books(recommended_books[0])
                 return recommended_books
             elif function_name == "by_users_description":
                 description = arguments["Users Description"]
                 recommended_books=by_users_description(description, upvote_books)
-                addbooks.add_books( recommended_books)
+                addbooks.add_books( recommended_books[0])
                 return recommended_books
         reply = chat.choices[0].message.content # type: ignore
         print(chat)#type: ignore

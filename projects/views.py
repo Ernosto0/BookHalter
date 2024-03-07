@@ -37,10 +37,15 @@ def recommended_books(request):
     user_query = request.GET.get('user_query')
     print(user_query)
     context = ai.gpt_main(user_query, upvoted_books)
-    books = getbook.search_books_in_database(context)
-    html = render(request, 'projects/recommended_books.html', {'books': books})
+    books = getbook.search_books_in_database(context[0])
+    greeting_message = context[1]
+    text_after_recommendations = context[2]
+    
+    html = render(request, 'projects/recommended_books.html', {'books': books, 'greeting_message': greeting_message, 'text_after_recommendations':text_after_recommendations}, )
     return HttpResponse(html, content_type='text/html')
 
+
+# TODO: Fix the vote up, down system
 
 @login_required
 def vote(request, book_id):
@@ -79,7 +84,7 @@ def vote(request, book_id):
         else:
             book.vote_total -= 1
 
-
+    # TODO: Fix the calculute the ratio system
     # Calculate the ratio
             
     # upvotes_count = book.upvotes_count
