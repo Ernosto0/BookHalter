@@ -36,11 +36,19 @@
                 {% for book in books %}
                     <div class="book">
                         <h3 class="title">{{ book.name }}</h3>
-                        <img src="{{book.featured_image.url}}">
+
+                        <!-- Display image -->
+                        {% if book.featured_image_url %}
+                            <img src="{{ book.featured_image_url }}" alt="Cover image for {{ book.name }}">
+                        {% else %}
+                            <p>No cover image available.</p>
+                        {% endif %}
+
                         <p class="author"><strong>Author:</strong> {{ book.author }}</p>
                         <p class="votes"><strong>Total Votes:</strong> {{ book.total_votes }}</p>
                         <p class="ratio"><strong>Vote Ratio:</strong> {{ book.vote_ratio }}</p>
-                        <p class="description">{{ book.description }}</p>
+                        <p class="published_year"><strong>Published Year:</strong> {{ book.published_year }}</p>
+                        <p class="description"><strong>Description:</strong> {{ book.description }}</p>
                         <a href="{% url 'book-detail' book.id %}">{{ book.name }}</a>
 
                     </div>

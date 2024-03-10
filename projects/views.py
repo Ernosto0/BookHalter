@@ -52,8 +52,6 @@ def vote(request, book_id):
     book = get_object_or_404(Books, id=book_id)
     vote_type = request.POST.get('vote')
     
-   
-    
     current_vote = Vote.objects.filter(user=request.user, book=book).first()
     if book.vote_total is None:
         book.vote_total = 0

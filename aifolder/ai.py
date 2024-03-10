@@ -2,6 +2,7 @@ import openai
 import json
 from aifolder.extract_book_data import extract_book_and_author as ed
 from projects.management.commands import addbooks 
+from aifolder.openlibrary import main as bookapi 
 
 
 
@@ -137,7 +138,7 @@ def make_suggestion(data, upvote_books):
             )
 
             chat = openai.chat.completions.create( #type: ignore
-                model="gpt-4", messages=messages #type: ignore
+                model="gpt-4-0125-preview", messages=messages #type: ignore
             )
         print(chat)#type: ignore
         reply = chat.choices[0].message.content#type: ignore
@@ -156,7 +157,7 @@ def gpt_main(user_query, upvote_books):
                 {"role": "user", "content": message},
             )
             chat = openai.chat.completions.create(#type: ignore
-                model="gpt-4", messages=messages, tools=functions, #type: ignore
+                model="gpt-4-0125-preview", messages=messages, tools=functions, #type: ignore
             )
         recommended_books = []
         tool_calls = chat.choices[0].message.tool_calls#type: ignore
@@ -169,7 +170,7 @@ def gpt_main(user_query, upvote_books):
                 book_names = arguments["Book title or titles"]
                 recommended_books=by_book_titles(book_names, upvote_books)
                 print(recommended_books)
-                addbooks.add_books(recommended_books[0])
+                addbooks.add_books(bookapi(recommended_books[0]))
                 return recommended_books
             elif function_name == "by_book_authors":
                 authors = arguments["book author or authors"]
