@@ -169,7 +169,8 @@ def gpt_main(user_query, upvote_books):
             if function_name == "by_book_titles":
                 book_names = arguments["Book title or titles"]
                 recommended_books=by_book_titles(book_names, upvote_books)
-                print(recommended_books)
+                print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+                print(recommended_books[0])
                 addbooks.add_books(bookapi(recommended_books[0]))
                 return recommended_books
             elif function_name == "by_book_authors":

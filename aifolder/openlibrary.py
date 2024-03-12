@@ -1,16 +1,6 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import backoff
-import ratelimit
-from ratelimit import limits, sleep_and_retry
 
-
-
-FIFTEEN_MINUTES = 900
-
-@sleep_and_retry
-@limits(calls=100, period=FIFTEEN_MINUTES)
-@backoff.on_exception(backoff.expo, ratelimit.RateLimitException, max_time=60)
 def search_book_by_title(title):
     search_url = "https://openlibrary.org/search.json"
     search_params = {'title': title}
@@ -49,20 +39,17 @@ def search_book_by_title(title):
     else:
         return {'error': "Failed to fetch data."}
 
-def main(book_titles):
+def main(book_data):
     all_books_data = []
+    book_titles = [book[0] for book in book_data]
+
     with ThreadPoolExecutor(max_workers=5) as executor:
-        # Create a future for each book title
         future_to_title = {executor.submit(search_book_by_title, title): title for title in book_titles}
-        
-        # Process the futures as they complete
         for future in as_completed(future_to_title):
             book_data = future.result()
-
-            # Check if book_data is a dictionary and does not contain 'error'
-            if isinstance(book_data, dict) and 'error' not in book_data:
+            if 'error' not in book_data:
                 all_books_data.append(book_data)
-
     return all_books_data
 
+# Example usage
 
