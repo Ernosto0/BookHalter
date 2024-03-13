@@ -3,20 +3,21 @@ from django.db import IntegrityError
 
 def add_books(book_list):
     for book in book_list:
-        
+        print("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
+        print(book_list)
         # Check if the book already exists (considering name and author for uniqueness)
-        if not Books.objects.filter(name=book['name'], author=book['author']).exists():
+        if not Books.objects.filter(name=book['title'], author=book['author']).exists():
             try:
                 # Create a new book entry with all provided details
                 Books.objects.create(
-                    name=book['name'],
-                    author=book['author'],
-                    published_year=book['published_year'],
+                    name=book['title'],
+                    author=book['author'][0],
+                    published_year=2100,
                     description=book['description'],
-                    cover_image_url=book['featured_image_url'] 
+                    cover_image_url=book['cover_image'] 
                 )
-                print(f"Added book: {book['name']} by {book['author']}")
+                print(f"Added book: {book['title']} by {book['author'][0]}")
             except IntegrityError as e:
-                print(f"An error occurred when adding '{book['name']}': {e}")
+                print(f"An error occurred when adding '{book['title']}': {e}")
         else:
-            print(f"Book already exists: {book['name']} by {book['author']}")
+            print(f"Book already exists: {book['title']} by {book['author'][0]}")

@@ -171,24 +171,23 @@ def gpt_main(user_query, upvote_books):
                 recommended_books=by_book_titles(book_names, upvote_books)
                 print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
                 print(recommended_books[0])
-                addbooks.add_books(bookapi(recommended_books[0]))
                 return recommended_books
             elif function_name == "by_book_authors":
                 authors = arguments["book author or authors"]
                 recommended_books= by_book_authors(authors, upvote_books)
-                addbooks.add_books(recommended_books[0])
+                
                 return recommended_books
             elif function_name == "by_book_authors_and_titles":
                 book_names = arguments["Book title or titles"]
                 authors = arguments["book author or authors"]
                 summed_data = f"The book i like: {book_names}. The author i like: {authors}"
                 recommended_books=by_book_titles_and_authors(summed_data, upvote_books)
-                addbooks.add_books(recommended_books[0])
+                
                 return recommended_books
             elif function_name == "by_users_description":
                 description = arguments["Users Description"]
                 recommended_books=by_users_description(description, upvote_books)
-                addbooks.add_books( recommended_books[0])
+                
                 return recommended_books
         reply = chat.choices[0].message.content # type: ignore
         print(chat)#type: ignore

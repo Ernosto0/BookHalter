@@ -7,9 +7,9 @@ def search_books_in_database(books_to_search):
         # Try to find the book in the database
         print("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCccc")
 
-        print(book_to_search[0], book_to_search[1])
+        print(book_to_search['title'], book_to_search['author'][0])
         try:
-            book = Books.objects.get(name__iexact=book_to_search[0], author__iexact=book_to_search[1])
+            book = Books.objects.get(name__iexact=book_to_search['title'], author__iexact=book_to_search['author'][0])
             found_books.append(book)
             print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
             print(book.description)

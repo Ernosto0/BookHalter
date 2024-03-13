@@ -4,9 +4,11 @@ from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from aifolder import ai
+
+from aifolder import ai, openlibrary
 from .models import Project, Books, Comment, Vote
 from .management.commands import getbook, get_upvoted_book
+from .management.commands import addbooks
 def projects(request):
     
     projects = Project.objects.all()
@@ -37,7 +39,11 @@ def recommended_books(request):
     user_query = request.GET.get('user_query')
     print(user_query)
     context = ai.gpt_main(user_query, upvoted_books)
-    books = getbook.search_books_in_database(context[0])
+    print("::::::::::::::::::::::::::::::::::::::::")
+    print(context[0])
+    respond = openlibrary.main(context[0])
+    addbooks.add_books(respond)
+    books = getbook.search_books_in_database(respond)
     greeting_message = context[1]
     text_after_recommendations = context[2]
     

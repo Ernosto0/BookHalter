@@ -38,8 +38,8 @@
                         <h3 class="title">{{ book.name }}</h3>
 
                         <!-- Display image -->
-                        {% if book.featured_image_url %}
-                            <img src="{{ book.featured_image_url }}" alt="Cover image for {{ book.name }}">
+                        {% if book.cover_image_url %}
+                            <img src="{{ book.cover_image_url }}" alt="Cover image for {{ book.name }}">
                         {% else %}
                             <p>No cover image available.</p>
                         {% endif %}
