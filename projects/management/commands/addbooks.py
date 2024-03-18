@@ -3,8 +3,7 @@ from django.db import IntegrityError
 
 def add_books(book_list):
     for book in book_list:
-        print("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
-        print(book_list)
+        
         # Check if the book already exists (considering name and author for uniqueness)
         if not Books.objects.filter(name=book['title'], author=book['author']).exists():
             try:

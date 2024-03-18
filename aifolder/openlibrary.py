@@ -56,12 +56,16 @@ def get_amazon_id_by_title(title):
 
 
 def main(titles):
-    # Initialize dictionary for each book title
-    book_data = {title[0]: {} for title in titles}  # Use the first element of each tuple (the title) as the key
 
+    # Initialize dictionary for each book title
+    book_data = {book['title']: {} for book in titles}  # Use the first element of each tuple (the title) as the key
+    explanations = {explanation['explanation'] for explanation in titles}
+    
+    
+    
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         # Dispatch Google Books search tasks, using just the title for each task
-        google_books_futures = {executor.submit(search_book_by_title, title[0]): title[0] for title in titles}
+        google_books_futures = {executor.submit(search_book_by_title, title['title']): title['title'] for title in titles}
 
         for future in concurrent.futures.as_completed(google_books_futures):
             title = google_books_futures[future]  # This is now just the book title, not a tuple
@@ -73,7 +77,7 @@ def main(titles):
                 book_data[title]['error'] = str(e)  # Handle errors if needed
 
         # Dispatch Open Library Amazon ID search tasks, using just the title
-        open_library_futures = {executor.submit(get_amazon_id_by_title, title[0]): title[0] for title in titles}
+        open_library_futures = {executor.submit(get_amazon_id_by_title, title['title']): title['title'] for title in titles}
 
         for future in concurrent.futures.as_completed(open_library_futures):
             title = open_library_futures[future]  # Again, just the book title

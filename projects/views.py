@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from regex import P
 
 
 from aifolder import ai, openlibrary
@@ -36,18 +37,33 @@ def recommended_books(request):
     context = []    
     upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
     print(upvoted_books)
-    user_query = request.GET.get('user_query')
-    print(user_query)
-    context = ai.gpt_main(user_query, upvoted_books)
-    print("::::::::::::::::::::::::::::::::::::::::")
-    print(context[0])
-    respond = openlibrary.main(context[0])
-    addbooks.add_books(respond)
-    books = getbook.search_books_in_database(respond)
-    greeting_message = context[1]
-    text_after_recommendations = context[2]
+
+    recent_reads = request.GET.get('recent_reads')
+    desired_feeling = request.GET.get('desired_feeling')
+    character_plot_preferences = request.GET.get('character_plot_preferences')
+    pacing_narrative_style = request.GET.get('pacing_narrative_style')
+
+    context = ai.gpt_main([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+
     
-    html = render(request, 'projects/recommended_books.html', {'books': books, 'greeting_message': greeting_message, 'text_after_recommendations':text_after_recommendations}, )
+
+
+    respond = openlibrary.main(context)
+
+    
+    addbooks.add_books(respond)
+
+    books = getbook.search_books_in_database(respond)
+    explanations_by_gpt = {book['explanation']: {} for book in context}
+    print("::::::::::::::::::::::::::::::::::::::::")
+    print(books)
+
+    index = 0
+    for book in books:
+        book.explanation = respond[index]['explanation']
+        index = index + 1
+    
+    html = render(request, 'projects/recommended_books.html', {'books': books} )
     return HttpResponse(html, content_type='text/html')
 
 
@@ -89,6 +105,7 @@ def vote(request, book_id):
             book.vote_total -= 1
 
     # TODO: Fix the calculute the ratio system
+            
     # Calculate the ratio
             
     # upvotes_count = book.upvotes_count

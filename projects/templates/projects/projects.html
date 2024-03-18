@@ -24,7 +24,7 @@
 
 
     <div class="rectangle">
-        Your long text goes here. It will automatically wrap to the next line when it reaches the end of the rectangle's width. You can adjust the width of the rectangle by changing the width property in the CSS.
+        Your long text goes here. 
     </div>
     
 
@@ -40,8 +40,19 @@
     </form>
     
     <form method="GET" action="{% url 'recommended_books' %}">
-        <input type="text" name="user_query" id="user_input" placeholder="Enter your query">
-        <button type="submit" href="{% url 'recommended_books' %}">Get Book Recommendations</button> 
+        <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
+        <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
+
+        <label for="desired_feeling">How you want to feel with your next book:</label><br>
+        <input type="text" id="desired_feeling" name="desired_feeling" placeholder="Desired Feeling"><br>
+
+        <label for="character_plot_preferences">Preferences for characters and plot:</label><br>
+        <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
+
+        <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
+        <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
+
+        <button type="submit">Get Book Recommendations</button> 
     </form>
     <!-- Text for Result -->
     <p id="resultText"></p>
