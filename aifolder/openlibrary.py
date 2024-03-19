@@ -1,10 +1,10 @@
 import requests
 import concurrent.futures
+from fuzzywuzzy import fuzz
 
-
-def search_book_by_title(title):
+def search_book_by_title_and_author(title, author):
     search_url = "https://www.googleapis.com/books/v1/volumes"
-    search_params = {'q': f'intitle:{title}', 'maxResults': 1, 'langRestrict': 'en', 'orderBy': 'newest'}
+    search_params = {'q': f'intitle:{title}+inauthor:{author}', 'maxResults': 1, 'langRestrict': 'en'}
 
     response = requests.get(search_url, params=search_params)
 
@@ -55,26 +55,33 @@ def get_amazon_id_by_title(title):
         return "Failed to fetch data."
 
 
-def main(titles):
+def is_match(fetched, expected, threshold=90):
+    # Perform fuzzy matching for title and author
+    title_score = fuzz.ratio(fetched.get('title', '').lower(), expected[0].lower())
+    author_score = fuzz.ratio(fetched.get('author', '').lower(), expected[1].lower())
 
-    # Initialize dictionary for each book title
-    book_data = {book['title']: {} for book in titles}  # Use the first element of each tuple (the title) as the key
-    explanations = {explanation['explanation'] for explanation in titles}
-    
+    # Check if both title and author match exceed the threshold
+    return title_score >= threshold and author_score >= threshold
+
+def main(titles):
+    book_data = {}
     
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         # Dispatch Google Books search tasks, using just the title for each task
-        google_books_futures = {executor.submit(search_book_by_title, title['title']): title['title'] for title in titles}
+        google_books_futures = {executor.submit(search_book_by_title_and_author, title, author): (title, author) for
+                                  title, author in titles}
 
         for future in concurrent.futures.as_completed(google_books_futures):
-            title = google_books_futures[future]  # This is now just the book title, not a tuple
+            expected_title_author = google_books_futures[future]  # This is now just the book title, not a tuple
             try:
-                result = future.result()
-                if isinstance(result, dict):
-                    book_data[title].update(result)  # No error here since title is consistent with book_data keys
+                fetched_book = future.result()
+                if fetched_book and is_match(fetched_book, expected_title_author):
+                    book_data[expected_title_author] = fetched_book
+                else:
+                    book_data[expected_title_author] = {'error': 'No accurate match found'}
             except Exception as e:
-                book_data[title]['error'] = str(e)  # Handle errors if needed
+                book_data[expected_title_author] = {'error': str(e)}
 
         # Dispatch Open Library Amazon ID search tasks, using just the title
         open_library_futures = {executor.submit(get_amazon_id_by_title, title['title']): title['title'] for title in titles}

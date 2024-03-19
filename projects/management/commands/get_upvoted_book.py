@@ -1,4 +1,4 @@
-from projects.models import Vote, Books  # Replace 'your_app' with the name of your Django app
+from projects.models import Vote, Books  
 
 def get_upvoted_books_by_user(user_id):
 

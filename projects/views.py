@@ -8,8 +8,8 @@ from regex import P
 
 from aifolder import ai, openlibrary
 from .models import Project, Books, Comment, Vote
-from .management.commands import getbook, get_upvoted_book
-from .management.commands import addbooks
+from .management.commands import getbook, get_upvoted_book, addbooks, check_books
+
 def projects(request):
     
     projects = Project.objects.all()
@@ -45,22 +45,24 @@ def recommended_books(request):
 
     context = ai.gpt_main([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
 
+    # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
+    filtered_books = check_books.remove_existing_books(context)
     
 
-
-    respond = openlibrary.main(context)
-
-    
-    addbooks.add_books(respond)
+    if (filtered_books): # if there is a not added or not got the data from api
+        # Get filtered book's data for the first time
+        print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
+        print(filtered_books)
+        respond = openlibrary.main(filtered_books)
+        # Add the filtered books to data base for the first time
+        addbooks.add_books(respond)
 
     books = getbook.search_books_in_database(respond)
-    explanations_by_gpt = {book['explanation']: {} for book in context}
-    print("::::::::::::::::::::::::::::::::::::::::")
-    print(books)
+    
 
     index = 0
     for book in books:
-        book.explanation = respond[index]['explanation']
+        book.explanation = context[index]['explanation']
         index = index + 1
     
     html = render(request, 'projects/recommended_books.html', {'books': books} )
