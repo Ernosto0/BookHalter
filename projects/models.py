@@ -43,6 +43,7 @@ class Books(models.Model):
     featured_image = models.ImageField(null=True, blank=True, default='book.png')
     cover_image_url = models.URLField(max_length=1000, null=True, blank=True)
     published_year = models.IntegerField(null=True, blank=True)
+    amazon_id = models.IntegerField(default=0, null=True, blank=True)
 
     class Meta:
         unique_together = ('name', 'author')

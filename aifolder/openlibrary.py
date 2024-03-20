@@ -39,7 +39,7 @@ def search_book_by_title_and_author(title, author):
 
 def get_amazon_id_by_title(title):
     search_url = "https://openlibrary.org/search.json"
-    search_params = {'title': title}
+    search_params = {'title': title, }
     response = requests.get(search_url, params=search_params)
 
     if response.status_code == 200:
@@ -50,9 +50,9 @@ def get_amazon_id_by_title(title):
             return {
                 'id_amazon': id_amazon}
         else:
-            return f"No results found for '{title}'."
+            return {}
     else:
-        return "Failed to fetch data."
+        return {}
 
 
 def is_match(fetched, expected, threshold=90):
@@ -64,10 +64,9 @@ def is_match(fetched, expected, threshold=90):
     return title_score >= threshold and author_score >= threshold
 
 def main(titles):
+    
     book_data = {}
 
-    print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
-    print(titles)
     titles_with_authors = [(book['title'], book['author']) for book in titles]
 
     titles_for_openlibrary = {book['title']: {} for book in titles}
@@ -89,23 +88,29 @@ def main(titles):
                 book_data[expected_title_author] = {'error': str(e)}
 
         # Dispatch Open Library Amazon ID search tasks, using just the title
-        # open_library_futures = {executor.submit(get_amazon_id_by_title, title): title for title in titles_for_openlibrary.keys()}
+        open_library_futures = {executor.submit(get_amazon_id_by_title, title): title for title in titles_for_openlibrary.keys()}
 
-        # for future in concurrent.futures.as_completed(open_library_futures):
-        #     title = open_library_futures[future]
-        #     try:
-        #         amazon_id = future.result()
-        #         if amazon_id:
-        #             # Ensure the dictionary for this title exists before updating it
-        #             if title not in book_data:
-        #                 book_data[title] = {}
-        #             book_data[title]['id_amazon'] = amazon_id
-        #     except Exception as e:
-        #         # Ensure the dictionary for this title exists before updating it
-        #         if title not in book_data:
-        #             book_data[title] = {}
-                # book_data[title]['error'] = str(e)
-
+        for future in concurrent.futures.as_completed(open_library_futures):
+            title = open_library_futures[future]  # The book title
+            try:
+                amazon_id_result = future.result()
+                if amazon_id_result:
+                    # Check if the book already has an entry in book_data
+                    # Find the entry by matching the title
+                    matching_entry = next((k for k in book_data.keys() if k[0] == title), None)
+                    if matching_entry:
+                        # Update the existing entry with the Amazon ID
+                        book_data[matching_entry]['id_amazon'] = amazon_id_result['id_amazon']
+                    else:
+                        # Handle the case where the book wasn't found via Google Books API but has an Amazon ID
+                        book_data[(title, '')] = {'id_amazon': amazon_id_result['id_amazon']}
+            except Exception as e:
+                if (title, '') not in book_data:
+                    book_data[(title, '')] = {'error': str(e)}
+                else:
+                    # Update the error message if the title already exists in the book_data
+                    book_data[(title, '')]['error'] = str(e)
+    print(book_data)
     return list(book_data.values())
 
 
