@@ -44,6 +44,10 @@ class Books(models.Model):
     cover_image_url = models.URLField(max_length=1000, null=True, blank=True)
     published_year = models.IntegerField(null=True, blank=True)
 
+    class Meta:
+        unique_together = ('name', 'author')
+
+
 
 class Comment(models.Model):
     VOTE_TYPE = (

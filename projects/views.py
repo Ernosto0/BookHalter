@@ -57,7 +57,7 @@ def recommended_books(request):
         # Add the filtered books to data base for the first time
         addbooks.add_books(respond)
 
-    books = getbook.search_books_in_database(respond)
+    books = getbook.search_books_in_database(context)
     
 
     index = 0

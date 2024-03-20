@@ -1,5 +1,7 @@
 from django.db.models import Q
 from projects.models import Books
+from fuzzywuzzy import process, fuzz
+import re
 
 def remove_existing_books(book_data):
     """
@@ -22,8 +24,26 @@ def remove_existing_books(book_data):
 
         # Check if the book exists in the database
         if not Books.objects.filter(Q(name__iexact=book.get('title')) & Q(author__iexact=book.get('author'))).exists():
-            new_books.append(book)  # If the book doesn't exist, add it to the new_books list
+            if not find_fuzzy_match(book['title'], book['author']):
+                new_books.append(book)  # If the book doesn't exist, add it to the new_books list
     print("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
     print(new_books)
     return new_books
 
+def find_fuzzy_match(new_title, new_author, threshold=85):  # Adjusted threshold for demonstration
+    # Fetch titles and authors from the database
+    books = Books.objects.values_list('name', 'author')
+
+    # Preprocess and compare each book for a fuzzy match on both title and author
+    for title, author in books:
+        title_similarity = process.extractOne(preprocess_text(new_title[0]), [preprocess_text(t) for t in title], scorer=fuzz.token_set_ratio)[1] #type: ignore
+        author_similarity = process.extractOne(preprocess_text(new_author[0]), [preprocess_text(a) for a in author], scorer=fuzz.token_set_ratio)[1] #type: ignore
+
+        if title_similarity > threshold and author_similarity > threshold:
+            return True  # A fuzzy match was found
+
+    return False  # No fuzzy match found
+
+def preprocess_text(text):
+    # Remove punctuation and convert to lowercase
+    return re.sub(r'[^\w\s]', '', text).lower()

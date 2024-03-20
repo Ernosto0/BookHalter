@@ -65,18 +65,23 @@ def is_match(fetched, expected, threshold=90):
 
 def main(titles):
     book_data = {}
-    
+
+    print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    print(titles)
+    titles_with_authors = [(book['title'], book['author']) for book in titles]
+
+    titles_for_openlibrary = {book['title']: {} for book in titles}
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         # Dispatch Google Books search tasks, using just the title for each task
         google_books_futures = {executor.submit(search_book_by_title_and_author, title, author): (title, author) for
-                                  title, author in titles}
+                                  title, author in titles_with_authors}
 
         for future in concurrent.futures.as_completed(google_books_futures):
             expected_title_author = google_books_futures[future]  # This is now just the book title, not a tuple
             try:
                 fetched_book = future.result()
-                if fetched_book and is_match(fetched_book, expected_title_author):
+                if fetched_book:
                     book_data[expected_title_author] = fetched_book
                 else:
                     book_data[expected_title_author] = {'error': 'No accurate match found'}
@@ -84,16 +89,22 @@ def main(titles):
                 book_data[expected_title_author] = {'error': str(e)}
 
         # Dispatch Open Library Amazon ID search tasks, using just the title
-        open_library_futures = {executor.submit(get_amazon_id_by_title, title['title']): title['title'] for title in titles}
+        # open_library_futures = {executor.submit(get_amazon_id_by_title, title): title for title in titles_for_openlibrary.keys()}
 
-        for future in concurrent.futures.as_completed(open_library_futures):
-            title = open_library_futures[future]  # Again, just the book title
-            try:
-                amazon_id = future.result()
-                if amazon_id:
-                    book_data[title]['id_amazon'] = amazon_id  # Consistent use of title as key
-            except Exception as e:
-                book_data[title]['error'] = str(e)  # Handle errors if needed
+        # for future in concurrent.futures.as_completed(open_library_futures):
+        #     title = open_library_futures[future]
+        #     try:
+        #         amazon_id = future.result()
+        #         if amazon_id:
+        #             # Ensure the dictionary for this title exists before updating it
+        #             if title not in book_data:
+        #                 book_data[title] = {}
+        #             book_data[title]['id_amazon'] = amazon_id
+        #     except Exception as e:
+        #         # Ensure the dictionary for this title exists before updating it
+        #         if title not in book_data:
+        #             book_data[title] = {}
+                # book_data[title]['error'] = str(e)
 
     return list(book_data.values())
 
