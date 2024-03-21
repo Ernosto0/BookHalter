@@ -28,7 +28,7 @@ def add_books(book_list):
 
 
 
-def find_fuzzy_match(new_title, new_author, threshold=90):
+def find_fuzzy_match(new_title, new_author, threshold=99):
     # Fetch titles and authors from the database
     books = Books.objects.values_list('name', 'author')
 

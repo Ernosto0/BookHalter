@@ -1,3 +1,4 @@
+from regex import F
 import requests
 import concurrent.futures
 from fuzzywuzzy import fuzz
@@ -39,16 +40,20 @@ def search_book_by_title_and_author(title, author):
 
 def get_amazon_id_by_title(title):
     search_url = "https://openlibrary.org/search.json"
-    search_params = {'title': title, }
+    search_params = {'title': title}
     response = requests.get(search_url, params=search_params)
 
     if response.status_code == 200:
         search_data = response.json()
         if search_data['numFound'] > 0:
-            book = search_data['docs'][0]  # Take the first book from the search result
-            id_amazon = book.get('id_amazon', ['N/A'])[0]  # Takes the first Amazon ID if available
-            return {
-                'id_amazon': id_amazon}
+            for book in search_data['docs']:
+                id_amazon_list = book.get('id_amazon', [])
+                if id_amazon_list:  # Check if the list is not empty
+                    for id_amazon in id_amazon_list:
+                        if id_amazon != 'N/A':  # Check if the id_amazon is not 'N/A'
+                            return {'id_amazon': id_amazon}
+            # If no valid id_amazon was found in any of the docs
+            return {'id_amazon': 'N/A'}
         else:
             return {}
     else:
@@ -110,6 +115,7 @@ def main(titles):
                 else:
                     # Update the error message if the title already exists in the book_data
                     book_data[(title, '')]['error'] = str(e)
+    print(":::::::::::::::::::::::::::::::::")
     print(book_data)
     return list(book_data.values())
 

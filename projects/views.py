@@ -56,8 +56,11 @@ def recommended_books(request):
         respond = openlibrary.main(filtered_books)
         # Add the filtered books to data base for the first time
         addbooks.add_books(respond)
-
+    print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
+    print(context)
+    
     books = getbook.search_books_in_database(context)
+    
     
 
     index = 0
