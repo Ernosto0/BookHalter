@@ -10,6 +10,15 @@ from aifolder import ai, openlibrary
 from .models import Project, Books, Comment, Vote
 from .management.commands import getbook, get_upvoted_book, addbooks, check_books
 
+
+
+def set_cookie(request):
+    response = HttpResponse("Cookie has been set")
+    response.set_cookie('example_cookie', 'example_value', max_age=3600)  # Cookie expires in 1 hour
+    return response
+
+
+
 def projects(request):
     
     projects = Project.objects.all()
@@ -17,9 +26,6 @@ def projects(request):
     return render(request,'projects/projects.html')
 
 
-def project(request, pk):
-    hello = "hello"
-    return render(request,'projects/single-project.html',{'hello': hello})
 
 def home(request):
     return render(request, 'projects.html')
