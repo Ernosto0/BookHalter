@@ -1,10 +1,13 @@
+from os import read
 import openai
 import json
 from aifolder.extract_book_data import extract_books_info
 from projects.management.commands import addbooks, getbook
 
-openai.api_key = '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'
+with open("C:/project_bookai/aifolder/openaikey.txt", 'r') as file:
 
+    openai.api_key = file.read()
+    
 messages = [
     {
         "role": "system",
@@ -48,17 +51,12 @@ def make_suggestion(data):
 
         
         return reply
-    
-def gpt_main(user_queries, up_voted_books):        
-
-    
-
-    if (user_queries[0]=="" and user_queries[1]=="" and user_queries[2]=="" and user_queries[3]==""):
-        pass
         
+    
         
 
-
+def RecommendWithAnswers(user_queries, up_voted_books):
+     
     user_preferences = {
         "questions": {
             "recent_reads": {
@@ -88,3 +86,7 @@ def gpt_main(user_queries, up_voted_books):
     extracted_data = extract_books_info(reply)
 
     return extracted_data
+
+
+def RecommendWithReadingPersona(data):
+    pass

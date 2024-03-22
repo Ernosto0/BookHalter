@@ -6,9 +6,9 @@ from django.contrib.auth.models import User
 from regex import P
 
 
-from aifolder import ai, openlibrary
+from aifolder import ai, openlibrary, CreateUserReadingPersona
 from .models import Project, Books, Comment, Vote
-from .management.commands import getbook, get_upvoted_book, addbooks, check_books
+from .management.commands import getbook, get_upvoted_book, addbooks, check_books, GetUserData
 
 
 
@@ -28,6 +28,23 @@ def projects(request):
 
 
 def home(request):
+
+
+    up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request)
+
+    # Check if readers have alast 20 liked books
+
+    if len(up_voted_books) > 20:
+        # If there are more than 20 books, after voted an other 20 books. Get last 20 and create an other.
+        pass
+
+
+    elif len(up_voted_books) <= 20:
+        
+        CreateUserReadingPersona.main(request, up_voted_books)
+
+
+
     return render(request, 'projects.html')
 
 def book_detail(request, book_id):
@@ -39,17 +56,40 @@ def book_detail(request, book_id):
 
 
 def recommended_books(request):
+    function = 1
+
+
+    if request.method == 'POST':
+        if 'action' in request.POST:
+            action = request.POST.get('action')
+            if action == 'by_personality':
+                function = 2
+                
+    print(function)
     books = []
-    context = []    
+    context = []  
     upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
     print(upvoted_books)
 
-    recent_reads = request.GET.get('recent_reads')
-    desired_feeling = request.GET.get('desired_feeling')
-    character_plot_preferences = request.GET.get('character_plot_preferences')
-    pacing_narrative_style = request.GET.get('pacing_narrative_style')
 
-    context = ai.gpt_main([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+
+    if function == 1:
+
+        # Get data from request.GET if using the GET method
+        recent_reads = request.POST.get('recent_reads')
+        desired_feeling = request.POST.get('desired_feeling')
+        character_plot_preferences = request.POST.get('character_plot_preferences')
+        pacing_narrative_style = request.POST.get('pacing_narrative_style')
+
+        # Perform actions specific to function 1
+        context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+
+
+    elif function == 2:
+        data = GetUserData.GetUserData(request)
+        # context = ai.RecommendWithReadingPersona(data)
+        
+
 
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
     filtered_books = check_books.remove_existing_books(context)
@@ -71,8 +111,9 @@ def recommended_books(request):
 
     index = 0
     for book in books:
-        book.explanation = context[index]['explanation']
-        index = index + 1
+        explanation = context[index].get('explanation') if context[index] is not None else "No explanation available."
+        book.explanation = explanation
+        index += 1
     
     html = render(request, 'projects/recommended_books.html', {'books': books} )
     return HttpResponse(html, content_type='text/html')

@@ -31,7 +31,7 @@
     <form id="myForm">
         <div class="button-container">
             <div class="login-button">
-                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'login' %}">Login1</a>
             </div>
             <div class="register-button">
                 <a href="{% url 'register' %}">Register</a>
@@ -39,6 +39,10 @@
         </div>
     </form>
     
+
+
+
+
     <form method="GET" action="{% url 'recommended_books' %}">
         <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
         <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
@@ -52,8 +56,20 @@
         <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
         <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
 
-        <button type="submit">Get Book Recommendations</button> 
+        <button type="submit", name="action", value="by_answers">Get Book Recommendations</button>
+
     </form>
+
+    <div class="quick-recommendation">
+        <h2>Quick Book Recommendation</h2>
+        <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
+        <form method="POST" action="{% url 'recommended_books' %}">
+            {% csrf_token %}
+ 
+            <button type="submit", name="action", value="by_personality">Surprise Me!</button>
+        </form>
+    </div>
+
     <!-- Text for Result -->
     <p id="resultText"></p>
 
