@@ -29,9 +29,9 @@ def make_suggestion(data):
 
 
     while True:
-        one_message = f"""Please make 10 book suggestions based on the user's answers of the these questions: {preferences_summary} Explain the
-        and considering the user previously liked these books: {liked_books_summary} each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
-        explanation' Dont add any extra text. just book name, author and explanations about why did you suggest that 
+        one_message = f"""Please make 10 book suggestions based on the user's answers of the these questions: {preferences_summary} 
+        and considering the user previously liked these books: {liked_books_summary}.Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
         book."""
 
         if one_message:
@@ -49,8 +49,16 @@ def make_suggestion(data):
         
         return reply
     
-def gpt_main(user_queries, up_voted_books):
+def gpt_main(user_queries, up_voted_books):        
+
     
+
+    if (user_queries[0]=="" and user_queries[1]=="" and user_queries[2]=="" and user_queries[3]==""):
+        pass
+        
+        
+
+
     user_preferences = {
         "questions": {
             "recent_reads": {
