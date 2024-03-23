@@ -8,14 +8,18 @@
 </head>
 <div class="page">
     <div class="header">
-        <h2>{{ book.name }}</h2>
+        <h2>{{ book.name }} By {{book.author}}</h2>
     </div>
     <div class="book-detail">
         <div class="book-title">
             <h1>Title: {{ book.name }}</h1>
         </div>
         <p class="book-author">Author: {{ book.author }}</p>
-        <img class="book-image" src="{{ book.featured_image.url }}" alt="Book Image">
+        {% if book.cover_image_url %}
+                <img src="{{ book.cover_image_url }}" alt="Cover image for {{ book.name }}">
+        {% else %}
+                <p>No cover image available.</p>
+         {% endif %}
         <p class="book-description">Description: {{ book.description }}</p>
         <!-- Voting form -->
         <div class="voting-section">

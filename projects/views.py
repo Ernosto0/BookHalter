@@ -84,10 +84,9 @@ def recommended_books(request):
 
     elif function == 2:
         data = GetUserData.GetUserData(request, "user_reading_persona")
-        # context = ai.RecommendWithReadingPersona(data)
+        print(data)
+        context = ai.RecommendWithReadingPersona(data)
         
-
-
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
     filtered_books = check_books.remove_existing_books(context)
     
@@ -133,7 +132,7 @@ def vote(request, book_id):
             current_vote.delete()
             if vote_type == 'up':
                 book.vote_total -= 1
-                
+                UpdateVoteCount.decrease_vote_count(request)
             else:
                 book.vote_total += 1
                 
@@ -154,7 +153,7 @@ def vote(request, book_id):
 
         else:
             book.vote_total -= 1
-            UpdateVoteCount.decrease_vote_count(request)
+            
 
     # TODO: Fix the calculute the ratio system
             

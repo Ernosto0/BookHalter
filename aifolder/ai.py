@@ -14,7 +14,7 @@ messages = [
         "content": "You are an intelligent book suggester AI and you know about books. Your task is to suggest books "
                    "for the users based on their input. After providing book suggestions, craft a friendly and "
                    "informative response to the user, incorporating these suggestions. Your book recommendations "
-                   "should be in the format: 'title by author'. Avoid suggesting the same author's books repeatedly. "
+                   "should be in the format: 'title by author': explanation. Avoid suggesting the same author's books repeatedly. "
                    "Do not use quotation marks around book names, and do not use 'and' between book names. Each book "
                    "name should be followed by a period."
     }
@@ -85,5 +85,26 @@ def RecommendWithAnswers(user_queries, up_voted_books):
     return extracted_data
 
 
-def RecommendWithReadingPersona(data):
-    pass
+def RecommendWithReadingPersona(user_reading_personality):
+    while True:
+        prompt = (
+        f"""Please, based on the following reading personality description, recommend 10 books that the person will likely enjoy Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
+        book.:{user_reading_personality} """
+        
+        
+        )
+
+        if prompt:
+            messages.append(
+                {"role": "user", "content": prompt},
+            )
+            chat = openai.chat.completions.create( # type: ignore
+                model="gpt-4-0125-preview", messages=messages # type: ignore
+            )
+        print(chat)
+        reply = chat.choices[0].message.content # type: ignore
+
+        extracted_data = extract_books_info(reply)
+    
+        return extracted_data
+    
