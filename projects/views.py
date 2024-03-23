@@ -8,7 +8,7 @@ from regex import P
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
 from .models import Project, Books, Comment, Vote
-from .management.commands import getbook, get_upvoted_book, addbooks, check_books, GetUserData
+from .management.commands import getbook, get_upvoted_book, addbooks, check_books, GetUserData, UpdateVoteCount
 
 
 
@@ -20,30 +20,27 @@ def set_cookie(request):
 
 
 def projects(request):
+    print("home")
+
+
     
-    projects = Project.objects.all()
-    tags = Project.objects.values('tags').distinct()
+    up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+
+    
+    vote_count_data = GetUserData.GetUserData(request, "User_vote_count_data")
+
+    
+    if len(up_voted_books) >= 2 and vote_count_data==2:
+        # If there are more than 20 books; after voted an other 20 books, get last 20 and create an otr.
+        UpdateVoteCount.reset_user_vote_count(request)
+        print(up_voted_books)
+        CreateUserReadingPersona.main(request, up_voted_books)
+
     return render(request,'projects/projects.html')
 
 
 
 def home(request):
-
-
-    up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request)
-
-    # Check if readers have alast 20 liked books
-
-    if len(up_voted_books) > 20:
-        # If there are more than 20 books, after voted an other 20 books. Get last 20 and create an other.
-        pass
-
-
-    elif len(up_voted_books) <= 20:
-        
-        CreateUserReadingPersona.main(request, up_voted_books)
-
-
 
     return render(request, 'projects.html')
 
@@ -86,7 +83,7 @@ def recommended_books(request):
 
 
     elif function == 2:
-        data = GetUserData.GetUserData(request)
+        data = GetUserData.GetUserData(request, "user_reading_persona")
         # context = ai.RecommendWithReadingPersona(data)
         
 
@@ -153,8 +150,11 @@ def vote(request, book_id):
         Vote.objects.create(user=request.user, book=book, vote_type=vote_type)
         if vote_type == 'up':
             book.vote_total += 1
+            UpdateVoteCount.increase_vote_count(request)
+
         else:
             book.vote_total -= 1
+            UpdateVoteCount.decrease_vote_count(request)
 
     # TODO: Fix the calculute the ratio system
             

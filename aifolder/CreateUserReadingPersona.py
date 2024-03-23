@@ -9,25 +9,24 @@ with open("C:/project_bookai/aifolder/openaikey.txt", 'r') as file:
 
 
 def CreatePersonality(liked_books):
-    messages = [
-        {
+    messages = [ {
+        
             "role": "system",
             "content": "You are an intelligent book suggester AI. Your task is to analyze users' liked books and "
                        "describe their reading personality in a paragraph. Make sure to provide diverse. "
 
-        },
-        {
-            "role": "user",
-            "content": f"Analyze the following liked books and describe the user's reading personality: {liked_books}. Minimum: 100, maximum: 200 words."
-        }
-    ]
+        }]
+    one_message = f"Analyze the following liked books and describe the user's reading personality: {liked_books}. Minimum: 100, maximum: 200 words."
 
-    chat = openai.ChatCompletion.create(  # type: ignore
-        model="gpt-4-0125-preview",
-        messages=messages
-    )
-    print(chat)
-    reply = chat.choices[0].message.content
+    if one_message:
+        messages.append(
+            {"role": "user", "content": one_message},
+        )
+        chat = openai.chat.completions.create( # type: ignore
+            model="gpt-4-0125-preview", messages=messages # type: ignore
+        )
+        print(chat)
+        reply = chat.choices[0].message.content
     
     return reply
 
@@ -49,6 +48,6 @@ def update_user_reading_persona(request, new_reading_persona):
     # Save the changes to the database
     user_book_data.save()
 
-def main(liked_books, request):
+def main(request, liked_books):
 
     update_user_reading_persona(request, CreatePersonality(liked_books))

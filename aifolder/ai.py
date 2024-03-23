@@ -45,11 +45,8 @@ def make_suggestion(data):
                 model="gpt-4-0125-preview", messages=messages # type: ignore
             )
         print(chat)
-        reply = chat.choices[0].message.content
+        reply = chat.choices[0].message.content # type: ignore
 
-
-
-        
         return reply
         
     

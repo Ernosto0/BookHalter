@@ -1,33 +1,47 @@
 from django.core.exceptions import ObjectDoesNotExist
 from projects.models import User
+from users.models import UserBookData
 
-def GetUserData(request):
+def GetUserData(request, data):
     current_user = request.user
 
     # Ensure the user is authenticated to avoid errors
     if not current_user.is_authenticated:
-        # Handle the case where the user is not authenticated
         print("User is not authenticated.")
         return None  # Or return a suitable response/error message
 
-    try:
-        # Access the UserBookData related to the current user
-        # This uses the 'related_name' set in the UserBookData model
-        user_book_data = current_user.book_data
+    if data == "user_reading_persona":
+        try:
+            # Access the UserBookData related to the current user using the 'related_name'
+           # This directly accesses the related UserBookData instance
 
-        # Now you can access user_reading_persona
-        user_reading_persona = user_book_data.user_reading_persona
+            
 
-        # Do something with user_reading_persona
-        # For example, return it
-        return user_reading_persona
+            # Now you can access user_reading_persona
+            user_reading_persona = current_user.book_data.user_reading_persona
+           
 
-    except ObjectDoesNotExist:
-        # Handle the case where UserBookData does not exist for the current user
-        print("UserBookData does not exist for the current user.")
-        return None  # Or return a suitable response/error message
+            return user_reading_persona
 
-    except Exception as e:
-        # Handle other unforeseen errors
-        print(f"An error occurred: {e}")
-        return None  # Or return a suitable response/error message
+        except UserBookData.DoesNotExist:  # This is the more specific exception for when the related object does not exist
+            print("UserBookData does not exist for the current user.")
+            return None  # Or return a suitable response/error message
+
+        except Exception as e:  # Catch other unforeseen errors
+            print(f"An error occurred: {e}")
+            return None  # Or return a suitable response/error message
+
+    if data == "User_vote_count_data":
+        try:
+            user_vote_count_data = current_user.book_data.vote_count
+            return user_vote_count_data
+        
+        except UserBookData.DoesNotExist:  # This is the more specific exception for when the related object does not exist
+            print("UserBookData does not exist for the current user.")
+            return None  # Or return a suitable response/error message
+
+        except Exception as e:  # Catch other unforeseen errors
+            print(f"An error occurred: {e}")
+            return None  # Or return a suitable response/error message 
+
+        
