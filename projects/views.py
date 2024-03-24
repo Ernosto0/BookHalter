@@ -1,9 +1,10 @@
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from regex import P
+
 
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
@@ -164,26 +165,17 @@ def vote(request, book_id):
             UpdateVoteCount.decrease_vote_count(request)
     book.save()
     
-    return JsonResponse({
-        'vote_total': book.vote_total,
-        'vote_ratio': book.vote_ratio
-    })
-            
-
-    # TODO: Fix the calculute the ratio system
-            
     # Calculate the ratio
-            
-    # upvotes_count = book.upvotes_count
+    upvotes_count = book.upvotes_count
+    total_votes_count = abs(book.vote_total)
+    
 
-    # total_votes_count = abs(book.vote_total)
+    if total_votes_count > 0 and upvotes_count is not None:
+        book.vote_ratio = int((upvotes_count / total_votes_count) * 100)
+    else:
+        book.vote_ratio = 0
 
-    # if total_votes_count > 0:
-    #     book.vote_ratio = int((upvotes_count / total_votes_count) * 100)
-    # else:
-    #     book.vote_ratio = 0
-
-    #     book.save()
+    book.save()
     
     return JsonResponse({
         'vote_total': book.vote_total,
@@ -191,8 +183,11 @@ def vote(request, book_id):
     })
 
 
+
+
 @login_required
 def post_comment(request, book_id):
+    
     if request.method == 'POST':
         comment_text = request.POST.get('comment', '')  # Get the comment text or default to empty string
         book = get_object_or_404(Books, id=book_id)  # Get the book object or return 404 if not found
