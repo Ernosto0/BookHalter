@@ -53,45 +53,47 @@ def book_detail(request, book_id):
 
 
 def recommended_books(request):
-    function = 1
-
+    function_type = 1
 
     if request.method == 'POST':
         if 'action' in request.POST:
             action = request.POST.get('action')
             if action == 'by_personality':
-                function = 2
+                function_type = 2
                 
-    print(function)
-    books = []
-    context = []  
+    print(function_type)
+     
     upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+
     print(upvoted_books)
 
-
-
-    if function == 1:
-
+    if function_type == 1:
         # Get data from request.GET if using the GET method
         recent_reads = request.POST.get('recent_reads')
         desired_feeling = request.POST.get('desired_feeling')
         character_plot_preferences = request.POST.get('character_plot_preferences')
         pacing_narrative_style = request.POST.get('pacing_narrative_style')
 
-        # Perform actions specific to function 1
-        context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+        # Perform actions specific to function_type 1
+        try:
+            context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+        except Exception as e:
+            print(f"Error occurred while generating context: {e}")
+            context = []
 
-
-    elif function == 2:
+    elif function_type == 2:
         data = GetUserData.GetUserData(request, "user_reading_persona")
         print(data)
-        context = ai.RecommendWithReadingPersona(data)
+        try:
+            context = ai.RecommendWithReadingPersona(data)
+        except Exception as e:
+            print(f"Error occurred while generating context: {e}")
+            context = []
         
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
     filtered_books = check_books.remove_existing_books(context)
     
-
-    if (filtered_books): # if there is a not added or not got the data from api
+    if filtered_books: # if there is a not added or not got the data from api
         # Get filtered book's data for the first time
         print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
         print(filtered_books)
@@ -103,8 +105,6 @@ def recommended_books(request):
     
     books = getbook.search_books_in_database(context)
     
-    
-
     index = 0
     for book in books:
         explanation = context[index].get('explanation') if context[index] is not None else "No explanation available."
@@ -133,26 +133,41 @@ def vote(request, book_id):
             if vote_type == 'up':
                 book.vote_total -= 1
                 UpdateVoteCount.decrease_vote_count(request)
+                if book.upvotes_count is not None:
+                    book.upvotes_count -= 1
             else:
                 book.vote_total += 1
-                
         else:
             # Change the vote and adjust book vote_total accordingly
             current_vote.vote_type = vote_type
             current_vote.save()
             if vote_type == 'up':
                 book.vote_total += 2  # One to cancel out the downvote, one to add the upvote
+                if book.upvotes_count is not None:
+                    book.upvotes_count += 1
+                UpdateVoteCount.increase_vote_count(request)
             else:
                 book.vote_total -= 2  # One to cancel out the upvote, one to add the downvote
+                if book.upvotes_count is not None:
+                    book.upvotes_count -= 1
+                UpdateVoteCount.decrease_vote_count(request)
     else:
         # If no current vote, create a new one and adjust book vote_total
         Vote.objects.create(user=request.user, book=book, vote_type=vote_type)
         if vote_type == 'up':
             book.vote_total += 1
+            if book.upvotes_count is not None:
+                book.upvotes_count += 1
             UpdateVoteCount.increase_vote_count(request)
-
         else:
             book.vote_total -= 1
+            UpdateVoteCount.decrease_vote_count(request)
+    book.save()
+    
+    return JsonResponse({
+        'vote_total': book.vote_total,
+        'vote_ratio': book.vote_ratio
+    })
             
 
     # TODO: Fix the calculute the ratio system
