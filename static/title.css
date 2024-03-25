@@ -65,7 +65,7 @@ footer .container .section2 .box .links{
   flex-direction: column;
 }
 footer .container .section2 .box .links a{
-  margin-bottom:10px;
+  margin-bottom:11px;
   text-decoration: none;
   color: var(--maincolor);
   font-size: 15px;
