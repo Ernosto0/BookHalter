@@ -51,7 +51,7 @@ footer .container .section1 a:hover {
 footer .container .section2{
   display: flex;
   gap: 50px;
-  margin-left: 55px;
+  margin-left: 50px;
 }
 footer .container .section2 .box .heading h3{
   color: white;
