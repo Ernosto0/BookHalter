@@ -16,70 +16,75 @@
   color: #555;
 }
 
-footer {
-  background-color: #fff; 
-  color: #333; 
-  text-align: center; 
-  padding: 20px 0; 
-  box-shadow: 2px -2px 10px rgba(0, 0, 0, 0.1); /* Box shadow like the form but cast upwards */
-  border-top: 2px solid #ccc; /* A top border to distinguish from the content area */
-  position: relative; /* Position relative for any absolutely positioned children */
-  bottom: 0; /* Stick to the bottom */
-  width: 100%; /* Full width */
+footer .container {
+  display: flex;
+  flex-direction: row;
+  padding: 0px 200px;
+  text-align: left;
+  gap: 300px;
+  background-color: rgb(34, 34, 34);
 }
 
-.footer-content {
-  max-width: 500px; /* Matches the form width */
-  margin: auto; /* Center the footer content */
-  padding: 0 30px; /* Padding on the sides */
+footer .container .section1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
 }
 
-.footer-section {
-  margin-bottom: 20px; /* Space between footer sections */
+footer .container .section1 img {
+  height: 100px;
+  margin: 0px 30px;
+  margin-bottom: 30px;
 }
 
-.footer-section h3 {
+footer .container .section1 a {
+  text-decoration: none;
+  color: var(--maincolor);
   font-size: 20px;
-  color: #239b27; /* Green color to match the headings in the content area */
-  margin-bottom: 10px; /* Space below the section headings */
 }
 
-.footer-section ul {
-  list-style: none; /* Remove bullet points */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margins */
-  text-align: left; /* Align text to the left */
+footer .container .section1 a:hover {
+  text-decoration: underline;
+  color: rgb(110, 110, 110);
 }
-
-.footer-section ul li {
-  margin-bottom: 5px; /* Space between list items */
+footer .container .section2{
+  display: flex;
+  gap: 50px;
+  margin-left: 50px;
 }
-
-.footer-section ul li a {
-  color: #333; /* Darker text color for links for better readability */
-  text-decoration: none; /* No underlines on links */
-  transition: color 0.3s ease; /* Smooth transition for hover effect */
+footer .container .section2 .box .heading h3{
+  color: white;
 }
-
-.footer-section ul li a:hover {
-  color: #4CAF50; /* Color change on hover to match button hover state */
+footer .container .section2 .box{
+  display: flex;
+  flex-direction: column;
 }
-
-.footer-bottom {
-  border-top: 1px solid #ccc; /* A subtle top border for the bottom area */
-  padding-top: 10px; /* Padding above the bottom text */
-  font-size: 14px; /* Smaller font size for copyright text */
+footer .container .section2 .box .links{
+  display: flex;
+  flex-direction: column;
 }
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .footer-content {
-      padding: 0 15px; /* Smaller padding on smaller screens */
-  }
-  .footer-section h3 {
-      font-size: 18px; /* Slightly smaller headings on smaller screens */
-  }
-  .footer-section ul li {
-      font-size: 14px; /* Smaller text for list items on smaller screens */
-  }
+footer .container .section2 .box .links a{
+  margin-bottom:10px;
+  text-decoration: none;
+  color: var(--maincolor);
+  font-size: 15px;
+}
+footer .container .section2 .box .links a:hover{
+  text-decoration: underline;
+  color: rgb(111, 110, 110);
+}
+footer .container .section3{
+display: flex;
+flex-direction: column;
+margin-top: 20px;
+margin-left: 50px;
+}
+footer .container .section3 .icons i{
+  font-size: 36px;
+  margin: 0px 20px;
+  color: white;
+}
+footer .container .section3 .about p{
+  color: #8f8f8f;
 }
