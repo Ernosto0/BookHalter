@@ -94,12 +94,18 @@
                         var col1 = $('#column1').empty();
                         var col2 = $('#column2').empty();
                         response.books.forEach(function(book, index) {
+                            var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
+
                             var bookElement = $('<div class="book">').append(
                                 $('<h3 class="title">').text(book.name),
                                 book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
                                 $('<p>').text('Author: ' + book.author),
-                                $('<p>').text(book.explanation)
+                                $('<p>').text(book.explanation),
                                 // Add other details as needed
+
+
+
+                                bookDetailLink
                             );
                             if (index % 2 === 0) { col1.append(bookElement); }
                             else { col2.append(bookElement); }
