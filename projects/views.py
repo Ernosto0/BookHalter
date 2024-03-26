@@ -1,10 +1,11 @@
+from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from regex import P
-
+from MyTest.testcontext import test_contex
 
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
@@ -68,42 +69,44 @@ def recommended_books(request):
 
     print(upvoted_books)
 
-    if function_type == 1:
-        # Get data from request.GET if using the GET method
-        recent_reads = request.POST.get('recent_reads')
-        desired_feeling = request.POST.get('desired_feeling')
-        character_plot_preferences = request.POST.get('character_plot_preferences')
-        pacing_narrative_style = request.POST.get('pacing_narrative_style')
+    # if function_type == 1:
+    #     # Get data from request.GET if using the GET method
+    #     recent_reads = request.POST.get('recent_reads')
+    #     desired_feeling = request.POST.get('desired_feeling')
+    #     character_plot_preferences = request.POST.get('character_plot_preferences')
+    #     pacing_narrative_style = request.POST.get('pacing_narrative_style')
 
-        # Perform actions specific to function_type 1
-        try:
-            context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    #     # Perform actions specific to function_type 1
+    #     try:
+    #         context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
 
-    elif function_type == 2:
-        data = GetUserData.GetUserData(request, "user_reading_persona")
-        print(data)
-        try:
-            context = ai.RecommendWithReadingPersona(data)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    # elif function_type == 2:
+    #     data = GetUserData.GetUserData(request, "user_reading_persona")
+    #     print(data)
+    #     try:
+    #         context = ai.RecommendWithReadingPersona(data)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
         
-    # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
-    filtered_books = check_books.remove_existing_books(context)
+    # # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
+    # filtered_books = check_books.remove_existing_books(context)
     
-    if filtered_books: # if there is a not added or not got the data from api
-        # Get filtered book's data for the first time
-        print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
-        print(filtered_books)
-        respond = openlibrary.main(filtered_books)
-        # Add the filtered books to data base for the first time
-        addbooks.add_books(respond)
-    print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
-    print(context)
+    # if filtered_books: # if there is a not added or not got the data from api
+    #     # Get filtered book's data for the first time
+    #     print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
+    #     print(filtered_books)
+    #     respond = openlibrary.main(filtered_books)
+    #     # Add the filtered books to data base for the first time
+    #     addbooks.add_books(respond)
+    # print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
+    # print(context)
     
+    context = test_contex
+
     books = getbook.search_books_in_database(context)
     
     index = 0
@@ -112,8 +115,26 @@ def recommended_books(request):
         book.explanation = explanation
         index += 1
     
-    html = render(request, 'projects/recommended_books.html', {'books': books} )
-    return HttpResponse(html, content_type='text/html')
+    books_data = []
+    for book in books:
+    # Constructing a dictionary for each book with all the required details
+        book_dict = {
+            'name': book.name,
+            'author': book.author,
+            'cover_image_url': book.cover_image_url if hasattr(book, 'cover_image_url') else None,  # Assuming you have a cover_image_url field or similar
+            'explanation': book.explanation if hasattr(book, 'explanation') else "No explanation available.",
+            'total_votes': book.total_votes if hasattr(book, 'total_votes') else 0,  # Assuming you have a total_votes field or similar
+            'vote_ratio': book.vote_ratio if hasattr(book, 'vote_ratio') else "N/A",  # Assuming you have a vote_ratio field or similar
+            'published_year': book.published_year if hasattr(book, 'published_year') else "Unknown",  # Assuming you have a published_year field or similar
+            'description': book.description if hasattr(book, 'description') else "Description not available.",  # Assuming you have a description field or similar
+            'id': book.id,  # Assuming each book has an id
+            'amazon_id': book.amazon_id if hasattr(book, 'amazon_id') else "N/A",  # Assuming you have an amazon_id field or similar
+            'detail_url': reverse('book-detail', args=[str(book.id)])
+        }
+        books_data.append(book_dict)
+
+    # Returning JSON response
+    return JsonResponse({'books': books_data})
 
 
 # TODO: Fix the vote up, down system
@@ -187,6 +208,7 @@ def vote(request, book_id):
 
 @login_required
 def post_comment(request, book_id):
+    
     
     if request.method == 'POST':
         comment_text = request.POST.get('comment', '')  # Get the comment text or default to empty string
