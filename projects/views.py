@@ -25,18 +25,18 @@ def projects(request):
     print("home")
 
 
-    
-    up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+    if request.user.is_authenticated:
+        up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+        vote_count_data = GetUserData.GetUserData(request, "User_vote_count_data")
 
     
-    vote_count_data = GetUserData.GetUserData(request, "User_vote_count_data")
-
+        if len(up_voted_books) >= 2 and vote_count_data==2:
+            # If there are more than 20 books; after voted an other 20 books, get last 20 and create an otr.
+            UpdateVoteCount.reset_user_vote_count(request)
+            print(up_voted_books)
+            CreateUserReadingPersona.main(request, up_voted_books)
     
-    if len(up_voted_books) >= 2 and vote_count_data==2:
-        # If there are more than 20 books; after voted an other 20 books, get last 20 and create an otr.
-        UpdateVoteCount.reset_user_vote_count(request)
-        print(up_voted_books)
-        CreateUserReadingPersona.main(request, up_voted_books)
+    
 
     return render(request,'projects/projects.html')
 
@@ -65,7 +65,10 @@ def recommended_books(request):
                 
     print(function_type)
      
-    upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+    if request.user.is_authenticated:
+        upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+    else:
+        upvoted_books = []
 
     print(upvoted_books)
 
@@ -141,6 +144,9 @@ def recommended_books(request):
 
 @login_required
 def vote(request, book_id):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("You must be logged in to vote.")
+    
     book = get_object_or_404(Books, id=book_id)
     vote_type = request.POST.get('vote')
     
@@ -208,7 +214,8 @@ def vote(request, book_id):
 
 @login_required
 def post_comment(request, book_id):
-    
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("You must be logged in to post a comment.")
     
     if request.method == 'POST':
         comment_text = request.POST.get('comment', '')  # Get the comment text or default to empty string
@@ -229,4 +236,4 @@ def post_comment(request, book_id):
         return redirect('book-detail', book_id=book_id)  
     else:
         # If not a POST request, return a bad request response
-        return HttpResponse(status=400)
+        return HttpResponseBadRequest("Invalid request method.")

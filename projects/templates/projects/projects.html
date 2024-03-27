@@ -36,6 +36,14 @@
             <div class="register-button">
                 <a href="{% url 'register' %}">Register</a>
             </div>
+            {% if user.is_authenticated %}
+            <div class="logout-button-container">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
+            </div>
+        {% endif %}
         </div>
     
     

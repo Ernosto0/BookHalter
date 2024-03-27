@@ -111,7 +111,24 @@ body {
       max-width: 500px;
       margin: 0 auto; /* Centering the container */
   }
-    
+  .logout-button {
+    font-size: 20px; /* Match the font size of login and register */
+    padding: 10px; /* Same padding */
+    margin: 5px; /* Same margin */
+    background-color: transparent; /* Initially transparent background */
+    color: #4CAF50; /* Same text color as login and register */
+    border: 2px solid #4CAF50; /* Same border style */
+    border-radius: 4px; /* Same border-radius */
+    cursor: pointer; /* Cursor pointer for button */
+    text-align: center; /* Center the text */
+    width: 100%; /* Match the width of the container */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+}
+
+  .logout-button:hover {
+    background-color: #4CAF50; /* Background color on hover */
+    color: white; /* Text color on hover */
+}  
   .login-button a,
   .register-button a {
       display: block;
