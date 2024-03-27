@@ -24,7 +24,7 @@ def set_cookie(request):
 def projects(request):
     print("home")
 
-
+    
     if request.user.is_authenticated:
         up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
         vote_count_data = GetUserData.GetUserData(request, "User_vote_count_data")
