@@ -31,6 +31,20 @@
             <p id="vote-total">Votes: {{ book.vote_total }}</p>
             <p id="vote-ratio">Rating: {{ book.vote_ratio }}%</p>
         </div>
+        
+        <!-- Read button -->
+        <form method="POST" id="toggle_read_status-form">
+            {% csrf_token %}
+            <button type="submit" class="read-button">
+                {% if data.message %}
+                    {{ data.message }}
+                {% else %}
+                    Mark as Read
+                {% endif %}
+            </button>
+        </form>
+
+
         <!-- Comment form -->
         <div class="comment-section">
             <h3>Add a Comment</h3>
@@ -39,6 +53,7 @@
                 <textarea name="comment" class="comment-textarea" placeholder="Write your comment here..."></textarea>
                 <button type="submit" class="comment-submit">Add comment</button> 
             </form>
+
             <div class="comments-list">
                 {% for comment in book.comment_set.all %}
                     <div class="comment">
@@ -107,6 +122,44 @@
         return cookieValue;
     }
 });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('toggle_read_status-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var formData = new FormData(this);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            fetch("{% url 'toggle_read_status' book.id %}", {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin' // Include cookies in the request
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parse JSON only if response is valid
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                console.log(data); // Log the JSON data
+                const readButton = document.querySelector('.read-button');
+                if (data.read) {
+                    readButton.textContent = 'Remove from Read List'; // Update button text to remove
+                } else {
+                    readButton.textContent = 'Mark as Read'; // Update button text to mark as read
+                }
+                alert(data.message); // Notify the user of the action taken
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred, please try again.');
+            });
+        });
+    });
 </script>
 
 {% endblock %}

@@ -12,6 +12,7 @@ colorama==0.4.6
 distlib==0.3.8
 distro==1.8.0
 Django==5.0
+django-ratelimit==4.1.0
 duckduckgo-search==3.9.4
 filelock==3.13.1
 fuzzywuzzy==0.18.0

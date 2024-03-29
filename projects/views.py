@@ -10,6 +10,7 @@ from django.shortcuts import render
 from .forms import UserInputForm
 from django_ratelimit.decorators import ratelimit
 
+from users.models import UserBookData
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
 from .models import Project, Books, Comment, Vote
@@ -59,10 +60,9 @@ def book_detail(request, book_id):
 
 
 @ratelimit(key='ip', rate='1/h', method='ALL', block=True)
-
 def recommended_books(request):
     
-    form = UserInputForm(request.POST or None)
+
     
     function_type = 1
 
@@ -81,42 +81,42 @@ def recommended_books(request):
 
     print(upvoted_books)
 
-    if function_type == 1:
-        # Get data from request.GET if using the GET method
-        recent_reads = request.POST.get('recent_reads')
-        desired_feeling = request.POST.get('desired_feeling')
-        character_plot_preferences = request.POST.get('character_plot_preferences')
-        pacing_narrative_style = request.POST.get('pacing_narrative_style')
+    # if function_type == 1:
+    #     # Get data from request.GET if using the GET method
+    #     recent_reads = request.POST.get('recent_reads')
+    #     desired_feeling = request.POST.get('desired_feeling')
+    #     character_plot_preferences = request.POST.get('character_plot_preferences')
+    #     pacing_narrative_style = request.POST.get('pacing_narrative_style')
         
 
-        # Perform actions specific to function_type 1
-        try:
-            context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    #     # Perform actions specific to function_type 1
+    #     try:
+    #         context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
 
-    elif function_type == 2:
-        data = GetUserData.GetUserData(request, "user_reading_persona")
-        print(data)
-        try:
-            context = ai.RecommendWithReadingPersona(data)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    # elif function_type == 2:
+    #     data = GetUserData.GetUserData(request, "user_reading_persona")
+    #     print(data)
+    #     try:
+    #         context = ai.RecommendWithReadingPersona(data)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
         
-    # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
-    filtered_books = check_books.remove_existing_books(context)
+    # # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
+    # filtered_books = check_books.remove_existing_books(context)
     
-    if filtered_books: # if there is a not added or not got the data from api
-        # Get filtered book's data for the first time
-        print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
-        print(filtered_books)
-        respond = openlibrary.main(filtered_books)
-        # Add the filtered books to data base for the first time
-        addbooks.add_books(respond)
-    print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
-    print(context)
+    # if filtered_books: # if there is a not added or not got the data from api
+    #     # Get filtered book's data for the first time
+    #     print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
+    #     print(filtered_books)
+    #     respond = openlibrary.main(filtered_books)
+    #     # Add the filtered books to data base for the first time
+    #     addbooks.add_books(respond)
+    # print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
+    # print(context)
     
     context = test_contex
 
@@ -149,8 +149,6 @@ def recommended_books(request):
     # Returning JSON response
     return JsonResponse({'books': books_data})
 
-
-# TODO: Fix the vote up, down system
 
 @login_required
 def vote(request, book_id):
@@ -247,3 +245,22 @@ def post_comment(request, book_id):
     else:
         # If not a POST request, return a bad request response
         return HttpResponseBadRequest("Invalid request method.")
+
+@login_required
+def toggle_read_status(request, book_id):
+    if request.method == 'POST':
+        book = get_object_or_404(Books, id=book_id)
+        user_book_data, _ = UserBookData.objects.get_or_create(user=request.user)
+
+        if book in user_book_data.read_books.all():
+            user_book_data.read_books.remove(book)  # Remove the book if it's already read
+            message = 'Book removed from your read list'
+            print(message)
+        else:
+            user_book_data.read_books.add(book)  # Add the book if it's not in the read list
+            message = 'Book marked as read'
+            print(message)
+
+        return JsonResponse({'status': 'success', 'message': message, 'read': book in user_book_data.read_books.all()})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
