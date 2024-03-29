@@ -46,13 +46,12 @@
         {% endif %}
         </div>
     
-    
-
 
 
 
         <form id="recommendationForm" method="POST">
             {% csrf_token %}
+            {% comment %} {{ form.as_p }} {% endcomment %} 
             <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
             <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
             <label for="desired_feeling">How you want to feel with your next book:</label><br>

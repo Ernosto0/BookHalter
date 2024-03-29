@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from regex import P
 from MyTest.testcontext import test_contex
+from django.shortcuts import render
+from .forms import UserInputForm
+from django_ratelimit.decorators import ratelimit
 
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
@@ -54,7 +57,13 @@ def book_detail(request, book_id):
     return render(request, 'projects/book_detail.html', context)
 
 
+
+@ratelimit(key='ip', rate='1/h', method='ALL', block=True)
+
 def recommended_books(request):
+    
+    form = UserInputForm(request.POST or None)
+    
     function_type = 1
 
     if request.method == 'POST':
@@ -72,41 +81,42 @@ def recommended_books(request):
 
     print(upvoted_books)
 
-    # if function_type == 1:
-    #     # Get data from request.GET if using the GET method
-    #     recent_reads = request.POST.get('recent_reads')
-    #     desired_feeling = request.POST.get('desired_feeling')
-    #     character_plot_preferences = request.POST.get('character_plot_preferences')
-    #     pacing_narrative_style = request.POST.get('pacing_narrative_style')
-
-    #     # Perform actions specific to function_type 1
-    #     try:
-    #         context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
-    #     except Exception as e:
-    #         print(f"Error occurred while generating context: {e}")
-    #         context = []
-
-    # elif function_type == 2:
-    #     data = GetUserData.GetUserData(request, "user_reading_persona")
-    #     print(data)
-    #     try:
-    #         context = ai.RecommendWithReadingPersona(data)
-    #     except Exception as e:
-    #         print(f"Error occurred while generating context: {e}")
-    #         context = []
+    if function_type == 1:
+        # Get data from request.GET if using the GET method
+        recent_reads = request.POST.get('recent_reads')
+        desired_feeling = request.POST.get('desired_feeling')
+        character_plot_preferences = request.POST.get('character_plot_preferences')
+        pacing_narrative_style = request.POST.get('pacing_narrative_style')
         
-    # # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
-    # filtered_books = check_books.remove_existing_books(context)
+
+        # Perform actions specific to function_type 1
+        try:
+            context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+        except Exception as e:
+            print(f"Error occurred while generating context: {e}")
+            context = []
+
+    elif function_type == 2:
+        data = GetUserData.GetUserData(request, "user_reading_persona")
+        print(data)
+        try:
+            context = ai.RecommendWithReadingPersona(data)
+        except Exception as e:
+            print(f"Error occurred while generating context: {e}")
+            context = []
+        
+    # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
+    filtered_books = check_books.remove_existing_books(context)
     
-    # if filtered_books: # if there is a not added or not got the data from api
-    #     # Get filtered book's data for the first time
-    #     print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
-    #     print(filtered_books)
-    #     respond = openlibrary.main(filtered_books)
-    #     # Add the filtered books to data base for the first time
-    #     addbooks.add_books(respond)
-    # print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
-    # print(context)
+    if filtered_books: # if there is a not added or not got the data from api
+        # Get filtered book's data for the first time
+        print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
+        print(filtered_books)
+        respond = openlibrary.main(filtered_books)
+        # Add the filtered books to data base for the first time
+        addbooks.add_books(respond)
+    print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
+    print(context)
     
     context = test_contex
 
