@@ -4,9 +4,9 @@ import json
 from aifolder.extract_book_data import extract_books_info
 from projects.management.commands import addbooks, getbook
 
-with open("C:/project_bookai/aifolder/openaikey.txt", 'r') as file:
+# with open("C:/Users/ernos/Desktop/BookPalAi/aifolder/openaikey.txt", 'r') as file:
 
-    openai.api_key = file.read()
+#     openai.api_key = file.read()
     
 messages = [
     {
