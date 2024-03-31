@@ -64,7 +64,6 @@ footer .container .section2 .box .links{
   flex-direction: column;
 }
 footer .container .section2 .box .links a{
-<<<<<<< HEAD
   margin-bottom:11px;
   text-decoration: none;
   color: var(--maincolor);
@@ -87,12 +86,10 @@ footer .container .section3 .icons i{
 }
 footer .container .section3 .about p{
   color: #8f8f8f;
-=======
   margin-bottom:10px;
   text-decoration: none;
   color: var(--maincolor);
   font-size: 15px;
->>>>>>> fee99c9d9c66b7e47ba75ced79fc65da9a33e30d
 }
 footer .container .section2 .box .links a:hover{
   text-decoration: underline;

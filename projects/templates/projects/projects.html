@@ -3,74 +3,98 @@
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookAi - Your Intelligent Book Assistant</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
 
-    <!-- Display the form -->
-    <h1>Welcome to BookAi</h1>
 
-        <!-- Check if the user is authenticated and display their username -->
+
+    <!-- Login Register Section -->
+    <div class="button-container">
+        <div class="login-button">
+            <a href="{% url 'login' %}">Login</a>
+        </div>
+        <div class="register-button">
+            <a href="{% url 'register' %}">Register</a>
+        </div>
+    
+        {% if user.is_authenticated %}
+        <div class="logout-button-container">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <!-- Login Register Section -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <h1>Welcome to BookAi</h1>
+    <!-- Book Ai Logo -->
+    <div class="logo">
+        <img src="/static/imagies/logo.jpg" alt="">
+    </div>
+    <!-- Book Ai Logo -->
+
+    <!-- Check if the user is authenticated and display their username -->
     {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}!</p>
+    <p>Hello, {{ user.username }}!</p>
     {% else %}
-        
+
     {% endif %}
 
 
     <div class="rectangle">
-        Your long text goes here. 
+        <i class="fa-solid fa-book"></i>
+        The BookAI scrolls through different genres and styles to give you personalized book recommendations. By
+        analyzing your preferences, it uses advanced algorithms to find the 10 best books for your taste. It is here to
+        enrich your reading experience and help you make new discoveries!
     </div>
-    
-
-    
-        <div class="button-container">
-            <div class="login-button">
-                <a href="{% url 'login' %}">Login1</a>
-            </div>
-            <div class="register-button">
-                <a href="{% url 'register' %}">Register</a>
-            </div>
-            {% if user.is_authenticated %}
-            <div class="logout-button-container">
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-button">Logout</button>
-                </form>
-            </div>
-        {% endif %}
-        </div>
-    
 
 
 
-        <form id="recommendationForm" method="POST">
-            {% csrf_token %}
-            {% comment %} {{ form.as_p }} {% endcomment %} 
-            <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
-            <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
-            <label for="desired_feeling">How you want to feel with your next book:</label><br>
-            <input type="text" id="desired_feeling" name="desired_feeling" placeholder="Desired Feeling"><br>
-            <label for="character_plot_preferences">Preferences for characters and plot:</label><br>
-            <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
-            <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
-            <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
-            <button type="submit" name="action" value="by_answers">Get Book Recommendations</button>
-        </form>
-        
+
+    <form id="recommendationForm" method="POST">
+        {% csrf_token %}
+        {% comment %} {{ form.as_p }} {% endcomment %}
+        <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
+        <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
+        <label for="desired_feeling">How you want to feel with your next book:</label><br>
+        <input type="text" id="desired_feeling" name="desired_feeling" placeholder="Desired Feeling"><br>
+        <label for="character_plot_preferences">Preferences for characters and plot:</label><br>
+        <input type="text" id="character_plot_preferences" name="character_plot_preferences"
+            placeholder="Character/Plot Preferences"><br>
+        <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
+        <input type="text" id="pacing_narrative_style" name="pacing_narrative_style"
+            placeholder="Pacing/Narrative Style"><br>
+        <button type="submit" name="action" value="by_answers">Get Book Recommendations</button>
+    </form>
+
 
     <div class="quick-recommendation">
         <h2>Quick Book Recommendation</h2>
-        <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
+        <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book
+            personality!</p>
         <form method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
- 
-            <button type="submit", name="action", value="by_personality">Surprise Me!</button>
+
+            <button type="submit" , name="action" , value="by_personality">Surprise Me!</button>
         </form>
     </div>
 
@@ -79,23 +103,21 @@
         <div id="column2" class="book-column"></div>
     </div>
 
-<<<<<<< HEAD
-        <button type="submit">Get Book Recommendations</button> 
+
+    <button type="submit">Get Book Recommendations</button>
     </form>
-    
-=======
->>>>>>> fee99c9d9c66b7e47ba75ced79fc65da9a33e30d
+
     <!-- Text for Result -->
     <p id="resultText"></p>
 
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    
+
 
     <script>
-        $(document).ready(function() {
-            $('#recommendationForm').submit(function(event) {
+        $(document).ready(function () {
+            $('#recommendationForm').submit(function (event) {
                 event.preventDefault();
                 $.ajax({
                     headers: { "X-CSRFToken": "{{ csrf_token }}" },
@@ -103,10 +125,10 @@
                     url: '{% url "recommended_books" %}',
                     data: $(this).serialize(),
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         var col1 = $('#column1').empty();
                         var col2 = $('#column2').empty();
-                        response.books.forEach(function(book, index) {
+                        response.books.forEach(function (book, index) {
                             var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
 
                             var bookElement = $('<div class="book">').append(
@@ -124,7 +146,7 @@
                             else { col2.append(bookElement); }
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error("AJAX call failed", status, error);
                     }
                 });
@@ -132,7 +154,8 @@
         });
     </script>
 
-    
+
 </body>
+
 </html>
 {% endblock %}

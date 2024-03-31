@@ -1,8 +1,51 @@
+:root {
+  --maincolor: #4CAF50;
+  --hovercolor: #45a049;
+}
+
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f8f8f8;
   text-align: center;
+  overflow-x: hidden;
 }
+
+.logo img {
+  border-radius: 100px;
+  margin: 20px 0;
+  border: 1px solid;
+}
+
+
+.rectangle {
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ccc;
+  text-align: center;
+  word-wrap: break-word;
+  line-height: 40px;
+
+}
+
+.rectangle i {
+  font-size: 40px;
+  color: var(--maincolor);
+  margin-bottom: 20px;
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: right;
+  margin-right: 0px;
+}
+
 
 form {
   background-color: #fff;
@@ -83,19 +126,6 @@ h1 {
   color: #239b27;
 }
 
-.rectangle {
-  
-  max-width: 501px; /* Matches the form width */
-  margin: 20px auto; /* Centers the rectangle and adds vertical spacing */
-  padding: 30px; /* Matches the form padding */
-  background-color: #fff; /* Matches the form background color */
-  border-radius: 10px; /* Matches the form border radius */
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Matches the form box shadow */
-  border: 2px solid #ccc; /* Lighter border color to match the input fields */
-  text-align: left; /* Aligns text to the left */
-  word-wrap: break-word; /* Ensures the text wraps inside the box */
-  white-space: pre-wrap; /* Maintains spacing and line breaks as in the source */
-}
 
 .user-greeting {
   color: #239b27; /* Green color to match your h1 */
@@ -105,13 +135,6 @@ h1 {
   
 }
 
-.button-container {
-    display: flex;
-    justify-content : space-between; /* This will place one item on each end */
-    max-width: 500px;
-    margin: 0 auto; /* Centering the container */
-  }
-  
 .login-button a,
 .register-button a {
     display: block;
