@@ -29,16 +29,21 @@ def add_books(book_list):
 
 
 def find_fuzzy_match(new_title, new_author, threshold=99):
-    # Fetch titles and authors from the database
-    books = Books.objects.values_list('name', 'author')
+    
+    try:
+        # Fetch titles and authors from the database
+        books = Books.objects.values_list('name', 'author')
+        
+        # Check each book for a fuzzy match on both title and author
+        for title, author in books:
+            title_similarity = process.extractOne(new_title[0], [title])[1]  # type: ignore
+            author_similarity = process.extractOne(new_author[0], [author])[1] # type: ignore
 
-    # Check each book for a fuzzy match on both title and author
-    for title, author in books:
-        title_similarity = process.extractOne(new_title[0], [title])[1]  # type: ignore
-        author_similarity = process.extractOne(new_author[0], [author])[1] # type: ignore
+            # If both title and author match above the threshold, consider it a match
+            if title_similarity > threshold and author_similarity > threshold:
+                return True  # A fuzzy match was found
 
-        # If both title and author match above the threshold, consider it a match
-        if title_similarity > threshold and author_similarity > threshold:
-            return True  # A fuzzy match was found
-
-    return False  # No fuzzy match found
+        return False  # No fuzzy match found
+    except Exception as e:
+        print(f"An error occurred when finding a fuzzy match: {e}")
+        return False

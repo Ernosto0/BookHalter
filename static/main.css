@@ -1,90 +1,190 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f8f8;
-    text-align: center;
-  }
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f8f8;
+  text-align: center;
+}
+
+form {
+  background-color: #fff;
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+  width: calc(100% - 44px); /* Adjust width considering padding and border */
+  padding: 12px 20px; /* Keep the padding for comfortable typing space */
+  margin: 10px 0 20px; /* Add some margin for spacing between inputs */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  border: 2px solid #ccc; /* A light grey border that matches the form style */
+  border-radius: 4px; /* Rounded corners for the inputs */
+  background-color: #f8f8f8; /* A light background color for the inputs */
+  font-size: 16px; /* Slightly larger font size for readability */
+  color: #333; /* Darker text color for better contrast */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for focus effect */
+}
+
+input[type="text"]:focus {
+  border-color: #4CAF50; /* Green border color when focused, matching the button color */
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); /* A subtle glow effect using the same green color */
+  outline: none; /* Remove the default focus outline */
+}
+
+
+label {
+  display: block; /* Ensure the label is on its own line */
+  margin-top: 15px; /* Space above each label */
+  margin-bottom: 5px; /* Space between label and its input field */
+  color: #666; /* A darker color for the labels for readability */
+  font-size: 14px; /* A smaller font size for labels compared to input text */
+  text-align: left; /* Align labels to the left */
+}
+
+button {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+p {
+  margin-top: 30px;
+  font-size: 18px;
+}
+
+h2 {
+  position: relative;
+  top: 50px;
+  margin-top: 40px;
+  font-size: 15px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translate(555px, 25px);
   
-  form {
-    background-color: #fff;
+}
+
+h1 {
+  position: relative;
+  top: 20px; 
+  margin-top: 40px;
+  font-size: 32px;
+  color: #239b27;
+}
+
+.rectangle {
+  
+  max-width: 501px; /* Matches the form width */
+  margin: 20px auto; /* Centers the rectangle and adds vertical spacing */
+  padding: 30px; /* Matches the form padding */
+  background-color: #fff; /* Matches the form background color */
+  border-radius: 10px; /* Matches the form border radius */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Matches the form box shadow */
+  border: 2px solid #ccc; /* Lighter border color to match the input fields */
+  text-align: left; /* Aligns text to the left */
+  word-wrap: break-word; /* Ensures the text wraps inside the box */
+  white-space: pre-wrap; /* Maintains spacing and line breaks as in the source */
+}
+
+.user-greeting {
+  color: #239b27; /* Green color to match your h1 */
+  font-size: 20px; /* Slightly smaller than your h1 for differentiation */
+  margin-top: 20px; /* Space above the greeting */
+  font-weight: bold; /* Make it stand out */
+  
+}
+
+.button-container {
+    display: flex;
+    justify-content : space-between; /* This will place one item on each end */
     max-width: 500px;
-    margin: 50px auto;
-    padding: 30px;
-    border-radius: 11px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Centering the container */
   }
   
-  input[type="text"] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
+.login-button a,
+.register-button a {
+    display: block;
+    font-size: 20px; /* Larger font size */
+    padding: 10px;
+    margin: 5px;
+    text-decoration: none;
+    color: #4CAF50; /* Your button color */
+    border: 2px solid #4CAF50; /* Your button color */
     border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
   }
   
-  input[type="text"]:focus {
-    border-color: #4CAF50;
-    outline: none;
-  }
-  
-  button {
-    width: 100%;
+.login-button a:hover,
+.register-button a:hover {
     background-color: #4CAF50;
     color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  p {
-    margin-top: 30px;
-    font-size: 18px;
-  }
-  
-  h2 {
-    position: relative;
-    top: 50px;
-    margin-top: 40px;
-    font-size: 15px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transform: translate(555px, 25px);
-    
   }
 
-  h1 {
-    position: relative;
-    top: 20px; 
-    margin-top: 40px;
-    font-size: 32px;
-    color: #239b27;
-  }
-  
-  .rectangle {
-    
-    max-width: 501px; /* Matches the form width */
-    margin: 20px auto; /* Centers the rectangle and adds vertical spacing */
-    padding: 30px; /* Matches the form padding */
-    background-color: #fff; /* Matches the form background color */
-    border-radius: 10px; /* Matches the form border radius */
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Matches the form box shadow */
-    border: 2px solid #ccc; /* Lighter border color to match the input fields */
-    text-align: left; /* Aligns text to the left */
-    word-wrap: break-word; /* Ensures the text wraps inside the box */
-    white-space: pre-wrap; /* Maintains spacing and line breaks as in the source */
-  }
-
-  .user-greeting {
-    color: #239b27; /* Green color to match your h1 */
-    font-size: 20px; /* Slightly smaller than your h1 for differentiation */
-    margin-top: 20px; /* Space above the greeting */
-    font-weight: bold; /* Make it stand out */
+/* Container for recommendations */
+/* Container for book columns */
+#bookColumns {
+display: flex;
+justify-content: space-between;
+max-width: 1020px; /* Adjusted to fit two 500px columns with some spacing */
+margin: 30px auto;
+padding: 20px;
+background-color: #fff;
+border-radius: 10px;
+box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Individual book columns */
+.book-column {
+flex: 1;
+display: flex;
+flex-direction: column;
+padding: 0 10px;
+}
+
+/* Style for each book */
+.book {
+margin-bottom: 20px;
+padding: 15px;
+background-color: #f8f8f8;
+border: 1px solid #ccc;
+border-radius: 4px;
+text-align: left;
+}
+
+.book img {
+max-width: 100%;
+height: auto;
+border-radius: 4px;
+margin-bottom: 10px;
+}
+
+.book .title {
+margin: 10px 0 5px;
+color: #333;
+font-size: 18px;
+font-weight: bold;
+}
+
+.book p {
+margin: 5px 0;
+color: #666;
+font-size: 14px;
+line-height: 1.4;
+}
+
+/* Ensure last book in each column doesn't have a bottom margin */
+.book-column .book:last-child {
+margin-bottom: 0;
+}
+

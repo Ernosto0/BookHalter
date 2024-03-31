@@ -28,68 +28,111 @@
     </div>
     
 
-    <form id="myForm">
+    
         <div class="button-container">
             <div class="login-button">
-                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'login' %}">Login1</a>
             </div>
             <div class="register-button">
                 <a href="{% url 'register' %}">Register</a>
             </div>
+            {% if user.is_authenticated %}
+            <div class="logout-button-container">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
+            </div>
+        {% endif %}
         </div>
-    </form>
     
-    <form method="GET" action="{% url 'recommended_books' %}">
-        <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
-        <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
 
-        <label for="desired_feeling">How you want to feel with your next book:</label><br>
-        <input type="text" id="desired_feeling" name="desired_feeling" placeholder="Desired Feeling"><br>
 
-        <label for="character_plot_preferences">Preferences for characters and plot:</label><br>
-        <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
 
-        <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
-        <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
+        <form id="recommendationForm" method="POST">
+            {% csrf_token %}
+            {% comment %} {{ form.as_p }} {% endcomment %} 
+            <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
+            <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
+            <label for="desired_feeling">How you want to feel with your next book:</label><br>
+            <input type="text" id="desired_feeling" name="desired_feeling" placeholder="Desired Feeling"><br>
+            <label for="character_plot_preferences">Preferences for characters and plot:</label><br>
+            <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
+            <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
+            <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
+            <button type="submit" name="action" value="by_answers">Get Book Recommendations</button>
+        </form>
+        
 
+    <div class="quick-recommendation">
+        <h2>Quick Book Recommendation</h2>
+        <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
+        <form method="POST" action="{% url 'recommended_books' %}">
+            {% csrf_token %}
+ 
+            <button type="submit", name="action", value="by_personality">Surprise Me!</button>
+        </form>
+    </div>
+
+    <div id="bookColumns" class="book-columns">
+        <div id="column1" class="book-column"></div>
+        <div id="column2" class="book-column"></div>
+    </div>
+
+<<<<<<< HEAD
         <button type="submit">Get Book Recommendations</button> 
     </form>
     
+=======
+>>>>>>> fee99c9d9c66b7e47ba75ced79fc65da9a33e30d
     <!-- Text for Result -->
     <p id="resultText"></p>
 
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    <!-- Inline JavaScript to handle form submission -->
+    
+
     <script>
         $(document).ready(function() {
-            $('#myForm').submit(function(event) {
-                event.preventDefault(); // Prevent the form from submitting in the traditional way
-
-                // Make an AJAX request to the Django server
+            $('#recommendationForm').submit(function(event) {
+                event.preventDefault();
                 $.ajax({
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
                     type: 'POST',
-                    url: '/get_result/',  // Update this URL with your Django view endpoint
-                    data: {
-                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    },
+                    url: '{% url "recommended_books" %}',
+                    data: $(this).serialize(),
+                    dataType: 'json',
                     success: function(response) {
-                        // Update the text element with the result from the server
-                        $('#resultText').text(response.result);
+                        var col1 = $('#column1').empty();
+                        var col2 = $('#column2').empty();
+                        response.books.forEach(function(book, index) {
+                            var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
+
+                            var bookElement = $('<div class="book">').append(
+                                $('<h3 class="title">').text(book.name),
+                                book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
+                                $('<p>').text('Author: ' + book.author),
+                                $('<p>').text(book.explanation),
+                                // Add other details as needed
+
+
+
+                                bookDetailLink
+                            );
+                            if (index % 2 === 0) { col1.append(bookElement); }
+                            else { col2.append(bookElement); }
+                        });
                     },
-                    error: function(error) {
-                        console.log(error);
+                    error: function(xhr, status, error) {
+                        console.error("AJAX call failed", status, error);
                     }
                 });
             });
         });
-        $('#myForm').submit(function(event) {
-        event.preventDefault(); 
-        window.location.href = "{% url 'recommended_books' %}";
-});
     </script>
 
+    
 </body>
 </html>
 {% endblock %}

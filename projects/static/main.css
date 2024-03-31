@@ -110,8 +110,25 @@ body {
       justify-content : space-between; /* This will place one item on each end */
       max-width: 500px;
       margin: 0 auto; /* Centering the container */
-    }
-    
+  }
+  .logout-button {
+    font-size: 20px; /* Match the font size of login and register */
+    padding: 10px; /* Same padding */
+    margin: 5px; /* Same margin */
+    background-color: transparent; /* Initially transparent background */
+    color: #4CAF50; /* Same text color as login and register */
+    border: 2px solid #4CAF50; /* Same border style */
+    border-radius: 4px; /* Same border-radius */
+    cursor: pointer; /* Cursor pointer for button */
+    text-align: center; /* Center the text */
+    width: 100%; /* Match the width of the container */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+}
+
+  .logout-button:hover {
+    background-color: #4CAF50; /* Background color on hover */
+    color: white; /* Text color on hover */
+}  
   .login-button a,
   .register-button a {
       display: block;
@@ -123,12 +140,68 @@ body {
       border: 2px solid #4CAF50; /* Your button color */
       border-radius: 4px;
       transition: background-color 0.3s, color 0.3s;
-    }
+  }
     
   .login-button a:hover,
   .register-button a:hover {
       background-color: #4CAF50;
       color: white;
-    }
+  }
 
-  
+  /* Container for recommendations */
+/* Container for book columns */
+#bookColumns {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1020px; /* Adjusted to fit two 500px columns with some spacing */
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual book columns */
+.book-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+}
+
+/* Style for each book */
+.book {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.book img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.book .title {
+  margin: 10px 0 5px;
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.book p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Ensure last book in each column doesn't have a bottom margin */
+.book-column .book:last-child {
+  margin-bottom: 0;
+}
+
