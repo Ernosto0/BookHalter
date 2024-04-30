@@ -40,9 +40,14 @@ def projects(request):
             print(up_voted_books)
             CreateUserReadingPersona.main(request, up_voted_books)
     
-    
+        read_books = GetUserData.GetUserData(request, "User_read_data")
 
-    return render(request,'projects/projects.html')
+        if read_books is not None:
+            read_books_list = [{'name': book_name, 'author': 'Unknown'} for book_name in read_books]
+
+        
+
+    return render(request,'projects/projects.html', {"read_books": read_books_list})
 
 
 
@@ -146,8 +151,16 @@ def recommended_books(request):
         }
         books_data.append(book_dict)
 
+    # Get user's read books
+    read_books = GetUserData.GetUserData(request, "User_read_data")
+
+    if read_books is not None:
+        read_books_list = [{'name': book_name.name, 'author': book_name.author} for book_name in read_books]
+        print(read_books_list)
+
+
     # Returning JSON response
-    return JsonResponse({'books': books_data})
+    return JsonResponse({'books': books_data, 'read_books': read_books_list}, safe=False)
 
 
 @login_required

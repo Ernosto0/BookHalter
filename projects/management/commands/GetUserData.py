@@ -44,4 +44,21 @@ def GetUserData(request, data):
             print(f"An error occurred: {e}")
             return None  # Or return a suitable response/error message 
 
-        
+    if data == "User_read_data":
+        try:
+            context = {}
+            if request.user.is_authenticated:
+                user_book_data = UserBookData.objects.get(user=request.user)
+                read_books = user_book_data.read_books.all()
+                context['read_books'] = read_books
+                
+                
+                return context
+            
+            
+        except UserBookData.DoesNotExist:
+            print("UserBookData does not exist for the current user.")
+            return None  # Or return a suitable response/error message
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None  # Or return a suitable response/error message

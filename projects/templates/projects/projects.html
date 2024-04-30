@@ -73,6 +73,26 @@
             <button type="submit", name="action", value="by_personality">Surprise Me!</button>
         </form>
     </div>
+    
+
+    {% if user.is_authenticated %}
+        <div class="read-books-container">
+            <h3>Your Read Books</h3>
+            <div class="read-books-list">
+                {% for book in read_books %}
+                    <div class="read-book">
+                        <h4>{{ book.name }}</h4>
+                        <p>By {{ book.author }}</p>
+                        <!-- Add more book details if you like -->
+                    </div>
+                {% empty %}
+                    <p>You haven't marked any books as read yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
 
     <div id="bookColumns" class="book-columns">
         <div id="column1" class="book-column"></div>
