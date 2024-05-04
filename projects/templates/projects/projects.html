@@ -73,6 +73,8 @@
             <button type="submit", name="action", value="by_personality">Surprise Me!</button>
         </form>
     </div>
+    
+
 
     <div id="bookColumns" class="book-columns">
         <div id="column1" class="book-column"></div>
@@ -126,7 +128,43 @@
         });
     </script>
 
-    
+
+    {% if user.is_authenticated %}
+    <div class="read-books-container">
+        <h3>Your Read Books</h3>
+        <div class="read-books-list" id="readBooksList">
+            <!-- Books will be loaded here by JavaScript -->
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch("{% url 'get_read_books' %}")  // Ensure this URL is correctly named in urls.py
+        .then(response => response.json())
+        .then(data => {
+            let books = data.read_books;
+            let container = document.getElementById('readBooksList');
+            container.innerHTML = ''; // Clear existing entries
+            if (books.length) {
+                books.forEach(book => {
+                    // Entire book entry is now clickable
+                    let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
+                                    <div class="read-book">
+                                        <h4>${book.name}</h4>
+                                        <p>${book.author}</p>
+                                    </div>
+                                </a>`;
+                    container.innerHTML += bookDiv;
+                });
+            } else {
+                container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
+            }
+        })
+        .catch(error => console.error('Error loading the books:', error));
+    });
+    </script>
+    {% endif %}
+
+
 </body>
 </html>
 {% endblock %}

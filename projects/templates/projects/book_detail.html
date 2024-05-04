@@ -36,8 +36,8 @@
         <form method="POST" id="toggle_read_status-form">
             {% csrf_token %}
             <button type="submit" class="read-button">
-                {% if data.message %}
-                    {{ data.message }}
+                {% if is_read %}
+                    Remove from Read List
                 {% else %}
                     Mark as Read
                 {% endif %}

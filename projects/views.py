@@ -1,3 +1,4 @@
+from os import read
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,7 +15,8 @@ from users.models import UserBookData
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
 from .models import Project, Books, Comment, Vote
-from .management.commands import getbook, get_upvoted_book, addbooks, check_books, GetUserData, UpdateVoteCount
+from .management.commands import getbook, get_upvoted_book, addbooks, check_books,  UpdateVoteCount
+from .management.commands.GetUserData import UserDataGetter
 
 
 
@@ -25,13 +27,37 @@ def set_cookie(request):
 
 
 
+def get_read_books(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'User not authenticated'}, status=401)
+
+    try:
+        user_data_getter = UserDataGetter(request)
+        read_books_context = user_data_getter.get_user_read_data()
+
+        if read_books_context is not None:
+            read_books = read_books_context['read_books']
+            read_books_list = [{
+                'name': book.name,
+                'author': book.author if book.author else 'Unknown',
+                'url': reverse('book-detail', args=[book.id])  # Adding URL for each book
+            } for book in read_books]
+        else:
+            read_books_list = []
+
+        return JsonResponse({'read_books': read_books_list}, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 def projects(request):
     print("home")
 
-    
+    user_data_getter = UserDataGetter(request)
+
     if request.user.is_authenticated:
         up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
-        vote_count_data = GetUserData.GetUserData(request, "User_vote_count_data")
+        vote_count_data = user_data_getter.get_user_vote_count_data()
 
     
         if len(up_voted_books) >= 2 and vote_count_data==2:
@@ -40,9 +66,14 @@ def projects(request):
             print(up_voted_books)
             CreateUserReadingPersona.main(request, up_voted_books)
     
-    
+        read_books = user_data_getter.get_user_read_data()
 
-    return render(request,'projects/projects.html')
+        if read_books is not None:
+            read_books_list = [{'name': book_name, 'author': 'Unknown'} for book_name in read_books]
+
+        
+
+    return render(request,'projects/projects.html', {"read_books": read_books_list})
 
 
 
@@ -52,8 +83,21 @@ def home(request):
 
 def book_detail(request, book_id):
     book = get_object_or_404(Books, pk=book_id)
+    user = request.user
+
+
+    is_read = False
+
+    # Ensure the user has associated UserBookData
+    if hasattr(user, 'book_data'):
+        # Check if the book is in the user's read_books
+        is_read = book in user.book_data.read_books.all()
+    else:
+        is_read = False
+
     context = {
-        'book': book
+        'book': book,
+        'is_read': is_read
     }
     return render(request, 'projects/book_detail.html', context)
 
@@ -61,7 +105,8 @@ def book_detail(request, book_id):
 
 @ratelimit(key='ip', rate='1/h', method='ALL', block=True)
 def recommended_books(request):
-    
+    user_data_getter = UserDataGetter(request)
+
 
     
     function_type = 1
@@ -75,7 +120,7 @@ def recommended_books(request):
     print(function_type)
      
     if request.user.is_authenticated:
-        upvoted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+        upvoted_books = user_data_getter.get_user_vote_count_data()
     else:
         upvoted_books = []
 
@@ -146,8 +191,32 @@ def recommended_books(request):
         }
         books_data.append(book_dict)
 
+    # Get user's read books
+    try:
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'User not authenticated'}, status=401)
+        
+        user_data_getter = UserDataGetter(request)
+        read_books_context = user_data_getter.get_user_read_data()
+
+        if read_books_context is not None:
+            read_books = read_books_context['read_books']
+            read_books_list = [{'name': book.name, 'author': book.author if book.author else 'Unknown'} for book in read_books] 
+            
+        else:
+            read_books_list = []
+
+    except Exception as e:
+        print(f"Error occurred while getting user's read books: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+    print("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
+    print(read_books_list)
     # Returning JSON response
-    return JsonResponse({'books': books_data})
+    try:
+        return JsonResponse({'books': books_data, 'read_books': read_books_list}, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @login_required

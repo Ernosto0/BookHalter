@@ -11,5 +11,6 @@ urlpatterns = [
     path('post_comment/<uuid:book_id>/', views.post_comment, name='post_comment'),
     path('users/', include('users.urls')),
     path('book/<uuid:book_id>/toggle_read_status/', views.toggle_read_status, name='toggle_read_status'),
+    path('ajax/get-read-books/', views.get_read_books, name='get_read_books'),
 
 ]

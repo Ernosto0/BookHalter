@@ -205,3 +205,50 @@ body {
   margin-bottom: 0;
 }
 
+
+/* Container for the "Read Books" section */
+.read-books-container {
+  background-color: #fff; /* Matches the form and other containers */
+  max-width: 500px; /* Maximum width of the container */
+  margin: 30px auto; /* Centers the container and adds vertical spacing */
+  padding: 20px; /* Padding inside the container */
+  border-radius: 10px; /* Rounded corners like the forms */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  text-align: left; /* Aligns text to the left */
+
+  height: 360px; /* Adjusted fixed height to fit exactly 4 books */
+  overflow-y: scroll; /* Always shows vertical scrollbar */
+  overflow-x: hidden; /* Disables horizontal scrolling */
+}
+
+/* Styling for individual book entries in the list */
+.read-book {
+  border-bottom: 1px solid #ccc; /* Subtle separator for each book */
+  padding: 10px 0; /* Padding inside each book item */
+  margin: 10px 0; /* Space between book entries */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.read-book:last-child {
+  border-bottom: none; /* Remove border for the last item to clean up appearance */
+}
+
+.read-book:hover {
+  background-color: #f4f4f4; /* Light grey background on hover */
+}
+
+/* Styling for the book title */
+.read-book h4 {
+  color: #333; /* Dark grey for readability, matches other headings */
+  font-size: 18px; /* Slightly larger to highlight titles */
+  margin: 0 0 5px; /* No margin above, space below */
+}
+
+/* Styling for the book author and other details */
+.read-book p {
+  color: #666; /* Medium grey for less emphasis than titles */
+  font-size: 16px; /* Slightly smaller than the title for hierarchy */
+  margin: 0; /* Remove default margins */
+}
+
+

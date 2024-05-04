@@ -2,46 +2,68 @@ from django.core.exceptions import ObjectDoesNotExist
 from projects.models import User
 from users.models import UserBookData
 
-def GetUserData(request, data):
-    current_user = request.user
+class UserDataGetter:
+    def __init__(self, request):
+        self.request = request
+        self.current_user = request.user
 
-    # Ensure the user is authenticated to avoid errors
-    if not current_user.is_authenticated:
-        print("User is not authenticated.")
-        return None  # Or return a suitable response/error message
+    def get_user_reading_persona(self):
+        if not self.current_user.is_authenticated:
+            print("User is not authenticated.")
+            return None
 
-    if data == "user_reading_persona":
         try:
-            # Access the UserBookData related to the current user using the 'related_name'
-           # This directly accesses the related UserBookData instance
-
-            
-
-            # Now you can access user_reading_persona
-            user_reading_persona = current_user.book_data.user_reading_persona
-           
-
+            user_reading_persona = self.current_user.book_data.user_reading_persona
             return user_reading_persona
 
-        except UserBookData.DoesNotExist:  # This is the more specific exception for when the related object does not exist
+        except UserBookData.DoesNotExist:
             print("UserBookData does not exist for the current user.")
-            return None  # Or return a suitable response/error message
+            return None
 
-        except Exception as e:  # Catch other unforeseen errors
+        except Exception as e:
             print(f"An error occurred: {e}")
-            return None  # Or return a suitable response/error message
+            return None
 
-    if data == "User_vote_count_data":
+    def get_user_vote_count_data(self):
+        if not self.current_user.is_authenticated:
+            print("User is not authenticated.")
+            return None
+
         try:
-            user_vote_count_data = current_user.book_data.vote_count
+            user_vote_count_data = self.current_user.book_data.vote_count
             return user_vote_count_data
-        
-        except UserBookData.DoesNotExist:  # This is the more specific exception for when the related object does not exist
+
+        except UserBookData.DoesNotExist:
             print("UserBookData does not exist for the current user.")
-            return None  # Or return a suitable response/error message
+            return None
 
-        except Exception as e:  # Catch other unforeseen errors
+        except Exception as e:
             print(f"An error occurred: {e}")
-            return None  # Or return a suitable response/error message 
+            return None
 
-        
+    def get_user_read_data(self):
+        if not self.current_user.is_authenticated:
+            print("User is not authenticated.")
+            return None
+
+        try:
+            context = {}
+            user_book_data = UserBookData.objects.get(user=self.current_user)
+            read_books = user_book_data.read_books.all()
+            print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+            for book in read_books:
+                
+                print(book.name)
+            context['read_books'] = read_books
+            print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+            print(context)
+            print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+            return context
+
+        except UserBookData.DoesNotExist:
+            print("UserBookData does not exist for the current user.")
+            return None
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
