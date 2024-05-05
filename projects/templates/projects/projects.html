@@ -29,27 +29,28 @@
     
 
     
-        <div class="button-container">
-            <div class="login-button">
-                <a href="{% url 'login' %}">Login1</a>
-            </div>
-            <div class="register-button">
-                <a href="{% url 'register' %}">Register</a>
-            </div>
-            {% if user.is_authenticated %}
-            <div class="logout-button-container">
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-button">Logout</button>
-                </form>
-            </div>
-        {% endif %}
+    <div class="button-container">
+        <div class="login-button">
+            <button id="loginBtn">Login</button>
         </div>
+        <div class="register-button">
+            <button id="registerBtn">Register</button>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="logout-button">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+        
+        {% endif %}
+    </div>
+    
     
 
 
-
-        <form id="recommendationForm" method="POST">
+        <form id="recommendationForm" method="POST" data-url="{% url 'recommended_books' %}">
             {% csrf_token %}
             {% comment %} {{ form.as_p }} {% endcomment %} 
             <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
@@ -80,6 +81,29 @@
         <div id="column1" class="book-column"></div>
         <div id="column2" class="book-column"></div>
     </div>
+    
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="login-button">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Text for Result -->
     <p id="resultText"></p>
@@ -87,83 +111,45 @@
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    
-
-    <script>
-        $(document).ready(function() {
-            $('#recommendationForm').submit(function(event) {
-                event.preventDefault();
-                $.ajax({
-                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                    type: 'POST',
-                    url: '{% url "recommended_books" %}',
-                    data: $(this).serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        var col1 = $('#column1').empty();
-                        var col2 = $('#column2').empty();
-                        response.books.forEach(function(book, index) {
-                            var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
-
-                            var bookElement = $('<div class="book">').append(
-                                $('<h3 class="title">').text(book.name),
-                                book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
-                                $('<p>').text('Author: ' + book.author),
-                                $('<p>').text(book.explanation),
-                                // Add other details as needed
-
-
-
-                                bookDetailLink
-                            );
-                            if (index % 2 === 0) { col1.append(bookElement); }
-                            else { col2.append(bookElement); }
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX call failed", status, error);
-                    }
-                });
-            });
-        });
-    </script>
-
-
-    {% if user.is_authenticated %}
-    <div class="read-books-container">
-        <h3>Your Read Books</h3>
-        <div class="read-books-list" id="readBooksList">
-            <!-- Books will be loaded here by JavaScript -->
+     <!-- Register Modal -->
+     <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-register">&times;</span>
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username-register">Username:</label>
+                    <input type="text" id="username-register" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email-register">Email:</label>
+                    <input type="email" id="email-register" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password-register">Password:</label>
+                    <input type="password" id="password-register" name="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="register-button">Register</button>
+                </div>
+            </form>
         </div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        fetch("{% url 'get_read_books' %}")  // Ensure this URL is correctly named in urls.py
-        .then(response => response.json())
-        .then(data => {
-            let books = data.read_books;
-            let container = document.getElementById('readBooksList');
-            container.innerHTML = ''; // Clear existing entries
-            if (books.length) {
-                books.forEach(book => {
-                    // Entire book entry is now clickable
-                    let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
-                                    <div class="read-book">
-                                        <h4>${book.name}</h4>
-                                        <p>${book.author}</p>
-                                    </div>
-                                </a>`;
-                    container.innerHTML += bookDiv;
-                });
-            } else {
-                container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
-            }
-        })
-        .catch(error => console.error('Error loading the books:', error));
-    });
-    </script>
-    {% endif %}
 
+    <body data-get-read-books-url="{% url 'get_read_books' %}"></body>
+
+
+    <div class="read-books-container" id="readBooksList">
+        <!-- Books will be loaded here by JavaScript -->
+    </div>
+    
+
+    <!-- Loading spinner -->
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100;">
+        <div class="loader">Loading...</div>
+    </div>
+
+    <script src="{% static 'scripts.js' %}"></script>
 
 </body>
 </html>

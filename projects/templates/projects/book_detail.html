@@ -70,69 +70,76 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function(){
-    // Use vanilla JavaScript to attach the event if jQuery is not available
-    document.getElementById('vote-form').addEventListener('submit', function(e){
-        e.preventDefault(); // Prevent the form from submitting the traditional way
-
-        var form = this;
-        var actionUrl = form.getAttribute('action');
-
-        // Set up the AJAX request
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', actionUrl, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken')); // Get the CSRF token
-
-        // Define what happens on successful data submission
-        xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 400) {
-                // Success!
-                var data = JSON.parse(xhr.responseText);
-                document.getElementById('vote-total').textContent = 'Votes: ' + data.vote_total;
-                document.getElementById('vote-ratio').textContent = 'Rating: ' + data.vote_ratio + '%';
-            } else {
-                // We reached our target server, but it returned an error
-                console.error('Server returned an error on the vote submission.');
+        var form = document.getElementById('vote-form');
+        form.addEventListener('submit', function(e){
+            e.preventDefault(); // Prevent the form from submitting the traditional way
+            
+            // Check if user is authenticated
+            if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+                alert('You must be logged in to vote. Please login or register.');
+                window.location.href = '{% url 'login' %}';
+                return; // Stop further execution if not authenticated
             }
-        };
-
-        // Define what happens in case of an error
-        xhr.onerror = function () {
-            console.error('An error occurred during the vote submission.');
-        };
-
-        // Set up the request data
-        var requestData = 'vote=' + form.querySelector('button[name="vote"]:focus').value;
-
-        // Finally, send the AJAX request with the data
-        xhr.send(requestData);
-    });
-
-    // Function to get the CSRF token
-    function getCookie(name) {
-        var cookieValue = null;
-        var cookies = document.cookie.split(';');
-        for(var i=0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    
+            var actionUrl = form.getAttribute('action');
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', actionUrl, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+    
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    var data = JSON.parse(xhr.responseText);
+                    document.getElementById('vote-total').textContent = 'Votes: ' + data.vote_total;
+                    document.getElementById('vote-ratio').textContent = 'Rating: ' + data.vote_ratio + '%';
+                } else {
+                    console.error('Server returned an error on the vote submission.');
+                }
+            };
+    
+            xhr.onerror = function () {
+                console.error('An error occurred during the vote submission.');
+            };
+    
+            var requestData = 'vote=' + form.querySelector('button[name="vote"]:focus').value;
+            xhr.send(requestData);
+        });
+    
+        function getCookie(name) {
+            var cookieValue = null;
+            var cookies = document.cookie.split(';');
+            for(var i=0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
-});
-</script>
+    });
+    </script>
+    
 
-
+<!-- AJAX script for toggling the read status -->
 <script>
+    // Determine if the user is authenticated using Django template tags
+    var isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }}; 
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('toggle_read_status-form').addEventListener('submit', function(e) {
+        var form = document.getElementById('toggle_read_status-form');
+        form.addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent the default form submission
-
+    
+            // Check if the user is authenticated
+            if (!isAuthenticated) {
+                alert('You must be logged in to mark books as read. Please login or register.');
+                window.location.href = '{% url 'login' %}'; // Redirect them to the login page
+                return; // Stop further execution of this script
+            }
+    
             var formData = new FormData(this);
             formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
+    
             fetch("{% url 'toggle_read_status' book.id %}", {
                 method: 'POST',
                 body: formData,
@@ -160,6 +167,52 @@
             });
         });
     });
-</script>
+    </script>
+    <!-- AJAX script for posting comments -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var commentForm = document.getElementById('commentForm');
+            commentForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent the default form submission
+        
+                // Check if user is authenticated
+                if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+                    alert('You must be logged in to add comments. Please login or register.');
+                    window.location.href = '{% url 'login' %}';
+                    return; // Stop further execution if not authenticated
+                }
+        
+                var formData = new FormData(this);
+        
+                fetch('{% url 'post_comment' book.id %}', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin' // Include cookies in the request
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse JSON only if response is valid
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    // Assuming the server returns the created comment data
+                    console.log(data);
+                    // Append the new comment to the comment list
+                    var commentsList = document.getElementById('commentsList');
+                    var newComment = `<div class="comment">
+                        <p class="comment-user">${data.username} says:</p>
+                        <p class="comment-body">${data.comment}</p>
+                    </div>`;
+                    commentsList.insertAdjacentHTML('beforeend', newComment);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred, please try again.');
+                });
+            });
+        });
+        </script>
+        
 
 {% endblock %}

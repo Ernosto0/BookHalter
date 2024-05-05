@@ -114,9 +114,9 @@ body {
   .logout-button {
     font-size: 20px; /* Match the font size of login and register */
     padding: 10px; /* Same padding */
-    margin: 5px; /* Same margin */
+    margin: 10px; /* Same margin */
     background-color: transparent; /* Initially transparent background */
-    color: #4CAF50; /* Same text color as login and register */
+    color: #631a94; /* Same text color as login and register */
     border: 2px solid #4CAF50; /* Same border style */
     border-radius: 4px; /* Same border-radius */
     cursor: pointer; /* Cursor pointer for button */
@@ -251,4 +251,57 @@ body {
   margin: 0; /* Remove default margins */
 }
 
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+/* loader */
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
