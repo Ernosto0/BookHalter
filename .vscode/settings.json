@@ -2,4 +2,5 @@
     "python.analysis.autoImportCompletions": true,
     "python.analysis.typeCheckingMode": "basic",
     "html.validate.scripts": false,
+    "python.pythonPath": ""
 }

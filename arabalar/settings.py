@@ -82,6 +82,19 @@ DATABASES = {
     }
 }
 
+# for pythonanywhere deployment
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ernosto1$default',
+#         'USER': 'ernosto1',
+#         'PASSWORD': '8,jk7axm}?SSEdT',
+#         'HOST': 'ernosto1.mysql.pythonanywhere-services.com',  # e.g., yourusername.mysql.pythonanywhere-services.com
+#         'PORT': '',
+#     }
+# }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
