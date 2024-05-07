@@ -14,7 +14,7 @@ from django_ratelimit.decorators import ratelimit
 from users.models import UserBookData
 
 from aifolder import ai, openlibrary, CreateUserReadingPersona
-from .models import Project, Books, Comment, Vote
+from .models import  Books, Comment, Vote
 from .management.commands import getbook, get_upvoted_book, addbooks, check_books,  UpdateVoteCount
 from .management.commands.GetUserData import UserDataGetter
 
@@ -61,9 +61,11 @@ def projects(request):
     if request.user.is_authenticated:
         up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
         vote_count_data = user_data_getter.get_user_vote_count_data()
+        print("PPPPPPPPPPPPPPPPPPPPPPPP")
+        print(up_voted_books)
 
     
-        if len(up_voted_books) >= 2 and vote_count_data==2:
+        if len(up_voted_books) >= 20 and vote_count_data==20:
             # If there are more than 20 books; after voted an other 20 books, get last 20 and create an otr.
             UpdateVoteCount.reset_user_vote_count(request)
             print(up_voted_books)
@@ -166,7 +168,7 @@ def recommended_books(request):
     print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
     print(context)
     
-    context = test_contex
+    
 
     books = getbook.search_books_in_database(context)
     

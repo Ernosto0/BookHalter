@@ -75,12 +75,12 @@ WSGI_APPLICATION = 'arabalar.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # for pythonanywhere deployment
 # DATABASES = {
@@ -93,6 +93,17 @@ DATABASES = {
 #         'PORT': '',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myprojectdb',
+        'USER': 'root',
+        'PASSWORD': """12345""",  
+        'HOST': 'localhost',  # Or the IP Address of the MySQL server
+        'PORT': '3306',
+    }
+}
 
 
 

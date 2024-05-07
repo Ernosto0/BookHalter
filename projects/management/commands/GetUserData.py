@@ -57,7 +57,7 @@ class UserDataGetter:
             context['read_books'] = read_books
             print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
             print(context)
-            print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+          
             return context
 
         except UserBookData.DoesNotExist:

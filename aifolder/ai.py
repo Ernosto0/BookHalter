@@ -4,9 +4,9 @@ import json
 from aifolder.extract_book_data import extract_books_info
 from projects.management.commands import addbooks, getbook
 
-# with open("C:/Users/ernos/Desktop/BookPalAi/aifolder/openaikey.txt", 'r') as file:
+with open("C:/BookPalAi/aifolder/openaikey.txt", 'r') as file:
 
-#     openai.api_key = file.read()
+    openai.api_key = file.read()
     
 messages = [
     {
@@ -52,8 +52,8 @@ def make_suggestion(data):
     
         
 
-def RecommendWithAnswers(user_queries, up_voted_books):
-     
+def RecommendWithAnswers(user_queries, upvoted_books):
+    print(user_queries)
     user_preferences = {
         "questions": {
             "recent_reads": {
@@ -75,13 +75,13 @@ def RecommendWithAnswers(user_queries, up_voted_books):
                             "narratives that take their time to unfold?",
                 "answer": user_queries[3]
             }},
-            "user_liked_books": up_voted_books
+            "user_liked_books": "Martin eden"
     }
 
     reply = make_suggestion(user_preferences)
-
+    print(reply)
     extracted_data = extract_books_info(reply)
-
+    print(extracted_data)
     return extracted_data
 
 
@@ -103,8 +103,8 @@ def RecommendWithReadingPersona(user_reading_personality):
             )
         print(chat)
         reply = chat.choices[0].message.content # type: ignore
-
+        
         extracted_data = extract_books_info(reply)
-    
+        print(extracted_data)
         return extracted_data
     
