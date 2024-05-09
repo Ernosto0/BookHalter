@@ -21,13 +21,16 @@ def search_book_by_title_and_author(title, author):
             year = volume_info.get('publishedDate', '').split('-')[0]  # Get only the year part
             description = volume_info.get('description', 'No description available.')
             cover_image = volume_info.get('imageLinks', {}).get('thumbnail', 'No cover image available.')
-            id_amazon = get_amazon_id_by_title(title)
+            # id_amazon = 10000
+            googlebooks_link = book.get('saleInfo', '').get('buyLink', 'No buy link.')  # New variable for Google Books link
             return {
                 'title': title,
                 'author': author,
                 'year': year,
                 'description': description,
-                'cover_image': cover_image
+                'cover_image': cover_image,
+                # 'id_amazon': id_amazon,
+                'googlebooks_link': googlebooks_link,
             }
         else:
             return f"No results found for '{title}'."
@@ -35,7 +38,6 @@ def search_book_by_title_and_author(title, author):
         return "Failed to fetch data."
 
 
-# Example usage, replace 'your_api_key_here' with your actual Google Books API key
 
 
 def get_amazon_id_by_title(title):

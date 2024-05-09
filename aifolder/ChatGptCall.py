@@ -1,7 +1,7 @@
 from os import read
 import openai
 import json
-from aifolder.extract_book_data import extract_books_info
+from aifolder.ExtractBookData import extract_books_info
 from projects.management.commands import addbooks, getbook
 
 with open("C:/BookPalAi/aifolder/openaikey.txt", 'r') as file:

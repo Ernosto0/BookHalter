@@ -3,9 +3,9 @@ from users.models import UserBookData
 
 
 
-# with open("C:/Users/ernos/Desktop/BookPalAi/aifolder/openaikey.txt", 'r') as file:
+with open("C:/BookPalAi/aifolder/openaikey.txt", 'r') as file:
 
-#     openai.api_key = file.read()
+    openai.api_key = file.read()
 
 
 def CreatePersonality(liked_books):
