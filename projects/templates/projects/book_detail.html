@@ -21,6 +21,9 @@
                 <p>No cover image available.</p>
          {% endif %}
         <p class="book-description">Description: {{ book.description }}</p>
+        <p class="book-published">Published: {{ book.published }}</p>
+        <p class="'book-buy-link">Buy: <a href="{{ book.googlebooks_link }}">Buy Here</a></p>
+        
         <!-- Voting form -->
         <div class="voting-section">
             <form id="vote-form" method="post" action="{% url 'vote' book.id  %}">

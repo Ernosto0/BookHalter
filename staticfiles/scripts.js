@@ -1,7 +1,7 @@
 $(document).ready(function() {
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     var recommendationButton = $('#recBtn');
-    var clickDelay = 300000; // 5 minutes in milliseconds
+    var clickDelay = 200; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime')); // Retrieve and parse the last clicked time from localStorage
 
     // Function to calculate if the cooldown is active

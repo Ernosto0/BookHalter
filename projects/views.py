@@ -13,7 +13,7 @@ from django_ratelimit.decorators import ratelimit
 
 from users.models import UserBookData
 
-from aifolder import ai, openlibrary, CreateUserReadingPersona
+from aifolder import BookDataApis, ChatGptCall, CreateUserReadingPersona
 from .models import  Books, Comment, Vote
 from .management.commands import getbook, get_upvoted_book, addbooks, check_books,  UpdateVoteCount
 from .management.commands.GetUserData import UserDataGetter
@@ -141,7 +141,7 @@ def recommended_books(request):
 
         # Perform actions specific to function_type 1
         try:
-            context = ai.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+            context = ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
         except Exception as e:
             print(f"Error occurred while generating context: {e}")
             context = []
@@ -150,7 +150,7 @@ def recommended_books(request):
         data = user_data_getter.get_user_reading_persona()
         print(data)
         try:
-            context = ai.RecommendWithReadingPersona(data)
+            context = ChatGptCall.RecommendWithReadingPersona(data)
         except Exception as e:
             print(f"Error occurred while generating context: {e}")
             context = []
@@ -162,7 +162,10 @@ def recommended_books(request):
         # Get filtered book's data for the first time
         print("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTt")
         print(filtered_books)
-        respond = openlibrary.main(filtered_books)
+        print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
+        respond = BookDataApis.main(filtered_books)
+        print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
+        print(respond)
         # Add the filtered books to data base for the first time
         addbooks.add_books(respond)
     print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
@@ -184,14 +187,14 @@ def recommended_books(request):
         book_dict = {
             'name': book.name,
             'author': book.author,
-            'cover_image_url': book.cover_image_url if hasattr(book, 'cover_image_url') else None,  # Assuming you have a cover_image_url field or similar
+            'cover_image_url': book.cover_image_url if hasattr(book, 'cover_image_url') else None,  #
             'explanation': book.explanation if hasattr(book, 'explanation') else "No explanation available.",
-            'total_votes': book.total_votes if hasattr(book, 'total_votes') else 0,  # Assuming you have a total_votes field or similar
-            'vote_ratio': book.vote_ratio if hasattr(book, 'vote_ratio') else "N/A",  # Assuming you have a vote_ratio field or similar
-            'published_year': book.published_year if hasattr(book, 'published_year') else "Unknown",  # Assuming you have a published_year field or similar
-            'description': book.description if hasattr(book, 'description') else "Description not available.",  # Assuming you have a description field or similar
-            'id': book.id,  # Assuming each book has an id
-            'amazon_id': book.amazon_id if hasattr(book, 'amazon_id') else "N/A",  # Assuming you have an amazon_id field or similar
+            'total_votes': book.total_votes if hasattr(book, 'total_votes') else 0, 
+            'vote_ratio': book.vote_ratio if hasattr(book, 'vote_ratio') else "N/A",  
+            'published_year': book.published_year if hasattr(book, 'published_year') else "Unknown",  
+            'description': book.description if hasattr(book, 'description') else "Description not available.", 
+            # 'amazon_id': book.amazon_id if hasattr(book, 'amazon_id') else 'N/A',
+            'id': book.id,   
             'detail_url': reverse('book-detail', args=[str(book.id)])
         }
         books_data.append(book_dict)

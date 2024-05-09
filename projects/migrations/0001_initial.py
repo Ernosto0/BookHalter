@@ -30,6 +30,7 @@ class Migration(migrations.Migration):
                 ('cover_image_url', models.URLField(blank=True, max_length=250, null=True)),
                 ('published_year', models.IntegerField(blank=True, null=True)),
                 ('amazon_id', models.IntegerField(blank=True, default=0, null=True)),
+                ('googlebooks_link', models.URLField(max_length=250, null=True, blank=True))
             ],
         ),
         migrations.CreateModel(

@@ -14,10 +14,12 @@ def add_books(book_list):
                     Books.objects.create(
                         name=book['title'],
                         author=book['author'][0],
-                        published_year=2100,
+                        published_year=book['year'],
                         description=book['description'],
                         cover_image_url=book['cover_image'],
-                        amazon_id=10000
+                        # amazon_id=book['id_amazon'],
+                        googlebooks_link=book['googlebooks_link'],
+
                     )
                     print(f"Added book: {book['title']} by {book['author'][0]}")
                 except IntegrityError as e:
