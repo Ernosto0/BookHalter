@@ -3,7 +3,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from regex import P
 from MyTest.testcontext import test_contex
@@ -107,20 +108,21 @@ def book_detail(request, book_id):
     return render(request, 'projects/book_detail.html', context)
 
 
-
+@csrf_exempt
 @ratelimit(key='ip', rate='1/h', method='ALL', block=True)
 def recommended_books(request):
     user_data_getter = UserDataGetter(request)
-
-
-    
+    context = []
     function_type = 1
 
-    if request.method == 'POST':
-        if 'action' in request.POST:
-            action = request.POST.get('action')
-            if action == 'by_personality':
-                function_type = 2
+   
+            
+    action = request.POST.get('action')
+    print(action)
+    if action == 'by_personality':
+            function_type = 2
+    if action == 'by_paragraph':
+            function_type = 3
                 
     print(function_type)
      
@@ -148,12 +150,15 @@ def recommended_books(request):
 
     elif function_type == 2:
         data = user_data_getter.get_user_reading_persona()
-        print(data)
+        print("User data:",data)
         try:
             context = ChatGptCall.RecommendWithReadingPersona(data)
+            print("Context:",context)
         except Exception as e:
             print(f"Error occurred while generating context: {e}")
             context = []
+    elif function_type == 3:
+        print("MAMAEAEMAMEMAMEMA")
         
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
     filtered_books = check_books.remove_existing_books(context)

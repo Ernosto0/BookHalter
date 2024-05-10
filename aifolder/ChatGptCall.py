@@ -101,10 +101,10 @@ def RecommendWithReadingPersona(user_reading_personality):
             chat = openai.chat.completions.create( # type: ignore
                 model="gpt-4-0125-preview", messages=messages # type: ignore
             )
-        print(chat)
-        reply = chat.choices[0].message.content # type: ignore
         
+        reply = chat.choices[0].message.content # type: ignore
+        print("reply:", reply)
         extracted_data = extract_books_info(reply)
-        print(extracted_data)
+        print("extracted data:", extracted_data)
         return extracted_data
     

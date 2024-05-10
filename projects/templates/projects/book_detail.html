@@ -9,6 +9,7 @@
 <div class="page">
     <div class="header">
         <h2>{{ book.name }} By {{book.author}}</h2>
+        <button onclick="window.history.back();" class="go-back-button">Go Back</button>
     </div>
     <div class="book-detail">
         <div class="book-title">
@@ -21,8 +22,13 @@
                 <p>No cover image available.</p>
          {% endif %}
         <p class="book-description">Description: {{ book.description }}</p>
-        <p class="book-published">Published: {{ book.published }}</p>
-        <p class="'book-buy-link">Buy: <a href="{{ book.googlebooks_link }}">Buy Here</a></p>
+        <p class="book-published">Published: {{ book.published_year }}</p>
+        
+        {% if book.googlebooks_link != "No buy link." %}
+            <p class="book-buy-link">Buy: <a href="{{ book.googlebooks_link }}">Buy Here</a></p>
+        {% else %}
+            <p class="book-buy-link">Buy: Not available</p>
+        {% endif %}
         
         <!-- Voting form -->
         <div class="voting-section">

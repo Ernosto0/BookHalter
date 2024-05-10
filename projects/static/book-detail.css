@@ -146,3 +146,25 @@
   transform: scale(1.05);
   outline: none;
 }
+
+.go-back-button {
+  background: #008cba;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 20px;
+  display: inline-block;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.go-back-button:hover,
+.go-back-button:focus {
+  background: #007ba7;
+  transform: scale(1.05);
+  outline: none;
+}

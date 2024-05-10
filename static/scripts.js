@@ -1,30 +1,95 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Automatically select the default form on page load
+    selectForm('form1', 'Form with Questions', 'Use this form to answer specific questions about your reading preferences.');
+});
+
+function selectForm(formId, formName, formDescription) {
+    // Update the button text to show the selected form name
+    document.getElementById("formSelectBtn").textContent = formName;
+    // Update the description above the dropdown
+    document.getElementById("formDescription").textContent = formDescription;
+    // Show the selected form
+    showForm(formId);
+}
+
+function showForm(formId) {
+    var forms = document.getElementsByClassName('form-container');
+    for (var i = 0; i < forms.length; i++) {
+        forms[i].style.display = 'none'; // Hide all forms
+    }
+    document.getElementById(formId).style.display = 'block'; // Show selected form
+    // Ensure the dropdown menu is closed after selection
+    closeDropdown();
+}
+
+function toggleDropdown() {
+    document.getElementById("formDropdown").classList.toggle("show");
+}
+
+function closeDropdown() {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    for (var i = 0; i < dropdowns.length; i++) {
+        dropdowns[i].classList.remove('show');
+    }
+}
+
+// Handle clicks outside the dropdown to close it
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+        closeDropdown();
+    }
+}
+
+// Show description on hover
+document.querySelectorAll('.dropdown-content a').forEach(function(link) {
+    link.addEventListener('mouseover', function() {
+        var description = link.getAttribute('data-description');
+        document.getElementById('formDescription').textContent = description;
+    });
+    link.addEventListener('mouseout', function() {
+        // Reset to the selected form's description
+        var selectedForm = document.getElementById("formSelectBtn").textContent;
+        if (selectedForm === "Form with Questions") {
+            document.getElementById('formDescription').textContent = "Use this form to answer specific questions about your reading preferences.";
+        } else if (selectedForm === "Form with Paragraph") {
+            document.getElementById('formDescription').textContent = "Use this form to describe your reading preferences in a paragraph.";
+        } else {
+            document.getElementById('formDescription').textContent = 'Select a form to see more details.';
+        }
+    });
+});
+
+
+
+
+
 $(document).ready(function() {
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     var recommendationButton = $('#recBtn');
-    var clickDelay = 200; // 5 minutes in milliseconds
-    var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime')); // Retrieve and parse the last clicked time from localStorage
+    var paragraphRecommendationButton = $('#paraBtn');
+    var quickRecommendationButton = $('button[name="action"][value="by_personality"]');
+    var clickDelay = 300000; // 5 minutes in milliseconds
+    var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
 
-    // Function to calculate if the cooldown is active
     function cooldownActive() {
         var currentTime = new Date().getTime();
         return lastClickedTime && (currentTime - lastClickedTime < clickDelay);
     }
 
-    // Check if the cooldown is active on page load
     if (cooldownActive()) {
         recommendationButton.prop('disabled', true);
+        paragraphRecommendationButton.prop('disabled', true);
+        quickRecommendationButton.prop('disabled', true);
         setTimeout(function() {
             recommendationButton.prop('disabled', false);
+            paragraphRecommendationButton.prop('disabled', false);
+            quickRecommendationButton.prop('disabled', false);
             alert('You can now request recommendations again.');
         }, clickDelay - (new Date().getTime() - lastClickedTime));
     }
 
-    // Setup the click event to show a warning if the button is clicked during cooldown
-    recommendationButton.click(function(event) {
-        if (cooldownActive()) {
-            event.preventDefault(); // Prevent the form submission
-            alert('Please wait for 5 minutes before requesting again!');
-        }
+    $('#formSelectBtn').click(function() {
+        toggleDropdown();
     });
 
     $('#recommendationForm').submit(function(event) {
@@ -36,9 +101,9 @@ $(document).ready(function() {
 
         event.preventDefault();
         var currentTime = new Date().getTime();
-        localStorage.setItem('lastClickedTime', currentTime.toString()); // Store the current time in localStorage as a string
-        lastClickedTime = currentTime;
+        localStorage.setItem('lastClickedTime', currentTime.toString());
         recommendationButton.prop('disabled', true);
+        paragraphRecommendationButton.prop('disabled', true);
 
         $('#loading').show();
 
@@ -60,6 +125,85 @@ $(document).ready(function() {
                 $('#loading').hide();
                 setTimeout(function() {
                     recommendationButton.prop('disabled', false);
+                    paragraphRecommendationButton.prop('disabled', false);
+                }, clickDelay);
+            }
+        });
+    });
+
+    $('#paragraphForm').submit(function(event) {
+        if (cooldownActive()) {
+            event.preventDefault();
+            alert('Please wait for 5 minutes before requesting again!');
+            return;
+        }
+
+        event.preventDefault();
+        var currentTime = new Date().getTime();
+        localStorage.setItem('lastClickedTime', currentTime.toString());
+        recommendationButton.prop('disabled', true);
+        paragraphRecommendationButton.prop('disabled', true);
+
+        $('#loading').show();
+
+        $.ajax({
+            headers: { "X-CSRFToken": csrfToken },
+            type: 'POST',
+            url: $(this).data('url'),
+            data: $(this).serialize(),
+            dataType: 'json',
+            success: function(response) {
+                console.log("Success!", response);
+                displayBooks(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX call failed", status, error);
+                console.error("Error details:", xhr.responseText);
+            },
+            complete: function() {
+                $('#loading').hide();
+                setTimeout(function() {
+                    recommendationButton.prop('disabled', false);
+                    paragraphRecommendationButton.prop('disabled', false);
+                }, clickDelay);
+            }
+        });
+    });
+
+    $('form[action="{% url "recommended_books" %}"]').submit(function(event) {
+        if (cooldownActive()) {
+            event.preventDefault();
+            alert('Please wait for 5 minutes before requesting again!');
+            return;
+        }
+
+        event.preventDefault();
+        var currentTime = new Date().getTime();
+        localStorage.setItem('lastClickedTime', currentTime.toString());
+        recommendationButton.prop('disabled', true);
+        paragraphRecommendationButton.prop('disabled', true);
+
+        $('#loading').show();
+
+        $.ajax({
+            headers: { "X-CSRFToken": csrfToken },
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            dataType: 'json',
+            success: function(response) {
+                console.log("Success!", response);
+                displayBooks(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX call failed", status, error);
+                console.error("Error details:", xhr.responseText);
+            },
+            complete: function() {
+                $('#loading').hide();
+                setTimeout(function() {
+                    recommendationButton.prop('disabled', false);
+                    paragraphRecommendationButton.prop('disabled', false);
                 }, clickDelay);
             }
         });
@@ -85,10 +229,6 @@ $(document).ready(function() {
         });
     }
 });
-
-
-
-
 
 
 
@@ -206,6 +346,37 @@ window.onclick = function(event) {
 //     });
 // });
 
+
+
+document.getElementById('logoutButton').addEventListener('click', function() {
+    // Directly use the CSRF token provided by Django
+    const csrfToken = '{{ csrf_token }}';
+    console.log("CSRF Token:", csrfToken);  // Log the CSRF token for debugging
+
+    // Define the URL directly
+    const logoutUrl = '{% url "logout" %}';
+
+    // Perform the fetch request
+    fetch(logoutUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/x-www-form-urlencoded'  // Ensure content type is correct
+        },
+        body: ''  // Empty body for POST request
+    }).then(response => {
+        console.log("Response Status:", response.status);  // Log response status for debugging
+        if (response.ok) {
+            alert('You have been logged out.');
+            location.reload();  // Reload the page to update the UI
+        } else {
+            return response.text().then(text => { throw new Error(text) });  // Capture detailed error message
+        }
+    }).catch(error => {
+        console.error('Error:', error);  // Log detailed error to console
+        alert('Logout failed: ' + error.message);  // Display detailed error message
+    });
+});
 
 
 console.log("Script loaded successfully.");
