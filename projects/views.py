@@ -158,7 +158,14 @@ def recommended_books(request):
             print(f"Error occurred while generating context: {e}")
             context = []
     elif function_type == 3:
-        print("MAMAEAEMAMEMAMEMA")
+        data = request.POST.get('self_description')
+        print("User data:",data)
+        try:
+            context = ChatGptCall.RecommendWithParagraph(data)
+            print("Context:",context)
+        except Exception as e:
+            print(f"Error occurred while generating context: {e}")
+            context = []
         
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
     filtered_books = check_books.remove_existing_books(context)

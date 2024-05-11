@@ -24,18 +24,12 @@ messages = [
 
 
 
-def make_suggestion(data):
+def make_suggestion(prompt):
 
-    preferences_summary = " ".join([f"{pref['question']} {pref['answer']}" for pref in data["questions"].values()])
-
-    liked_books_summary = ", ".join(data["user_liked_books"])
-
+    
 
     while True:
-        one_message = f"""Please make 10 book suggestions based on the user's answers of the these questions: {preferences_summary} 
-        and considering the user previously liked these books: {liked_books_summary}.Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
-        explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
-        book."""
+        one_message = prompt
 
         if one_message:
             messages.append(
@@ -66,7 +60,8 @@ def RecommendWithAnswers(user_queries, upvoted_books):
                 "answer": user_queries[1]
             },
             "character_plot_preferences": {
-                "question": "Do you prefer stories focused on strong character development, complex villains, "
+             
+   "question": "Do you prefer stories focused on strong character development, complex villains, "
                             "or thrilling adventures? Or something else?",
                 "answer": user_queries[2]
             },
@@ -77,34 +72,40 @@ def RecommendWithAnswers(user_queries, upvoted_books):
             }},
             "user_liked_books": "Martin eden"
     }
+    preferences_summary = " ".join([f"{pref['question']} {pref['answer']}" for pref in user_preferences["questions"].values()])
 
-    reply = make_suggestion(user_preferences)
-    print(reply)
+    liked_books_summary = ", ".join(user_preferences["user_liked_books"])
+
+    prompt = f"""Please make 10 book suggestions based on the user's answers of the these questions: {preferences_summary} 
+        and considering the user previously liked these books: {liked_books_summary}.Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
+        book."""
+    reply = make_suggestion(prompt)
     extracted_data = extract_books_info(reply)
     print(extracted_data)
     return extracted_data
 
 
 def RecommendWithReadingPersona(user_reading_personality):
-    while True:
-        prompt = (
-        f"""Please, based on the following reading personality description, recommend 10 books that the person will likely enjoy Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
-        book.:{user_reading_personality} """
-        
-        
-        )
 
-        if prompt:
-            messages.append(
-                {"role": "user", "content": prompt},
-            )
-            chat = openai.chat.completions.create( # type: ignore
-                model="gpt-4-0125-preview", messages=messages # type: ignore
-            )
+    prompt = f"""Please make 10 book suggestions based on the user's reading personality: {user_reading_personality}
+        Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
+        book."""
         
-        reply = chat.choices[0].message.content # type: ignore
-        print("reply:", reply)
-        extracted_data = extract_books_info(reply)
-        print("extracted data:", extracted_data)
-        return extracted_data
+    reply = make_suggestion(prompt)
+        
+    extracted_data = extract_books_info(reply)
+    print("extracted data:", extracted_data)
+    return extracted_data
+
+def RecommendWithParagraph(user_paraghraph):
+    prompt = f"""Please make 10 book suggestions based on the user's book preferences paraghraph: {user_paraghraph}
+        Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
+        book."""
     
+    reply = make_suggestion(prompt)
+    extracted_data = extract_books_info(reply)
+    print("extracted data:", extracted_data)
+    return extracted_data

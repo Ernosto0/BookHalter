@@ -71,7 +71,7 @@
     </div>
     
     <div id="form2" class="form-container" style="display: none;">
-        <form id="paragraphForm" method="POST" data-url="{% url 'recommended_books' %}">
+        <form id="paragraphForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="by_paragraph">
             <label for="self_description">Describe yourself and your reading preferences:</label><br>
@@ -85,10 +85,10 @@
     <div class="quick-recommendation">
         <h2>Quick Book Recommendation</h2>
         <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
-        <form method="POST" action="{% url 'recommended_books' %}">
+        <form id="quickRecommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="by_personality">
-            <button type="submit">Surprise Me!</button>
+            <button type="submit" id="quickRecBtn">Surprise Me!</button>
         </form>
     </div>
 
