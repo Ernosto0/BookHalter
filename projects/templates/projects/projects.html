@@ -37,11 +37,14 @@
             <button id="registerBtn">Register</button>
         </div>
 
+        <!-- Logout button -->
         {% if user.is_authenticated %}
         <div class="logout-button">
             <button type="button" class="logout-button" id="logoutButton">Logout</button>
         </div>
     {% endif %}
+    <div id="logout-message" style="color: green;"></div> <!-- Logout message placeholder -->
+
     </div>
     <div class="dropdown">
     <div id="formDescription" class="form-description">Select a form to see more details.</div>
@@ -104,7 +107,7 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <form method="post" action="{% url 'login' %}">
+            <form id="loginForm" method="post" action="{% url 'users:ajax_login' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -117,9 +120,14 @@
                 <div class="form-group">
                     <button type="submit" class="login-button">Login</button>
                 </div>
+                <div id="login-message" style="color: green;"></div> <!-- Success message placeholder -->
+                <div id="login-error" style="color: red;"></div> <!-- Error message placeholder -->
             </form>
         </div>
     </div>
+    
+    
+    
 
 
     <!-- Text for Result -->
@@ -132,7 +140,7 @@
      <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close-register">&times;</span>
-            <form method="post" action="{% url 'register' %}">
+            <form id="registerForm" method="post" action="{% url 'users:register' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username-register">Username:</label>
@@ -143,19 +151,31 @@
                     <input type="email" id="email-register" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password-register">Password:</label>
-                    <input type="password" id="password-register" name="password" required>
+                    <label for="password1-register">Password:</label>
+                    <input type="password" id="password1-register" name="password1" required>
+                </div>
+                <div class="form-group">
+                    <label for="password2-register">Confirm Password:</label>
+                    <input type="password" id="password2-register" name="password2" required>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="register-button">Register</button>
                 </div>
+                <div id="register-error" style="color: red;"></div> <!-- Error message placeholder -->
+                <div id="register-success" style="color: green;"></div> <!-- Success message placeholder -->
             </form>
         </div>
     </div>
+    
+    
+    
+    
+    
 
     <body data-get-read-books-url="{% url 'get_read_books' %}"></body>
 
-
+    
+        
     <div class="read-books-container" id="readBooksList">
         <!-- Books will be loaded here by JavaScript -->
     </div>
@@ -185,21 +205,27 @@
                 body: ''  // Empty body for POST request
             }).then(response => {
                 console.log("Response Status:", response.status);  // Log response status for debugging
+                var logoutMessageDiv = document.getElementById('logout-message');
                 if (response.ok) {
-                    alert('You have been logged out.');
-                    location.reload();  // Reload the page to update the UI
+                    logoutMessageDiv.textContent = 'You have been logged out successfully.';
+                    setTimeout(() => {
+                        location.reload();  // Optionally reload the page after a short delay
+                    }, 2000);  // Adjust delay as needed
                 } else {
                     return response.text().then(text => { throw new Error(text) });  // Capture detailed error message
                 }
             }).catch(error => {
                 console.error('Error:', error);  // Log detailed error to console
-                alert('Logout failed: ' + error.message);  // Display detailed error message
+                var logoutMessageDiv = document.getElementById('logout-message');
+                // logoutMessageDiv.textContent = 'Logout failed: ' + error.message;  // Display detailed error message
+                logoutMessageDiv.style.color = 'red';  // Change color to red for errors
             });
         });
         </script>
+        
 
     <script src="{% static 'scripts.js' %}"></script>
-
+    
 </body>
 </html>
 {% endblock %}

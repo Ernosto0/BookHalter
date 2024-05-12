@@ -6,17 +6,19 @@ from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpR
 from django.contrib.auth.decorators import login_required 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.http import require_POST
 from regex import P
 from MyTest.testcontext import test_contex
 from django.shortcuts import render
 from .forms import UserInputForm
 from django_ratelimit.decorators import ratelimit
-
+import logging
 from users.models import UserBookData
 
 from aifolder import BookDataApis, ChatGptCall, CreateUserReadingPersona
 from .models import  Books, Comment, Vote
-from .management.commands import getbook, get_upvoted_book, addbooks, check_books,  UpdateVoteCount
+from .management.commands import CheckBooks, GetUpvotedBooks, GetBook, AddBooks, UpdateVoteCount
 from .management.commands.GetUserData import UserDataGetter
 
 
@@ -60,7 +62,7 @@ def projects(request):
     user_data_getter = UserDataGetter(request)
 
     if request.user.is_authenticated:
-        up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+        up_voted_books = GetUpvotedBooks.get_upvoted_books_by_user(request.user)
         vote_count_data = user_data_getter.get_user_vote_count_data()
         print("PPPPPPPPPPPPPPPPPPPPPPPP")
         print(up_voted_books)
@@ -168,7 +170,7 @@ def recommended_books(request):
             context = []
         
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
-    filtered_books = check_books.remove_existing_books(context)
+    filtered_books = CheckBooks.remove_existing_books(context)
     
     if filtered_books: # if there is a not added or not got the data from api
         # Get filtered book's data for the first time
@@ -179,13 +181,13 @@ def recommended_books(request):
         print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
         print(respond)
         # Add the filtered books to data base for the first time
-        addbooks.add_books(respond)
+        AddBooks.add_books(respond)
     print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
     print(context)
     
     
 
-    books = getbook.search_books_in_database(context)
+    books = GetBook.search_books_in_database(context)
     
     index = 0
     for book in books:
@@ -356,3 +358,4 @@ def toggle_read_status(request, book_id):
         return JsonResponse({'status': 'success', 'message': message, 'read': book in user_book_data.read_books.all()})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+    

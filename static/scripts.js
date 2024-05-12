@@ -161,22 +161,27 @@ $(document).ready(function() {
         fetch(fetchUrl)
         .then(response => response.json())
         .then(data => {
-            let books = data.read_books;
-            let container = document.getElementById('readBooksList');
-            container.innerHTML = ''; // Clear existing entries
-            if (books.length) {
-                books.forEach(book => {
-                    // Entire book entry is now clickable
-                    let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
-                                    <div class="read-book">
-                                        <h4>${book.name}</h4>
-                                        <p>${book.author}</p>
-                                    </div>
-                                </a>`;
-                    container.innerHTML += bookDiv;
-                });
+            if (data.authenticated) {
+                let books = data.read_books;
+                let container = document.getElementById('readBooksList');
+                container.innerHTML = ''; // Clear existing entries
+                if (books.length) {
+                    books.forEach(book => {
+                        // Entire book entry is now clickable
+                        let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
+                                        <div class="read-book">
+                                            <h4>${book.name}</h4>
+                                            <p>${book.author}</p>
+                                        </div>
+                                    </a>`;
+                        container.innerHTML += bookDiv;
+                    });
+                } else {
+                    container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
+                }
             } else {
-                container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
+                let container = document.getElementById('readBooksList');
+                container.innerHTML = '<p>You need to login to see read books.</p>';
             }
         })
         .catch(error => console.error('Error loading the books:', error));
@@ -201,6 +206,41 @@ loginBtn.onclick = function() {
 span.onclick = function() {
     modal.style.display = "none";
 }
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+    var form = event.target;
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        var errorDiv = document.getElementById('login-error');
+        var messageDiv = document.getElementById('login-message');
+        if (data.success) {
+            errorDiv.textContent = '';  // Clear any previous errors
+            messageDiv.textContent = 'Login successful!';
+            setTimeout(() => {
+                window.location.reload();  // Optionally reload the page after a short delay
+            }, 2000);  // Adjust delay as needed
+        } else {
+            messageDiv.textContent = '';  // Clear any previous success messages
+            errorDiv.textContent = data.error;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -228,12 +268,88 @@ spanRegister.onclick = function() {
     registerModal.style.display = "none";
 }
 
+
+// Register form submission
+document.getElementById('registerForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+    var form = event.target;
+    var formData = new FormData(form);
+
+    // Convert FormData to URLSearchParams
+    var urlParams = new URLSearchParams();
+    formData.forEach((value, key) => {
+        urlParams.append(key, value);
+    });
+
+    console.log("Submitting form with data:", urlParams.toString());  // Log form data for debugging
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',  // Ensure X-Requested-With header is set
+            'Content-Type': 'application/x-www-form-urlencoded'  // Ensure content type is correct
+        },
+        body: urlParams.toString()  // Send data as URL-encoded string
+    })
+    .then(response => {
+        console.log("Response status:", response.status);  // Log response status
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        var errorDiv = document.getElementById('register-error');
+        var successDiv = document.getElementById('register-success');
+        if (data.success) {
+            errorDiv.textContent = '';  // Clear any previous errors
+            successDiv.textContent = 'Registration successful!';
+            setTimeout(() => {
+                document.getElementById('registerModal').style.display = 'none';
+                successDiv.textContent = '';  // Clear success message after closing modal
+            }, 2000);  // Adjust delay as needed
+        } else {
+            console.error("Form errors:", data.error);  // Log form errors
+            successDiv.textContent = '';  // Clear any previous success messages
+            errorDiv.innerHTML = '';  // Clear previous error messages
+            // Check if data.error is a string and handle it
+            if (typeof data.error === 'string') {
+                var p = document.createElement('p');
+                p.textContent = data.error;
+                errorDiv.appendChild(p);
+            } else {
+                // Iterate through errors and display them
+                for (let field in data.error) {
+                    if (data.error.hasOwnProperty(field)) {
+                        data.error[field].forEach(error => {
+                            var p = document.createElement('p');
+                            p.textContent = `${field}: ${error}`;
+                            errorDiv.appendChild(p);
+                        });
+                    }
+                }
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);  // Log fetch errors
+        var errorDiv = document.getElementById('register-error');
+        errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+    });
+});
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
+    var registerModal = document.getElementById('registerModal');
     if (event.target == registerModal) {
         registerModal.style.display = "none";
     }
 }
+
+
+
 
 
 // Loader
@@ -271,7 +387,7 @@ window.onclick = function(event) {
 // });
 
 
-
+// Logout script
 document.getElementById('logoutButton').addEventListener('click', function() {
     // Directly use the CSRF token provided by Django
     const csrfToken = '{{ csrf_token }}';
@@ -290,15 +406,20 @@ document.getElementById('logoutButton').addEventListener('click', function() {
         body: ''  // Empty body for POST request
     }).then(response => {
         console.log("Response Status:", response.status);  // Log response status for debugging
+        var logoutMessageDiv = document.getElementById('logout-message');
         if (response.ok) {
-            alert('You have been logged out.');
-            location.reload();  // Reload the page to update the UI
+            logoutMessageDiv.textContent = 'You have been logged out successfully.';
+            setTimeout(() => {
+                location.reload();  // Optionally reload the page after a short delay
+            }, 2000);  // Adjust delay as needed
         } else {
             return response.text().then(text => { throw new Error(text) });  // Capture detailed error message
         }
     }).catch(error => {
         console.error('Error:', error);  // Log detailed error to console
-        alert('Logout failed: ' + error.message);  // Display detailed error message
+        var logoutMessageDiv = document.getElementById('logout-message');
+        // logoutMessageDiv.textContent = 'Logout failed: ' + error.message;  // Display detailed error message
+        logoutMessageDiv.style.color = 'red';  // Change color to red for errors
     });
 });
 

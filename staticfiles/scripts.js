@@ -67,8 +67,8 @@ $(document).ready(function() {
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     var recommendationButton = $('#recBtn');
     var paragraphRecommendationButton = $('#paraBtn');
-    var quickRecommendationButton = $('button[name="action"][value="by_personality"]');
-    var clickDelay = 300000; // 5 minutes in milliseconds
+    var quickRecommendationButton = $('#quickRecBtn');
+    var clickDelay = 230; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
 
     function cooldownActive() {
@@ -92,7 +92,7 @@ $(document).ready(function() {
         toggleDropdown();
     });
 
-    $('#recommendationForm').submit(function(event) {
+    $('#recommendationForm, #paragraphForm, #quickRecommendationForm').submit(function(event) {
         if (cooldownActive()) {
             event.preventDefault();
             alert('Please wait for 5 minutes before requesting again!');
@@ -104,84 +104,7 @@ $(document).ready(function() {
         localStorage.setItem('lastClickedTime', currentTime.toString());
         recommendationButton.prop('disabled', true);
         paragraphRecommendationButton.prop('disabled', true);
-
-        $('#loading').show();
-
-        $.ajax({
-            headers: { "X-CSRFToken": csrfToken },
-            type: 'POST',
-            url: $(this).data('url'),
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(response) {
-                console.log("Success!", response);
-                displayBooks(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX call failed", status, error);
-                console.error("Error details:", xhr.responseText);
-            },
-            complete: function() {
-                $('#loading').hide();
-                setTimeout(function() {
-                    recommendationButton.prop('disabled', false);
-                    paragraphRecommendationButton.prop('disabled', false);
-                }, clickDelay);
-            }
-        });
-    });
-
-    $('#paragraphForm').submit(function(event) {
-        if (cooldownActive()) {
-            event.preventDefault();
-            alert('Please wait for 5 minutes before requesting again!');
-            return;
-        }
-
-        event.preventDefault();
-        var currentTime = new Date().getTime();
-        localStorage.setItem('lastClickedTime', currentTime.toString());
-        recommendationButton.prop('disabled', true);
-        paragraphRecommendationButton.prop('disabled', true);
-
-        $('#loading').show();
-
-        $.ajax({
-            headers: { "X-CSRFToken": csrfToken },
-            type: 'POST',
-            url: $(this).data('url'),
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(response) {
-                console.log("Success!", response);
-                displayBooks(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX call failed", status, error);
-                console.error("Error details:", xhr.responseText);
-            },
-            complete: function() {
-                $('#loading').hide();
-                setTimeout(function() {
-                    recommendationButton.prop('disabled', false);
-                    paragraphRecommendationButton.prop('disabled', false);
-                }, clickDelay);
-            }
-        });
-    });
-
-    $('form[action="{% url "recommended_books" %}"]').submit(function(event) {
-        if (cooldownActive()) {
-            event.preventDefault();
-            alert('Please wait for 5 minutes before requesting again!');
-            return;
-        }
-
-        event.preventDefault();
-        var currentTime = new Date().getTime();
-        localStorage.setItem('lastClickedTime', currentTime.toString());
-        recommendationButton.prop('disabled', true);
-        paragraphRecommendationButton.prop('disabled', true);
+        quickRecommendationButton.prop('disabled', true);
 
         $('#loading').show();
 
@@ -204,59 +127,65 @@ $(document).ready(function() {
                 setTimeout(function() {
                     recommendationButton.prop('disabled', false);
                     paragraphRecommendationButton.prop('disabled', false);
+                    quickRecommendationButton.prop('disabled', false);
                 }, clickDelay);
             }
         });
     });
-
-    function displayBooks(response) {
-        var col1 = $('#column1').empty();
-        var col2 = $('#column2').empty();
-        response.books.forEach(function(book, index) {
-            var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
-            var bookElement = $('<div class="book">').append(
-                $('<h3 class="title">').text(book.name),
-                book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
-                $('<p>').text('Author: ' + book.author),
-                $('<p>').text(book.explanation),
-                bookDetailLink
-            );
-            if (index % 2 === 0) {
-                col1.append(bookElement);
-            } else {
-                col2.append(bookElement);
-            }
-        });
-    }
 });
 
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    var fetchUrl = document.body.getAttribute('data-get-read-books-url');
-    fetch(fetchUrl)
-    .then(response => response.json())
-    .then(data => {
-        let books = data.read_books;
-        let container = document.getElementById('readBooksList');
-        container.innerHTML = ''; // Clear existing entries
-        if (books.length) {
-            books.forEach(book => {
-                // Entire book entry is now clickable
-                let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
-                                <div class="read-book">
-                                    <h4>${book.name}</h4>
-                                    <p>${book.author}</p>
-                                </div>
-                            </a>`;
-                container.innerHTML += bookDiv;
+        function displayBooks(response) {
+            var col1 = $('#column1').empty();
+            var col2 = $('#column2').empty();
+            response.books.forEach(function(book, index) {
+                var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
+                var bookElement = $('<div class="book">').append(
+                    $('<h3 class="title">').text(book.name),
+                    book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
+                    $('<p>').text('Author: ' + book.author),
+                    $('<p>').text(book.explanation),
+                    bookDetailLink
+                );
+                if (index % 2 === 0) {
+                    col1.append(bookElement);
+                } else {
+                    col2.append(bookElement);
+                }
             });
-        } else {
-            container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
         }
-    })
-    .catch(error => console.error('Error loading the books:', error));
-});
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var fetchUrl = document.body.getAttribute('data-get-read-books-url');
+        fetch(fetchUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                let books = data.read_books;
+                let container = document.getElementById('readBooksList');
+                container.innerHTML = ''; // Clear existing entries
+                if (books.length) {
+                    books.forEach(book => {
+                        // Entire book entry is now clickable
+                        let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
+                                        <div class="read-book">
+                                            <h4>${book.name}</h4>
+                                            <p>${book.author}</p>
+                                        </div>
+                                    </a>`;
+                        container.innerHTML += bookDiv;
+                    });
+                } else {
+                    container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
+                }
+            } else {
+                let container = document.getElementById('readBooksList');
+                container.innerHTML = '<p>You need to login to see read books.</p>';
+            }
+        })
+        .catch(error => console.error('Error loading the books:', error));
+    });
 
 // login modal script
 // Get the modal
@@ -277,6 +206,41 @@ loginBtn.onclick = function() {
 span.onclick = function() {
     modal.style.display = "none";
 }
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+    var form = event.target;
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        var errorDiv = document.getElementById('login-error');
+        var messageDiv = document.getElementById('login-message');
+        if (data.success) {
+            errorDiv.textContent = '';  // Clear any previous errors
+            messageDiv.textContent = 'Login successful!';
+            setTimeout(() => {
+                window.location.reload();  // Optionally reload the page after a short delay
+            }, 2000);  // Adjust delay as needed
+        } else {
+            messageDiv.textContent = '';  // Clear any previous success messages
+            errorDiv.textContent = data.error;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -304,12 +268,88 @@ spanRegister.onclick = function() {
     registerModal.style.display = "none";
 }
 
+
+// Register form submission
+document.getElementById('registerForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+    var form = event.target;
+    var formData = new FormData(form);
+
+    // Convert FormData to URLSearchParams
+    var urlParams = new URLSearchParams();
+    formData.forEach((value, key) => {
+        urlParams.append(key, value);
+    });
+
+    console.log("Submitting form with data:", urlParams.toString());  // Log form data for debugging
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',  // Ensure X-Requested-With header is set
+            'Content-Type': 'application/x-www-form-urlencoded'  // Ensure content type is correct
+        },
+        body: urlParams.toString()  // Send data as URL-encoded string
+    })
+    .then(response => {
+        console.log("Response status:", response.status);  // Log response status
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        var errorDiv = document.getElementById('register-error');
+        var successDiv = document.getElementById('register-success');
+        if (data.success) {
+            errorDiv.textContent = '';  // Clear any previous errors
+            successDiv.textContent = 'Registration successful!';
+            setTimeout(() => {
+                document.getElementById('registerModal').style.display = 'none';
+                successDiv.textContent = '';  // Clear success message after closing modal
+            }, 2000);  // Adjust delay as needed
+        } else {
+            console.error("Form errors:", data.error);  // Log form errors
+            successDiv.textContent = '';  // Clear any previous success messages
+            errorDiv.innerHTML = '';  // Clear previous error messages
+            // Check if data.error is a string and handle it
+            if (typeof data.error === 'string') {
+                var p = document.createElement('p');
+                p.textContent = data.error;
+                errorDiv.appendChild(p);
+            } else {
+                // Iterate through errors and display them
+                for (let field in data.error) {
+                    if (data.error.hasOwnProperty(field)) {
+                        data.error[field].forEach(error => {
+                            var p = document.createElement('p');
+                            p.textContent = `${field}: ${error}`;
+                            errorDiv.appendChild(p);
+                        });
+                    }
+                }
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);  // Log fetch errors
+        var errorDiv = document.getElementById('register-error');
+        errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+    });
+});
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
+    var registerModal = document.getElementById('registerModal');
     if (event.target == registerModal) {
         registerModal.style.display = "none";
     }
 }
+
+
+
 
 
 // Loader
@@ -347,7 +387,7 @@ window.onclick = function(event) {
 // });
 
 
-
+// Logout script
 document.getElementById('logoutButton').addEventListener('click', function() {
     // Directly use the CSRF token provided by Django
     const csrfToken = '{{ csrf_token }}';
@@ -366,15 +406,20 @@ document.getElementById('logoutButton').addEventListener('click', function() {
         body: ''  // Empty body for POST request
     }).then(response => {
         console.log("Response Status:", response.status);  // Log response status for debugging
+        var logoutMessageDiv = document.getElementById('logout-message');
         if (response.ok) {
-            alert('You have been logged out.');
-            location.reload();  // Reload the page to update the UI
+            logoutMessageDiv.textContent = 'You have been logged out successfully.';
+            setTimeout(() => {
+                location.reload();  // Optionally reload the page after a short delay
+            }, 2000);  // Adjust delay as needed
         } else {
             return response.text().then(text => { throw new Error(text) });  // Capture detailed error message
         }
     }).catch(error => {
         console.error('Error:', error);  // Log detailed error to console
-        alert('Logout failed: ' + error.message);  // Display detailed error message
+        var logoutMessageDiv = document.getElementById('logout-message');
+        // logoutMessageDiv.textContent = 'Logout failed: ' + error.message;  // Display detailed error message
+        logoutMessageDiv.style.color = 'red';  // Change color to red for errors
     });
 });
 
