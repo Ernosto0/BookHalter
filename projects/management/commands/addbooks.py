@@ -1,31 +1,39 @@
 from projects.models import Books
-from django.db import IntegrityError
-from fuzzywuzzy import process
+from django.db import IntegrityError, transaction
+from fuzzywuzzy import process 
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 def add_books(book_list):
     for book in book_list:
-        # valid_amazon_id = book['id_amazon'] if book['id_amazon'].isdigit() else 0
+        try:
+            if 'title' not in book or 'author' not in book or not book['author']:
+                logger.error(f"Missing title or author for book: {book}")
+                continue
 
-        # Check if the book already exists (considering name and author for uniqueness)
-        if not Books.objects.filter(name=book['title'], author=book['author']).exists():
-            if not find_fuzzy_match(book['title'], book['author']):
-                try:
-                    # Create a new book entry with all provided details
-                    Books.objects.create(
-                        name=book['title'],
-                        author=book['author'][0],
-                        published_year=book['year'],
-                        description=book['description'],
-                        cover_image_url=book['cover_image'],
-                        # amazon_id=book['id_amazon'],
-                        googlebooks_link=book['googlebooks_link'],
-
-                    )
-                    print(f"Added book: {book['title']} by {book['author'][0]}")
-                except IntegrityError as e:
-                    print(f"An error occurred when adding '{book['title']}': {e}")
+            if not Books.objects.filter(name=book['title'], author=book['author'][0]).exists():
+                if not find_fuzzy_match(book['title'], book['author'][0]):
+                    try:
+                        with transaction.atomic():
+                            Books.objects.create(
+                                name=book['title'],
+                                author=book['author'][0],
+                                published_year=book.get('year', None),
+                                description=book.get('description', ''),
+                                cover_image_url=book.get('cover_image', ''),
+                                googlebooks_link=book.get('googlebooks_link', ''),
+                            )
+                            logger.info(f"Added book: {book['title']} by {book['author'][0]}")
+                    except IntegrityError as e:
+                        logger.error(f"IntegrityError when adding '{book['title']}': {e}")
+                else:
+                    logger.info(f"Book already exists: {book['title']} by {book['author'][0]}")
             else:
-                print(f"Book already exists: {book['title']} by {book['author'][0]}")
+                logger.info(f"Book already exists in database: {book['title']} by {book['author'][0]}")
+        except Exception as e:
+            logger.error(f"An unexpected error occurred for book '{book.get('title', 'Unknown')}': {e}")
 
 
 

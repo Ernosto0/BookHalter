@@ -3,21 +3,23 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.http import require_POST
 from regex import P
 from MyTest.testcontext import test_contex
 from django.shortcuts import render
 from .forms import UserInputForm
 from django_ratelimit.decorators import ratelimit
-
+import logging
 from users.models import UserBookData
 
 from aifolder import BookDataApis, ChatGptCall, CreateUserReadingPersona
 from .models import  Books, Comment, Vote
-from .management.commands import getbook, get_upvoted_book, addbooks, check_books,  UpdateVoteCount
+from .management.commands import CheckBooks, GetUpvotedBooks, GetBook, AddBooks, UpdateVoteCount
 from .management.commands.GetUserData import UserDataGetter
-
 
 
 def set_cookie(request):
@@ -27,10 +29,11 @@ def set_cookie(request):
 
 
 
+
+
 def get_read_books(request):
     if not request.user.is_authenticated:
-        return JsonResponse({'error': 'User not authenticated'}, status=401)
-
+        return JsonResponse({'authenticated': False, 'error': 'User not authenticated'}, status=401)
 
     try:
         user_data_getter = UserDataGetter(request)
@@ -46,9 +49,10 @@ def get_read_books(request):
         else:
             read_books_list = []
 
-        return JsonResponse({'read_books': read_books_list}, safe=False)
+        return JsonResponse({'authenticated': True, 'read_books': read_books_list}, safe=False)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'authenticated': True, 'error': str(e)}, status=500)
+
 
 
 def projects(request):
@@ -59,7 +63,7 @@ def projects(request):
     user_data_getter = UserDataGetter(request)
 
     if request.user.is_authenticated:
-        up_voted_books = get_upvoted_book.get_upvoted_books_by_user(request.user)
+        up_voted_books = GetUpvotedBooks.get_upvoted_books_by_user(request.user)
         vote_count_data = user_data_getter.get_user_vote_count_data()
         print("PPPPPPPPPPPPPPPPPPPPPPPP")
         print(up_voted_books)
@@ -107,20 +111,21 @@ def book_detail(request, book_id):
     return render(request, 'projects/book_detail.html', context)
 
 
-
+@csrf_exempt
 @ratelimit(key='ip', rate='1/h', method='ALL', block=True)
 def recommended_books(request):
     user_data_getter = UserDataGetter(request)
-
-
-    
+    context = []
     function_type = 1
 
-    if request.method == 'POST':
-        if 'action' in request.POST:
-            action = request.POST.get('action')
-            if action == 'by_personality':
-                function_type = 2
+   
+            
+    action = request.POST.get('action')
+    print(action)
+    if action == 'by_personality':
+            function_type = 2
+    if action == 'by_paragraph':
+            function_type = 3
                 
     print(function_type)
      
@@ -132,31 +137,43 @@ def recommended_books(request):
     print(upvoted_books)
 
     if function_type == 1:
-        # Get data from request.GET if using the GET method
-        recent_reads = request.POST.get('recent_reads')
-        desired_feeling = request.POST.get('desired_feeling')
-        character_plot_preferences = request.POST.get('character_plot_preferences')
-        pacing_narrative_style = request.POST.get('pacing_narrative_style')
+
+            context = test_contex
+    #     # Get data from request.GET if using the GET method
+    #     recent_reads = request.POST.get('recent_reads')
+    #     desired_feeling = request.POST.get('desired_feeling')
+    #     character_plot_preferences = request.POST.get('character_plot_preferences')
+    #     pacing_narrative_style = request.POST.get('pacing_narrative_style')
         
 
-        # Perform actions specific to function_type 1
-        try:
-            context = ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    #     # Perform actions specific to function_type 1
+    #     try:
+    #         context = ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
 
-    elif function_type == 2:
-        data = user_data_getter.get_user_reading_persona()
-        print(data)
-        try:
-            context = ChatGptCall.RecommendWithReadingPersona(data)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    # elif function_type == 2:
+    #     data = user_data_getter.get_user_reading_persona()
+    #     print("User data:",data)
+    #     try:
+    #         context = ChatGptCall.RecommendWithReadingPersona(data)
+    #         print("Context:",context)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
+    # elif function_type == 3:
+    #     data = request.POST.get('self_description')
+    #     print("User data:",data)
+    #     try:
+    #         context = ChatGptCall.RecommendWithParagraph(data)
+    #         print("Context:",context)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
         
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
-    filtered_books = check_books.remove_existing_books(context)
+    filtered_books = CheckBooks.remove_existing_books(context)
     
     if filtered_books: # if there is a not added or not got the data from api
         # Get filtered book's data for the first time
@@ -167,13 +184,13 @@ def recommended_books(request):
         print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
         print(respond)
         # Add the filtered books to data base for the first time
-        addbooks.add_books(respond)
+        AddBooks.add_books(respond)
     print("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
     print(context)
     
     
 
-    books = getbook.search_books_in_database(context)
+    books = GetBook.search_books_in_database(context)
     
     index = 0
     for book in books:
@@ -344,3 +361,4 @@ def toggle_read_status(request, book_id):
         return JsonResponse({'status': 'success', 'message': message, 'read': book in user_book_data.read_books.all()})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+    

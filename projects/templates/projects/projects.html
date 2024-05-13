@@ -36,23 +36,31 @@
         <div class="register-button">
             <button id="registerBtn">Register</button>
         </div>
+
+        <!-- Logout button -->
         {% if user.is_authenticated %}
         <div class="logout-button">
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="logout-button">Logout</button>
-            </form>
+            <button type="button" class="logout-button" id="logoutButton">Logout</button>
         </div>
-        
-        {% endif %}
+    {% endif %}
+    <div id="logout-message" style="color: green;"></div> <!-- Logout message placeholder -->
+
     </div>
-    
-    
+    <div class="dropdown">
+    <div id="formDescription" class="form-description">Select a form to see more details.</div>
+    <button id="formSelectBtn" class="dropbtn" >Form with Questions</button>
+    <div id="formDropdown" class="dropdown-content">
+        <a href="#" data-description="Use this form to answer specific questions about your reading preferences." onclick="selectForm('form1', 'Form with Questions')">Form with Questions</a>
+        <a href="#" data-description="Use this form to describe your reading preferences in a paragraph." onclick="selectForm('form2', 'Form with Paragraph')">Form with Paragraph</a>
+        <!-- Add more form options as needed -->
+    </div>
+</div>
 
-
-        <form id="recommendationForm" method="POST" data-url="{% url 'recommended_books' %}">
+    
+    <div id="form1" class="form-container">
+        <form id="recommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
-            {% comment %} {{ form.as_p }} {% endcomment %} 
+            <input type="hidden" name="action" value="by_answers">
             <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
             <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
             <label for="desired_feeling">How you want to feel with your next book:</label><br>
@@ -61,20 +69,32 @@
             <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
             <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
             <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
-            <button type="submit" name="action" value="by_answers" id="recBtn">Get Book Recommendations</button>
+            <button type="submit" id="recBtn">Get Book Recommendations</button>
         </form>
+    </div>
+    
+    <div id="form2" class="form-container" style="display: none;">
+        <form id="paragraphForm" method="POST" action="{% url 'recommended_books' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="by_paragraph">
+            <label for="self_description">Describe yourself and your reading preferences:</label><br>
+            <textarea id="self_description" name="self_description" placeholder="Write your description here..." rows="5" cols="40"></textarea><br>
+            <button type="submit" id="paraBtn">Get Book Recommendations</button>
+        </form>
+    </div>
+    
         
 
     <div class="quick-recommendation">
         <h2>Quick Book Recommendation</h2>
         <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
-        <form method="POST" action="{% url 'recommended_books' %}">
+        <form id="quickRecommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
- 
-            <button type="submit", name="action", value="by_personality">Surprise Me!</button>
+            <input type="hidden" name="action" value="by_personality">
+            <button type="submit" id="quickRecBtn">Surprise Me!</button>
         </form>
     </div>
-    
+
 
 
     <div id="bookColumns" class="book-columns">
@@ -87,7 +107,7 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <form method="post" action="{% url 'login' %}">
+            <form id="loginForm" method="post" action="{% url 'users:ajax_login' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -100,9 +120,14 @@
                 <div class="form-group">
                     <button type="submit" class="login-button">Login</button>
                 </div>
+                <div id="login-message" style="color: green;"></div> <!-- Success message placeholder -->
+                <div id="login-error" style="color: red;"></div> <!-- Error message placeholder -->
             </form>
         </div>
     </div>
+    
+    
+    
 
 
     <!-- Text for Result -->
@@ -115,7 +140,7 @@
      <div id="registerModal" class="modal">
         <div class="modal-content">
             <span class="close-register">&times;</span>
-            <form method="post" action="{% url 'register' %}">
+            <form id="registerForm" method="post" action="{% url 'users:register' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username-register">Username:</label>
@@ -126,19 +151,31 @@
                     <input type="email" id="email-register" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password-register">Password:</label>
-                    <input type="password" id="password-register" name="password" required>
+                    <label for="password1-register">Password:</label>
+                    <input type="password" id="password1-register" name="password1" required>
+                </div>
+                <div class="form-group">
+                    <label for="password2-register">Confirm Password:</label>
+                    <input type="password" id="password2-register" name="password2" required>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="register-button">Register</button>
                 </div>
+                <div id="register-error" style="color: red;"></div> <!-- Error message placeholder -->
+                <div id="register-success" style="color: green;"></div> <!-- Success message placeholder -->
             </form>
         </div>
     </div>
+    
+    
+    
+    
+    
 
     <body data-get-read-books-url="{% url 'get_read_books' %}"></body>
 
-
+    
+        
     <div class="read-books-container" id="readBooksList">
         <!-- Books will be loaded here by JavaScript -->
     </div>
@@ -149,8 +186,46 @@
         <div class="loader">Loading...</div>
     </div>
 
-    <script src="{% static 'scripts.js' %}"></script>
+    <script>
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            // Directly use the CSRF token provided by Django
+            const csrfToken = '{{ csrf_token }}';
+            console.log("CSRF Token:", csrfToken);  // Log the CSRF token for debugging
+        
+            // Define the URL directly
+            const logoutUrl = '{% url "logout" %}';
+        
+            // Perform the fetch request
+            fetch(logoutUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded'  // Ensure content type is correct
+                },
+                body: ''  // Empty body for POST request
+            }).then(response => {
+                console.log("Response Status:", response.status);  // Log response status for debugging
+                var logoutMessageDiv = document.getElementById('logout-message');
+                if (response.ok) {
+                    logoutMessageDiv.textContent = 'You have been logged out successfully.';
+                    setTimeout(() => {
+                        location.reload();  // Optionally reload the page after a short delay
+                    }, 2000);  // Adjust delay as needed
+                } else {
+                    return response.text().then(text => { throw new Error(text) });  // Capture detailed error message
+                }
+            }).catch(error => {
+                console.error('Error:', error);  // Log detailed error to console
+                var logoutMessageDiv = document.getElementById('logout-message');
+                // logoutMessageDiv.textContent = 'Logout failed: ' + error.message;  // Display detailed error message
+                logoutMessageDiv.style.color = 'red';  // Change color to red for errors
+            });
+        });
+        </script>
+        
 
+    <script src="{% static 'scripts.js' %}"></script>
+    
 </body>
 </html>
 {% endblock %}
