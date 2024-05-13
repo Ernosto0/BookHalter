@@ -58,7 +58,7 @@
 
     
     <div id="form1" class="form-container">
-        <form id="recommendationForm" method="POST" data-url="{% url 'recommended_books' %}">
+        <form id="recommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="by_answers">
             <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>

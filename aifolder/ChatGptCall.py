@@ -26,8 +26,6 @@ messages = [
 
 def make_suggestion(prompt):
 
-    
-
     while True:
         one_message = prompt
 

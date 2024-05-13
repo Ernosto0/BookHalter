@@ -22,7 +22,6 @@ from .management.commands import CheckBooks, GetUpvotedBooks, GetBook, AddBooks,
 from .management.commands.GetUserData import UserDataGetter
 
 
-
 def set_cookie(request):
     response = HttpResponse("Cookie has been set")
     response.set_cookie('example_cookie', 'example_value', max_age=3600)  # Cookie expires in 1 hour
@@ -30,10 +29,11 @@ def set_cookie(request):
 
 
 
+
+
 def get_read_books(request):
     if not request.user.is_authenticated:
-        return JsonResponse({'error': 'User not authenticated'}, status=401)
-
+        return JsonResponse({'authenticated': False, 'error': 'User not authenticated'}, status=401)
 
     try:
         user_data_getter = UserDataGetter(request)
@@ -49,9 +49,10 @@ def get_read_books(request):
         else:
             read_books_list = []
 
-        return JsonResponse({'read_books': read_books_list}, safe=False)
+        return JsonResponse({'authenticated': True, 'read_books': read_books_list}, safe=False)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'authenticated': True, 'error': str(e)}, status=500)
+
 
 
 def projects(request):
@@ -136,38 +137,40 @@ def recommended_books(request):
     print(upvoted_books)
 
     if function_type == 1:
-        # Get data from request.GET if using the GET method
-        recent_reads = request.POST.get('recent_reads')
-        desired_feeling = request.POST.get('desired_feeling')
-        character_plot_preferences = request.POST.get('character_plot_preferences')
-        pacing_narrative_style = request.POST.get('pacing_narrative_style')
+
+            context = test_contex
+    #     # Get data from request.GET if using the GET method
+    #     recent_reads = request.POST.get('recent_reads')
+    #     desired_feeling = request.POST.get('desired_feeling')
+    #     character_plot_preferences = request.POST.get('character_plot_preferences')
+    #     pacing_narrative_style = request.POST.get('pacing_narrative_style')
         
 
-        # Perform actions specific to function_type 1
-        try:
-            context = ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    #     # Perform actions specific to function_type 1
+    #     try:
+    #         context = ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
 
-    elif function_type == 2:
-        data = user_data_getter.get_user_reading_persona()
-        print("User data:",data)
-        try:
-            context = ChatGptCall.RecommendWithReadingPersona(data)
-            print("Context:",context)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
-    elif function_type == 3:
-        data = request.POST.get('self_description')
-        print("User data:",data)
-        try:
-            context = ChatGptCall.RecommendWithParagraph(data)
-            print("Context:",context)
-        except Exception as e:
-            print(f"Error occurred while generating context: {e}")
-            context = []
+    # elif function_type == 2:
+    #     data = user_data_getter.get_user_reading_persona()
+    #     print("User data:",data)
+    #     try:
+    #         context = ChatGptCall.RecommendWithReadingPersona(data)
+    #         print("Context:",context)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
+    # elif function_type == 3:
+    #     data = request.POST.get('self_description')
+    #     print("User data:",data)
+    #     try:
+    #         context = ChatGptCall.RecommendWithParagraph(data)
+    #         print("Context:",context)
+    #     except Exception as e:
+    #         print(f"Error occurred while generating context: {e}")
+    #         context = []
         
     # Check if book is already exists in data base. If exists, filter on check_books function for avoid to unnecessary api calls
     filtered_books = CheckBooks.remove_existing_books(context)

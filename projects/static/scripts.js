@@ -100,6 +100,7 @@ $(document).ready(function() {
         }
 
         event.preventDefault();
+        console.log('Submitting form:', $(this).attr('id')); // Debugging: Log form submission
         var currentTime = new Date().getTime();
         localStorage.setItem('lastClickedTime', currentTime.toString());
         recommendationButton.prop('disabled', true);
@@ -134,59 +135,66 @@ $(document).ready(function() {
     });
 });
 
-        function displayBooks(response) {
-            var col1 = $('#column1').empty();
-            var col2 = $('#column2').empty();
-            response.books.forEach(function(book, index) {
-                var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
-                var bookElement = $('<div class="book">').append(
-                    $('<h3 class="title">').text(book.name),
-                    book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
-                    $('<p>').text('Author: ' + book.author),
-                    $('<p>').text(book.explanation),
-                    bookDetailLink
-                );
-                if (index % 2 === 0) {
-                    col1.append(bookElement);
-                } else {
-                    col2.append(bookElement);
-                }
-            });
+function displayBooks(response) {
+    var col1 = $('#column1').empty();
+    var col2 = $('#column2').empty();
+    response.books.forEach(function(book, index) {
+        var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
+        var bookElement = $('<div class="book">').append(
+            $('<h3 class="title">').text(book.name),
+            book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
+            $('<p>').text('Author: ' + book.author),
+            $('<p>').text(book.explanation),
+            bookDetailLink
+        );
+        if (index % 2 === 0) {
+            col1.append(bookElement);
+        } else {
+            col2.append(bookElement);
         }
+    });
+}
 
 
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var fetchUrl = document.body.getAttribute('data-get-read-books-url');
-        fetch(fetchUrl)
-        .then(response => response.json())
-        .then(data => {
-            if (data.authenticated) {
-                let books = data.read_books;
+        document.addEventListener('DOMContentLoaded', function() {
+            var fetchUrl = document.body.getAttribute('data-get-read-books-url');
+            fetch(fetchUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data); // Log the entire response for debugging
+        
                 let container = document.getElementById('readBooksList');
                 container.innerHTML = ''; // Clear existing entries
-                if (books.length) {
-                    books.forEach(book => {
-                        // Entire book entry is now clickable
-                        let bookDiv = `<a href="${book.url}" style="text-decoration: none; color: inherit;">
-                                        <div class="read-book">
-                                            <h4>${book.name}</h4>
-                                            <p>${book.author}</p>
-                                        </div>
-                                    </a>`;
-                        container.innerHTML += bookDiv;
-                    });
+        
+                if (data.authenticated) {
+                    if (data.read_books && data.read_books.length) {
+                        data.read_books.forEach(book => {
+                            // Entire book entry is now clickable
+                            let bookDiv = document.createElement('a');
+                            bookDiv.href = book.url;
+                            bookDiv.style.textDecoration = 'none';
+                            bookDiv.style.color = 'inherit';
+        
+                            let bookContent = `
+                                <div class="read-book">
+                                    <h4>${book.name}</h4>
+                                    <p>${book.author}</p>
+                                </div>`;
+                            
+                            bookDiv.innerHTML = bookContent;
+                            container.appendChild(bookDiv);
+                        });
+                    } else {
+                        container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
+                    }
                 } else {
-                    container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
+                    container.innerHTML = `<p>${data.error || 'You need to login to see read books.'}</p>`;
                 }
-            } else {
-                let container = document.getElementById('readBooksList');
-                container.innerHTML = '<p>You need to login to see read books.</p>';
-            }
-        })
-        .catch(error => console.error('Error loading the books:', error));
-    });
-
+            })
+            .catch(error => console.error('Error loading the books:', error));
+        });
+        
+        
 // login modal script
 // Get the modal
 var modal = document.getElementById('loginModal');
