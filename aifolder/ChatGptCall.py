@@ -34,7 +34,7 @@ def make_suggestion(prompt):
                 {"role": "user", "content": one_message},
             )
             chat = openai.chat.completions.create( # type: ignore
-                model="gpt-4-0125-preview", messages=messages # type: ignore
+                model="gpt-4o-2024-05-13", messages=messages # type: ignore
             )
         print(chat)
         reply = chat.choices[0].message.content # type: ignore
@@ -75,7 +75,7 @@ def RecommendWithAnswers(user_queries, upvoted_books):
     liked_books_summary = ", ".join(user_preferences["user_liked_books"])
 
     prompt = f"""Please make 10 book suggestions based on the user's answers of the these questions: {preferences_summary} 
-        and considering the user previously liked these books: {liked_books_summary}.Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        and considering the user previously liked these books: {liked_books_summary}.Explain the each book why you suggested it with 20-30 words. Each book must be on this format: 'title by author: 
         explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
         book."""
     reply = make_suggestion(prompt)
@@ -87,7 +87,7 @@ def RecommendWithAnswers(user_queries, upvoted_books):
 def RecommendWithReadingPersona(user_reading_personality):
 
     prompt = f"""Please make 10 book suggestions based on the user's reading personality: {user_reading_personality}
-        Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        Explain the each book why you suggested it with 20-30 words. Each book must be on this format: 'title by author: 
         explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
         book."""
         
@@ -99,7 +99,7 @@ def RecommendWithReadingPersona(user_reading_personality):
 
 def RecommendWithParagraph(user_paraghraph):
     prompt = f"""Please make 10 book suggestions based on the user's book preferences paraghraph: {user_paraghraph}
-        Explain the each book why you suggested it with 30-15 words. Each book must be on this format: 'title by author: 
+        Explain the each book why you suggested it with 20-30 words. Each book must be on this format: 'title by author: 
         explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 
         book."""
     
