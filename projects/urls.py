@@ -14,4 +14,5 @@ urlpatterns = [
     path('get_read_books/', views.get_read_books, name='get_read_books'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('get_cached_books/', views.get_cached_books, name='get_cached_books'),
 ]

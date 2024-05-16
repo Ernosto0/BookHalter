@@ -64,16 +64,37 @@ document.querySelectorAll('.dropdown-content a').forEach(function(link) {
 
 
 $(document).ready(function() {
+    console.log("Document ready!");
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     var recommendationButton = $('#recBtn');
     var paragraphRecommendationButton = $('#paraBtn');
     var quickRecommendationButton = $('#quickRecBtn');
-    var clickDelay = 230; // 5 minutes in milliseconds
+    var clickDelay = 300; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
+    var buttonClicked = false;
+
 
     function cooldownActive() {
         var currentTime = new Date().getTime();
         return lastClickedTime && (currentTime - lastClickedTime < clickDelay);
+    }
+
+    function fetchCachedBooks() {
+        if (!buttonClicked) { // Only fetch cached books if the button is not clicked
+            $.ajax({
+                headers: { "X-CSRFToken": csrfToken },
+                type: 'GET',
+                url: '/get_cached_books/', // URL for fetching cached books
+                dataType: 'json',
+                success: function(response) {
+                    displayBooks(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX call failed", status, error);
+                    console.error("Error details:", xhr.responseText);
+                }
+            });
+        }
     }
 
     if (cooldownActive()) {
@@ -88,6 +109,9 @@ $(document).ready(function() {
         }, clickDelay - (new Date().getTime() - lastClickedTime));
     }
 
+    
+     
+
     $('#formSelectBtn').click(function() {
         toggleDropdown();
     });
@@ -100,6 +124,7 @@ $(document).ready(function() {
         }
 
         event.preventDefault();
+        buttonClicked = true;
         console.log('Submitting form:', $(this).attr('id')); // Debugging: Log form submission
         var currentTime = new Date().getTime();
         localStorage.setItem('lastClickedTime', currentTime.toString());
@@ -118,10 +143,12 @@ $(document).ready(function() {
             success: function(response) {
                 console.log("Success!", response);
                 displayBooks(response);
+                buttonClicked = false;
             },
             error: function(xhr, status, error) {
                 console.error("AJAX call failed", status, error);
                 console.error("Error details:", xhr.responseText);
+                buttonClicked = false;
             },
             complete: function() {
                 $('#loading').hide();
@@ -133,6 +160,9 @@ $(document).ready(function() {
             }
         });
     });
+
+    fetchCachedBooks(); // Fetch cached books on page load
+
 });
 
 function displayBooks(response) {
@@ -156,7 +186,10 @@ function displayBooks(response) {
 }
 
 
+
+
         document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM loaded!");
             var fetchUrl = document.body.getAttribute('data-get-read-books-url');
             fetch(fetchUrl)
             .then(response => response.json())
@@ -192,6 +225,9 @@ function displayBooks(response) {
                 }
             })
             .catch(error => console.error('Error loading the books:', error));
+            
+
+        console.log("BOOOKSSS YEAAAH");
         });
         
         
