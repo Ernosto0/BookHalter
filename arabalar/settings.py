@@ -1,4 +1,4 @@
-
+import socket
 
 from pathlib import Path
 import os
@@ -193,12 +193,28 @@ LOGGING = {
 
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+def is_redis_available():
+    try:
+        # Attempt to connect to the Redis server
+        socket.create_connection(("127.0.0.1", 6379), timeout=1)
+        return True
+    except OSError:
+        return False
+
+if is_redis_available():
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://127.0.0.1:6379/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
         }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': '/var/tmp/django_cache',
+        }
+    }
