@@ -72,7 +72,24 @@ $(document).ready(function() {
     var clickDelay = 300; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
     var buttonClicked = false;
+    var isAuthenticated = false; // Variable to store authentication status
 
+    // Function to check authentication status
+    function checkAuthentication() {
+        $.ajax({
+            headers: { "X-CSRFToken": csrfToken },
+            type: 'GET',
+            url: '/check_authentication/', // URL for checking authentication status
+            dataType: 'json',
+            success: function(response) {
+                isAuthenticated = response.is_authenticated;
+            },
+            error: function(xhr, status, error) {
+                console.error("Failed to check authentication status", status, error);
+                isAuthenticated = false;
+            }
+        });
+    }
 
     function cooldownActive() {
         var currentTime = new Date().getTime();
@@ -109,9 +126,6 @@ $(document).ready(function() {
         }, clickDelay - (new Date().getTime() - lastClickedTime));
     }
 
-    
-     
-
     $('#formSelectBtn').click(function() {
         toggleDropdown();
     });
@@ -120,6 +134,13 @@ $(document).ready(function() {
         if (cooldownActive()) {
             event.preventDefault();
             alert('Please wait for 5 minutes before requesting again!');
+            return;
+        }
+
+        // Check if user is authenticated
+        if (!isAuthenticated && $(this).attr('id') === 'quickRecommendationForm') {
+            event.preventDefault();
+            alert('You must be logged in to use this feature!');
             return;
         }
 
@@ -161,6 +182,7 @@ $(document).ready(function() {
         });
     });
 
+    checkAuthentication(); // Check authentication status on page load
     fetchCachedBooks(); // Fetch cached books on page load
 
 });
@@ -184,7 +206,6 @@ function displayBooks(response) {
         }
     });
 }
-
 
 
 

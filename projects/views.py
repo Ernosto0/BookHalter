@@ -1,3 +1,4 @@
+from math import log
 import re
 from django.urls import reverse
 from django.utils import timezone
@@ -7,11 +8,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django_ratelimit.decorators import ratelimit
+from .management import AddBooks, GetBook, GetUpvotedBooks, UpdateVoteCount
 from users.models import UserBookData
 from aifolder import CreateUserReadingPersona
 from .models import Books, Comment, Vote
-from .management.commands import CheckBooks, GetUpvotedBooks, GetBook, AddBooks, UpdateVoteCount
-from .management.commands.GetUserData import UserDataGetter
+from .management import CheckBooks
+from .management.GetUserData import UserDataGetter
 from .utils import BookService
 from MyTest import testcontext
 from django.core.cache import cache
@@ -76,8 +78,6 @@ def projects(request):
 
     return render(request,'projects/projects.html')
 
-
-
 # def home(request):
 
 #     return render(request, 'projects.html')
@@ -124,21 +124,33 @@ def recommended_books(request):
         book_service = BookService(request)
         action = request.POST.get('action')
         function_type = book_service.get_function_type(action)
+        print("function_type", function_type)
+
+      
 
         try:
+            book_service = BookService(request)
+            action = request.POST.get('action')
+            function_type = book_service.get_function_type(action)
             context = book_service.get_context_based_on_function_type(function_type)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-        context = book_service.filter_and_add_books(context)
-        books = book_service.get_books_with_explanations(context)
-        books_data = book_service.format_books_data(books)
-        read_books_list = book_service.get_read_books_list()
+        try:
+            context = book_service.filter_and_add_books(context)
+            books = book_service.get_books_with_explanations(context)
+            books_data = book_service.format_books_data(books)
+            read_books_list = book_service.get_read_books_list()
 
-        response_data = {'books': books_data, 'read_books': read_books_list}
-        cache.set('recommended_books_cache', response_data, timeout=1200) # Cache the response for 20 minutes
+            response_data = {'books': books_data, 'read_books': read_books_list}
+            cache.set('recommended_books_cache', response_data, timeout=1200) # Cache the response for 20 minutes
 
-        return JsonResponse(response_data, safe=False)
+            return JsonResponse(response_data, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+        
+            
+
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -152,7 +164,6 @@ def vote(request, book_id):
 def post_comment(request, book_id):
     book_service = BookService(request)
     return book_service.post_comment(book_id)
-
 
 # Toggle the read status of books
 @login_required
@@ -175,3 +186,6 @@ def toggle_read_status(request, book_id):
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
     
+@login_required
+def check_authentication(request):
+    return JsonResponse({'is_authenticated': request.user.is_authenticated})

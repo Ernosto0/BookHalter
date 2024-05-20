@@ -28,15 +28,25 @@ def search_books_in_database(books_to_search):
             Q(author__icontains=book_to_search['author'])
         )
 
-        if potential_matches:
-            # Apply fuzzy matching to find the best match among the potential matches
-            book = find_best_fuzzy_match(book_to_search['title'], book_to_search['author'], potential_matches)
+        if potential_matches.exists():
+            # Check for an exact match first
+            exact_match = potential_matches.filter(
+                name__iexact=book_to_search['title'], 
+                author__iexact=book_to_search['author']
+            ).first()
 
-            if book:
-                found_books.append(book)
-                print(book_to_search['title'] + " is found with fuzzy matching")
+            if exact_match:
+                found_books.append(exact_match)
+                print(book_to_search['title'] + " is found with exact matching")
             else:
-                print("No fuzzy match found for: " + book_to_search['title'])
+                # Apply fuzzy matching to find the best match among the potential matches
+                book = find_best_fuzzy_match(book_to_search['title'], book_to_search['author'], potential_matches)
+
+                if book:
+                    found_books.append(book)
+                    print(book_to_search['title'] + " is found with fuzzy matching")
+                else:
+                    print("No fuzzy match found for: " + book_to_search['title'])
         else:
             print("No potential matches found for: " + book_to_search['title'])
 

@@ -1,10 +1,12 @@
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.urls import reverse
 from django.utils import timezone
-from .management.commands import CheckBooks, AddBooks, GetBook
+
+from .management import AddBooks, GetBook, GetUpvotedBooks
+from .management import CheckBooks
 from aifolder import BookDataApis, ChatGptCall, CreateUserReadingPersona
-from .management.commands.GetUserData import UserDataGetter
-from .management.commands import GetUpvotedBooks, UpdateVoteCount
+from .management.GetUserData import UserDataGetter
+from .management import UpdateVoteCount
 from django.shortcuts import get_object_or_404, redirect
 from .models import Books, Vote, Comment
 
@@ -20,20 +22,24 @@ class BookService:
             return 2
         if action == 'by_paragraph':
             return 3
-        return 1
+        if action == 'by_answers':
+            return 1
 
-    def get_upvoted_books(self):
-        return self.user_data_getter.get_user_vote_count_data() if self.is_authenticated else []
+    
 
     def get_context_based_on_function_type(self, function_type):
-        upvoted_books = self.get_upvoted_books()
+        upvoted_books = []
         if function_type == 1:
-            data = GetUpvotedBooks.get_upvoted_books_by_user(self.request.user)
             recent_reads = self.request.POST.get('recent_reads')
             desired_feeling = self.request.POST.get('desired_feeling')
             character_plot_preferences = self.request.POST.get('character_plot_preferences')
             pacing_narrative_style = self.request.POST.get('pacing_narrative_style')
+
+            if self.is_authenticated:
+                upvoted_books = GetUpvotedBooks.get_upvoted_books_by_user(self.request.user)
+                return ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
             return ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
+        
         elif function_type == 2:
             data = self.user_data_getter.get_user_reading_persona()
             return ChatGptCall.RecommendWithReadingPersona(data)

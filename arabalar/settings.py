@@ -212,9 +212,11 @@ if is_redis_available():
         }
     }
 else:
+    cache_location = os.path.abspath(os.path.join('/var', 'tmp', 'django_cache'))
+    
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': '/var/tmp/django_cache',
+            'LOCATION': cache_location,  # Use the absolute path
         }
     }
