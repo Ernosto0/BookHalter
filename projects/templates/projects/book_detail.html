@@ -7,7 +7,7 @@
       <link rel="stylesheet" type="text/css" href="{% static 'book-detail.css' %}">
     </head>
     <div class="header">
-      <h2>{{ book.name }} By {{ book.author }}</h2>
+    
       <button onclick="window.history.back();" class="go-back-button">Go Back</button>
     </div>
     <div class="book-detail">
@@ -16,7 +16,7 @@
         <div class="book-title">
           <h1>{{ book.name }}</h1>
         </div>
-        <p class="book-author">Author: {{ book.author }}</p>
+        <p class="book-author">{{ book.author }}</p>
         <div class="star-rating">
           <span>★ ★ ★ ★ ☆</span>
           <span class="rating-value">{{ book.rating }}</span>
@@ -33,11 +33,10 @@
           <a href="#" class="genre">Literature</a>
         </div>
         {% if book.googlebooks_link != "No buy link." %}
-          <p class="book-buy-link"><a href="{{ book.googlebooks_link }}">Buy Here</a></p>
+          <p class="book-buy-link"><a href="{{ book.googlebooks_link }}" class="buy-button">Want to read</a></p>
         {% else %}
           <p class="book-buy-link">Buy: Not available</p>
         {% endif %}
-        <!-- Voting form -->
         <div class="voting-section">
           <form id="vote-form" method="post" action="{% url 'vote' book.id %}">
             {% csrf_token %}
