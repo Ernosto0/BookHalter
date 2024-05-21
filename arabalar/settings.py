@@ -1,4 +1,4 @@
-
+import socket
 
 from pathlib import Path
 import os
@@ -75,12 +75,6 @@ WSGI_APPLICATION = 'arabalar.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 # for pythonanywhere deployment
 # DATABASES = {
@@ -94,17 +88,25 @@ WSGI_APPLICATION = 'arabalar.wsgi.application'
 #     }
 # }
 
+# Local Mysqldb
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'myprojectdb',
+#         'USER': 'root',
+#         'PASSWORD': """12345""",  
+#         'HOST': 'localhost',  # Or the IP Address of the MySQL server
+#         'PORT': '3306',
+#     }
+# }
+
+# Baran bunu kullan
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myprojectdb',
-        'USER': 'root',
-        'PASSWORD': """12345""",  
-        'HOST': 'localhost',  # Or the IP Address of the MySQL server
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
-
 
 
 # Password validation
@@ -190,3 +192,33 @@ LOGGING = {
         },
     },
 }
+
+
+
+def is_redis_available():
+    try:
+        # Attempt to connect to the Redis server
+        socket.create_connection(("127.0.0.1", 6379), timeout=1)
+        return True
+    except OSError:
+        return False
+
+if is_redis_available():
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://127.0.0.1:6379/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+else:
+    cache_location = os.path.abspath(os.path.join('/var', 'tmp', 'django_cache'))
+    
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': cache_location,  # Use the absolute path
+        }
+    }

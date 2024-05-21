@@ -1,18 +1,56 @@
 <!-- base.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookAi - Your Intelligent Book Assistant</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'title.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
+    <div class="topbar">
+        <div class="logo">
+            <a href="{% url 'projects' %}">
+                <img src="{% static 'imagies/logo.jpg' %}" alt="Logo">
+            </a>
+        </div>
+        <div class="info">
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+    </div>
+    
     <header>
-      <a href="{% url 'projects' %}">
-          <img src="{% static 'imagies/logo.jpg' %}" alt="Logo">
-          </a>
+        <i class="fa-solid fa-bars"></i>
+        <div class="links">
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Saved</a></li>
+                <li><a href="#">Topic</a></li>
+            </ul>
+        </div>
+        <div class="button-container">
+            <div class="login-button">
+                <button id="loginBtn">LOGIN</button>
+            </div>
+            <div class="register-button">
+                <button id="registerBtn">REGISTER</button>
+            </div>
+    
+            <!-- Logout button -->
+            {% if user.is_authenticated %}
+            <div class="logout-button">
+                <button type="button" class="logout-button" id="logoutButton">LOGOUT</button>
+            </div>
+        {% endif %}
+        <div id="logout-message" style="color: green;"></div> <!-- Logout message placeholder -->
+    
+        </div>
+
     </header>
 
     {% block content %}
@@ -23,7 +61,7 @@
         <div class="container">
             <div class="section1">
                 <div class="logo">
-                    <img src="logo.jpg" alt="">
+                    <img src="../staticfiles/imagies/logo.jpg" alt="">
                 </div>
                 <div class="links">
                     <a href="#">Home</a>
@@ -60,12 +98,14 @@
                     <a href="#"><i class="fa-brands fa-discord"></i></a>
                 </div>
                 <div class="about">
-                    <p>Lorem isum dolor sit amet consectetur adipisicing elit. Cupiditate ad exercitationem quo possimus accusamus explicabo aliquid distinctio quibusdam nemo delectus porro, quis vitae nostrum reiciendis architecto neque provident, corporis commodi.</p>
+                    <p>Lorem isum dolor sit amet consectetur adipisicing elit. Cupiditate ad exercitationem quo possimus
+                        accusamus explicabo aliquid distinctio quibusdam nemo delectus porro, quis vitae nostrum
+                        reiciendis architecto neque provident, corporis commodi.</p>
                 </div>
             </div>
         </div>
     </footer>
-    
-</body>
-</html>
 
+</body>
+
+</html>

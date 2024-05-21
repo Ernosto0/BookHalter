@@ -1,6 +1,6 @@
 .page {
   max-width: 800px;
-  margin: 0 auto; 
+  margin: 0 auto;
   background: #f9f9f9;
   border-radius: 10px;
 }
@@ -9,40 +9,125 @@
 .header {
   background: #1e3a52;
   color: #fff;
-  padding: 20px; 
+  padding: 25px;
   border-top-left-radius: 10px;
-  border-top-right-radius: 10px; 
+  border-top-right-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 150%; /* Add this line to make the header expand horizontally */
+  width: 250x;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 24px;
 }
 
 /* Book Container */
 .book-detail {
+  display: flex;
   background: #fff;
   padding: 20px;
-  border-bottom: 1px solid #ddd;  
+  border-bottom: 1px solid #ddd;
 }
 
-/* Book Title */
-.book-title {
-  font-size: 18px;
-  font-weight: bold;  
+.book-detail img {
+  max-width: 220px;
+  max-height: 400px; /* Ensure the image has a maximum height */
+  width: 155%;
+  height: 155%;
+  margin-right: 30px;
+  object-fit: cover; /* Ensure the image covers the area properly */
+  border-radius: 5px; /* Optional: to match the rounded container style */
+  padding-right: 50px;
 }
 
-/* Book Metadata */
+.book-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-title h1 {
+  font-size: 36px;
+  margin: 0;
+}
+
+.book-author, .book-description, .book-published, .book-buy-link {
+  margin: 10px 0;
+}
+
 .book-author {
-  font-size: 14px;
-  color: #555;
+  font-size: 25px;
 }
 
-/* Description */
 .book-description {
-  margin-top: 10px;
-  font-style: italic;
-  color: #333;
+  font-size: 16px;
+  width: 150%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
+.book-published {
+  font-size: 22px;
+}
+
+
+.book-buy-link {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.buy-button {
+  display: inline-block;
+  background-color: #4caf50; /* Green background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding for size */
+  border-radius: 25px; /* Rounded corners */
+  text-decoration: none; /* Remove underline */
+  font-size: 16px; /* Adjust font size */
+  font-weight: bold; /* Make text bold */
+  text-align: center; /* Center the text */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.buy-button:hover {
+  background-color: #388e3c; /* Darker green on hover */
+}
+/* Genres */
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.genre {
+  margin-right: 10px;
+  color: #0066c0;
+  text-decoration: none;
+}
+
+/* Star Rating */
+.star-rating {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.star-rating span {
+  font-size: 24px;
+  color: #f8ce0b;
+}
+
+.rating-value {
+  font-size: 30px;
+  margin-left: 10px;
+}
+
+/* Voting Section */
 .voting-section {
   text-align: center;
   margin: 20px 0;
+  padding-right: 275px;
 }
 
 .vote-button {
@@ -50,16 +135,20 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-right: 10px;
+
 }
 
 .vote-up {
   background: #4caf50;
   color: #fff;
+ 
 }
 
 .vote-down {
-  background: #f44336; 
+  background: #f44336;
   color: #fff;
+
 }
 
 .vote p {
@@ -72,7 +161,7 @@
 .comments h3 {
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 10px;  
+  margin-bottom: 10px;
 }
 
 .comments-textarea {
@@ -97,7 +186,7 @@
   color: #fff;
   padding: 8px 15px;
   border: none;
-  border-radius: 5px; 
+  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -124,46 +213,28 @@
   margin-top: 5px;
 }
 
-.read-button {
-background: #008cba;
-color: #fff;
-padding: 10px 20px;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-font-weight: bold;
-text-transform: uppercase;
-margin-top: 20px;
-display: inline-block;
-text-decoration: none;
-transition: background-color 0.3s, transform 0.2s;
+/* Buttons */
+.read-button,
+.go-back-button {
+  background: #008cba;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 20px;
+  display: inline-block;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .read-button:hover,
-.read-buttonn:focus {
-background: #007ba7;
-transform: scale(1.05);
-outline: none;
-}
-
-.go-back-button {
-background: #008cba;
-color: #fff;
-padding: 10px 20px;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-font-weight: bold;
-text-transform: uppercase;
-margin-top: 20px;
-display: inline-block;
-text-decoration: none;
-transition: background-color 0.3s, transform 0.2s;
-}
-
+.read-button:focus,
 .go-back-button:hover,
 .go-back-button:focus {
-background: #007ba7;
-transform: scale(1.05);
-outline: none;
+  background: #007ba7;
+  transform: scale(1.05);
+  outline: none;
 }

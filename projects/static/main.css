@@ -1,8 +1,102 @@
+:root {
+  --maincolor: #4CAF50;
+  --navbarcolor: #222222;
+  --hover: rgb(9, 123, 143);
+}
+
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background-color: #f8f8f8;
   text-align: center;
+  overflow-x: hidden;
 }
+
+/* ! Topbar */
+
+.topbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.topbar .info {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.topbar .info i {
+  font-size: 2rem;
+  background-color: var(--maincolor);
+  padding: .8rem 1rem;
+  border-radius: 50%;
+  color: white;
+  border: 2px solid black;
+}
+
+.topbar .info a:hover i {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+}
+
+/* ! Topbar */
+
+/*! LOGIN REGISTER BUTTONS */
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1.5rem;
+}
+
+.login-button button,
+.register-button button,
+.logout-button button {
+  font-size: 15px;
+  padding: 10px;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: var(--navbarcolor);
+  border-radius: 4px;
+  transition: background-color 0 .3s, color 0.3s;
+  border: 2px solid #4CAF50;
+}
+
+.login-button button:hover,
+.register-button button:hover,
+.logout-button button:hover {
+  background-color: #3c8b3f;
+  border: 2px solid #3c8b3f;
+  color: white;
+}
+
+@media (max-width : 1250px) {
+
+  .login-button button,
+  .register-button button,
+  .logout-button button {
+    padding: 7px;
+    margin: 5px;
+  }
+}
+
+/*! LOGIN REGISTER BUTTONS */
+/* !Forms */
+.forms {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin: 0rem 20rem;
+}
+
+.forms .box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5rem;
+}
+
+/* !Forms */
 
 form {
   background-color: #fff;
@@ -14,320 +108,53 @@ form {
 }
 
 input[type="text"] {
-  width: calc(100% - 44px); /* Adjust width considering padding and border */
-  padding: 12px 20px; /* Keep the padding for comfortable typing space */
-  margin: 10px 0 20px; /* Add some margin for spacing between inputs */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  border: 2px solid #ccc; /* A light grey border that matches the form style */
-  border-radius: 4px; /* Rounded corners for the inputs */
-  background-color: #f8f8f8; /* A light background color for the inputs */
-  font-size: 16px; /* Slightly larger font size for readability */
-  color: #333; /* Darker text color for better contrast */
-  transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for focus effect */
+  width: calc(100% - 50px);
+  /* Adjust width considering padding and border */
+  padding: 12px 20px;
+  /* Keep the padding for comfortable typing space */
+  margin: 10px 0 20px;
+  /* Add some margin for spacing between inputs */
+  box-sizing: border-box;
+  /* Include padding and border in the element's total width and height */
+  border: 2px solid #ccc;
+  /* A light grey border that matches the form style */
+  border-radius: 4px;
+  /* Rounded corners for the inputs */
+  background-color: #f8f8f8;
+  /* A light background color for the inputs */
+  font-size: 16px;
+  /* Slightly larger font size for readability */
+  color: #333;
+  /* Darker text color for better contrast */
+  transition: border-color 0.3s, box-shadow 0.3s;
+  /* Smooth transition for focus effect */
 }
 
 input[type="text"]:focus {
-  border-color: #4CAF50; /* Green border color when focused, matching the button color */
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); /* A subtle glow effect using the same green color */
-  outline: none; /* Remove the default focus outline */
-}
-
-
-label {
-  display: block; /* Ensure the label is on its own line */
-  margin-top: 15px; /* Space above each label */
-  margin-bottom: 5px; /* Space between label and its input field */
-  color: #666; /* A darker color for the labels for readability */
-  font-size: 14px; /* A smaller font size for labels compared to input text */
-  text-align: left; /* Align labels to the left */
-}
-
-button {
-  width: 100%;
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-p {
-  margin-top: 30px;
-  font-size: 18px;
-}
-
-h2 {
-  position: relative;
-  top: 50px;
-  margin-top: 40px;
-  font-size: 15px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transform: translate(555px, 25px);
-  
-}
-
-h1 {
-  position: relative;
-  top: 20px; 
-  margin-top: 40px;
-  font-size: 32px;
-  color: #239b27;
-}
-
-.rectangle {
-  
-  max-width: 501px; /* Matches the form width */
-  margin: 20px auto; /* Centers the rectangle and adds vertical spacing */
-  padding: 30px; /* Matches the form padding */
-  background-color: #fff; /* Matches the form background color */
-  border-radius: 10px; /* Matches the form border radius */
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Matches the form box shadow */
-  border: 2px solid #ccc; /* Lighter border color to match the input fields */
-  text-align: left; /* Aligns text to the left */
-  word-wrap: break-word; /* Ensures the text wraps inside the box */
-  white-space: pre-wrap; /* Maintains spacing and line breaks as in the source */
-}
-
-.user-greeting {
-  color: #239b27; /* Green color to match your h1 */
-  font-size: 20px; /* Slightly smaller than your h1 for differentiation */
-  margin-top: 20px; /* Space above the greeting */
-  font-weight: bold; /* Make it stand out */
-  
-}
-
-.button-container {
-    display: flex;
-    justify-content : space-between; /* This will place one item on each end */
-    max-width: 500px;
-    margin: 0 auto; /* Centering the container */
-  }
-  
-.login-button a,
-.register-button a {
-    display: block;
-    font-size: 20px; /* Larger font size */
-    padding: 10px;
-    margin: 5px;
-    text-decoration: none;
-    color: #4CAF50; /* Your button color */
-    border: 2px solid #4CAF50; /* Your button color */
-    border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-.login-button a:hover,
-.register-button a:hover {
-    background-color: #4CAF50;
-    color: white;
-  }
-
-/* Container for recommendations */
-/* Container for book columns */
-#bookColumns {
-display: flex;
-justify-content: space-between;
-max-width: 1020px; /* Adjusted to fit two 500px columns with some spacing */
-margin: 30px auto;
-padding: 20px;
-background-color: #fff;
-border-radius: 10px;
-box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Individual book columns */
-.book-column {
-flex: 1;
-display: flex;
-flex-direction: column;
-padding: 0 10px;
-}
-
-/* Style for each book */
-.book {
-margin-bottom: 20px;
-padding: 15px;
-background-color: #f8f8f8;
-border: 1px solid #ccc;
-border-radius: 4px;
-text-align: left;
-}
-
-.book img {
-max-width: 100%;
-height: auto;
-border-radius: 4px;
-margin-bottom: 10px;
-}
-
-.book .title {
-margin: 10px 0 5px;
-color: #333;
-font-size: 18px;
-font-weight: bold;
-}
-
-.book p {
-margin: 5px 0;
-color: #666;
-font-size: 14px;
-line-height: 1.4;
-}
-
-/* Ensure last book in each column doesn't have a bottom margin */
-.book-column .book:last-child {
-margin-bottom: 0;
-}
-
-
-/* Dropdown button */
-.dropbtn {
-  background-color: #008cba;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #007ba7;
-}
-
-/* Dropdown container */
-.dropdown {
-  position: relative;
-  display: inline-block;
-  margin-top: 20px;
-}
-
-/* Dropdown content (hidden by default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  border-radius: 5px;
-}
-
-/* Links inside the dropdown */
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.3s;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-
-/* Show the dropdown menu */
-.show {
-  display: block;
-}
-
-
-
-/* General button styles */
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.dropbtn {
-  background-color: #008cba;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  margin-top: 10px;  /* Adjusted margin to ensure space between description and button */
-  display: inline-block;
-  text-align: center;
-  transition: background-color 0.3s;
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #007ba7;
+  border-color: #4CAF50;
+  /* Green border color when focused, matching the button color */
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+  /* A subtle glow effect using the same green color */
   outline: none;
-}
-
-/* Dropdown container */
-.dropdown {
-  position: relative;
-  display: inline-block;
-  text-align: center; /* Center-align content */
-}
-
-/* Dropdown content (hidden by default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 250px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  border-radius: 5px;
-  overflow: hidden;
-  text-align: left; /* Left-align dropdown items */
-}
-
-/* Links inside the dropdown */
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.3s;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-
-/* Show the dropdown menu */
-.show {
-  display: block;
+  /* Remove the default focus outline */
 }
 
 /* Form container styles */
 .form-container {
   display: none;
   background-color: #f9f9f9;
-  padding: 20px;
-  border: 1px solid #ddd;
   border-radius: 10px;
-  margin-top: 20px;
+
 }
 
 /* Form labels and inputs */
 form label {
   display: block;
-  margin: 10px 0 5px;
   font-weight: bold;
 }
 
-form input[type="text"], form textarea {
+form input[type="text"],
+form textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -357,9 +184,439 @@ form button[type="submit"]:hover {
 
 /* Form description styles */
 .form-description {
-  margin-bottom: 10px; /* Space between description and button */
+  margin-bottom: 10px;
+  /* Space between description and button */
   font-style: italic;
   color: #555;
   font-size: 14px;
-  transition: opacity 0.3s; /* Smooth transition for visibility */
+  transition: opacity 0.3s;
+  /* Smooth transition for visibility */
+}
+
+label {
+  display: block;
+  /* Ensure the label is on its own line */
+  margin-top: 5px;
+  /* Space above each label */
+  /* Space between label and its input field */
+  color: #666;
+  /* A darker color for the labels for readability */
+  font-size: 14px;
+  /* A smaller font size for labels compared to input text */
+  text-align: left;
+  /* Align labels to the left */
+}
+
+button {
+  width: 100%;
+  background-color: var(--navbarcolor);
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+p {
+  margin-top: 30px;
+  font-size: 18px;
+}
+
+h2 {
+  position: relative;
+  top: 50px;
+  margin-top: 40px;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translate(555px, 25px);
+
+}
+
+h1 {
+  position: relative;
+  top: 20px;
+  margin-top: 40px;
+  font-size: 32px;
+  color: #239b27;
+}
+
+
+.rectangle {
+  max-width: 501px;
+  /* Matches the form width */
+  margin: 20px auto;
+  /* Centers the rectangle and adds vertical spacing */
+  padding: 30px;
+  /* Matches the form padding */
+  background-color: #fff;
+  /* Matches the form background color */
+  border-radius: 10px;
+  /* Matches the form border radius */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  /* Matches the form box shadow */
+  border: 2px solid #ccc;
+  /* Lighter border color to match the input fields */
+  text-align: left;
+  /* Aligns text to the left */
+  word-wrap: break-word;
+  /* Ensures the text wraps inside the box */
+  white-space: pre-wrap;
+  /* Maintains spacing and line breaks as in the source */
+}
+
+.user-greeting {
+  color: #239b27;
+  /* Green color to match your h1 */
+  font-size: 20px;
+  /* Slightly smaller than your h1 for differentiation */
+  margin-top: 20px;
+  /* Space above the greeting */
+  font-weight: bold;
+  /* Make it stand out */
+
+}
+
+
+
+/* Container for recommendations */
+/* Container for book columns */
+#bookColumns {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1020px;
+  /* Adjusted to fit two 500px columns with some spacing */
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Individual book columns */
+.book-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+}
+
+/* Style for each book */
+.book {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.book img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.book .title {
+  margin: 10px 0 5px;
+  color: #333;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.book p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Ensure last book in each column doesn't have a bottom margin */
+.book-column .book:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Container for the "Read Books" section */
+.read-books-container {
+  background-color: #fff;
+  /* Matches the form and other containers */
+  max-width: 400px;
+  /* Maximum width of the container */
+  width: 400px;
+  margin: 20px auto;
+  /* Centers the container and adds vertical spacing */
+  padding: 50px;
+  /* Padding inside the container */
+  border-radius: 8px;
+  /* Rounded corners like the forms */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  /* Soft shadow for depth */
+  text-align: left;
+  /* Aligns text to the left */
+  height: 540px;
+  /* Adjusted fixed height to fit exactly 4 books */
+  overflow-y: scroll;
+  /* Always shows vertical scrollbar */
+  overflow-x: hidden;
+  /* Disables horizontal scrolling */
+}
+
+/* Styling for individual book entries in the list */
+.read-book {
+  border-bottom: 1px solid #ccc;
+  /* Subtle separator for each book */
+  padding: 10px 0;
+  /* Padding inside each book item */
+  margin: 10px 0;
+  /* Space between book entries */
+  transition: background-color 0.3s;
+  /* Smooth transition for hover effect */
+}
+
+.read-book:last-child {
+  border-bottom: none;
+  /* Remove border for the last item to clean up appearance */
+}
+
+.read-book:hover {
+  background-color: #f4f4f4;
+  /* Light grey background on hover */
+}
+
+/* Styling for the book title */
+.read-book h4 {
+  color: #333;
+  /* Dark grey for readability, matches other headings */
+  font-size: 16px;
+  /* Slightly larger to highlight titles */
+  margin: 0 0 2px;
+  /* No margin above, space below */
+}
+
+/* Styling for the book author and other details */
+.read-book p {
+  color: #666;
+  /* Medium grey for less emphasis than titles */
+  font-size: 14px;
+  /* Slightly smaller than the title for hierarchy */
+  margin: 0;
+  /* Remove default margins */
+}
+
+/* Style the scrollbar itself (the track) */
+.read-books-container::-webkit-scrollbar {
+  width: 12px;
+  /* Scrollbar width */
+  background-color: #f5f5f5;
+  /* Track color */
+}
+
+/* Handle the scrollbar handle (the thumb) */
+.read-books-container::-webkit-scrollbar-thumb {
+  background-color: #b6b6b6;
+  /* Thumb color */
+  border-radius: 6px;
+  /* Round corners of the thumb */
+  border: 3px solid #f5f5f5;
+  /* Creates a border inside the track */
+}
+
+/* Handle on hover or active states for the thumb */
+.read-books-container::-webkit-scrollbar-thumb:hover {
+  background-color: #949494;
+  /* Darker color on hover */
+}
+
+/* (Optional) Style the scrollbar buttons (arrows at the top and bottom of the scrollbar) */
+.read-books-container::-webkit-scrollbar-button {
+  display: block;
+  height: 10px;
+  /* Height of the buttons */
+  background-color: #dcdcdc;
+  /* Button color */
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* loader */
+
+.loader {
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.tab-system {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  background: #008cba;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0 10px;
+  display: inline-block;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.tab-button:hover,
+.tab-button:focus {
+  background: #007ba7;
+  transform: scale(1.05);
+  outline: none;
+}
+
+.form-container {
+  display: none;
+}
+
+#form1 {
+  display: block;
+  /* Default display for form1 */
+}
+
+/* General button styles */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.dropbtn {
+  background-color: #008cba;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-top: 10px;
+  /* Adjusted margin to ensure space between description and button */
+  display: inline-block;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: #007ba7;
+  outline: none;
+}
+
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  /* Center-align content */
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 250px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+  overflow: hidden;
+  text-align: left;
+  /* Left-align dropdown items */
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu */
+.show {
+  display: block;
 }

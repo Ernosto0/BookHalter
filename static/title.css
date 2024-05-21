@@ -1,13 +1,81 @@
-.content {
-  max-width: 800px;
-  margin: 0 auto;
-  background: #f9f9f9;
-  border-radius: 10px; 
-  padding: 20px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
+
+
+:root {
+  --maincolor: #4CAF50;
+  --navbarcolor : #222222;
+  --hover: rgb(9, 123, 143);
 }
- 
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: all .3s ease;
+}
+
+header .fa-bars {
+  display: none;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+
+header {
+  background-color: #222222;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem 5rem;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  font-family: 'Poppins' , sans-serif;
+}
+
+.logo a img {
+  height: 7rem;
+  border-radius: 50%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logo {
+  display: flex;
+  padding: .3rem 1rem;
+}
+
+header .links ul {
+  display: flex;
+  gap: 3rem;
+  margin-left: 5rem;
+}
+
+header .links ul li {
+  list-style: none;
+}
+
+header .links ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.5rem;
+  text-transform: capitalize;
+}
+
+header .links ul li .active {
+  background-color: #4CAF50;
+  padding: 2rem 2rem;
+}
+
+header .links ul li a:hover{
+  color: var(--hover);
+}
+
+header .links ul li a .active:hover {
+  background-color: var(--hover);
+}
+
 .title h2 {
-  font-size: 24px; 
+  font-size: 24px;
 }
 
 .other p {
@@ -20,7 +88,7 @@ footer .container {
   flex-direction: row;
   padding: 0px 200px;
   text-align: left;
-  gap: 300px;
+  gap:300px;
   background-color: rgb(34, 34, 34);
 }
 
@@ -28,7 +96,6 @@ footer .container .section1 {
   display: flex;
   flex-direction: row;
   align-items: center;
-
 }
 
 footer .container .section1 img {
@@ -47,43 +114,68 @@ footer .container .section1 a:hover {
   text-decoration: underline;
   color: rgb(110, 110, 110);
 }
-footer .container .section2{
+
+footer .container .section2 {
   display: flex;
   gap: 50px;
   margin-left: 50px;
 }
-footer .container .section2 .box .heading h3{
+
+footer .container .section2 .box .heading h3 {
   color: white;
 }
-footer .container .section2 .box{
+
+footer .container .section2 .box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+footer .container .section2 .box .links {
   display: flex;
   flex-direction: column;
 }
-footer .container .section2 .box .links{
-  display: flex;
-  flex-direction: column;
-}
-footer .container .section2 .box .links a{
-  margin-bottom:10px;
+
+footer .container .section2 .box .links a {
   text-decoration: none;
   color: var(--maincolor);
   font-size: 15px;
 }
-footer .container .section2 .box .links a:hover{
+
+footer .container .section2 .box .links a:hover {
   text-decoration: underline;
   color: rgb(111, 110, 110);
 }
-footer .container .section3{
-display: flex;
-flex-direction: column;
-margin-top: 20px;
-margin-left: 50px;
+
+footer .container .section3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+
 }
-footer .container .section3 .icons i{
+
+footer .container .section3 .icons i {
   font-size: 36px;
   margin: 0px 20px;
   color: white;
 }
-footer .container .section3 .about p{
+
+footer .container .section3 .about p {
   color: #8f8f8f;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 1250px) {
+  header .links ul li a {
+    font-size: 1.2rem;
+  }
+
+  header .links ul {
+    gap: 1.2rem;
+  }
+
+  header .logo a img {
+    height: 7rem;
+  }
 }
