@@ -194,9 +194,9 @@ function displayBooks(response) {
         var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
         var bookElement = $('<div class="book">').append(
             $('<h3 class="title">').text(book.name),
-            book.cover_image_url ? $('<img>').attr('src', book.cover_image_url) : '',
-            $('<p>').text('Author: ' + book.author),
-            $('<p>').text(book.explanation),
+            book.cover_image_url ? $('<img class="img">').attr('src', book.cover_image_url) : '',
+            $('<h3 class="author"> ').text(book.author),
+            $('<h3 class="explanation"> ').text(book.explanation),
             bookDetailLink
         );
         if (index % 2 === 0) {
