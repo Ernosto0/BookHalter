@@ -148,12 +148,44 @@ def recommended_books(request):
             return JsonResponse(response_data, safe=False)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-        
-            
 
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+@login_required
+def quickrecommended_books(request):
+    print("quickrecommended_books")
+    if request.method == 'POST':
+        book_service = BookService(request)
+        action = request.POST.get('action')
+        function_type = book_service.get_function_type(action)
+        print("function_type", function_type)
 
+      
+
+        try:
+            book_service = BookService(request)
+            action = request.POST.get('action')
+            function_type = book_service.get_function_type(action)
+            context = book_service.get_context_based_on_function_type(function_type)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+        try:
+            context = book_service.filter_and_add_books(context)
+            books = book_service.get_books_with_explanations(context)
+            books_data = book_service.format_books_data(books)
+            read_books_list = book_service.get_read_books_list()
+
+            response_data = {'books': books_data, 'read_books': read_books_list}
+            cache.set('recommended_books_cache', response_data, timeout=1200) # Cache the response for 20 minutes
+
+            return JsonResponse(response_data, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @login_required
 def vote(request, book_id):

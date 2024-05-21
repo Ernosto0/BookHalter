@@ -47,13 +47,6 @@
             <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
             <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
             <button type="submit" id="recBtn">Get Book Recommendations</button>
-            <div class="quick-recommendation">
-                <form id="quickRecommendationForm" method="POST" action="{% url 'recommended_books' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="by_personality">
-                    <button type="submit" id="quickRecBtn">Surprise Me!</button>
-                </form>
-            </div>
         </form>
         
     </div>
@@ -82,7 +75,13 @@
     </div>
 </div>
 
-
+<div class="quick-recommendation">
+            <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="by_personality">
+                <button type="submit" id="quickRecBtn">Surprise Me!</button>
+            </form>
+        </div>
 <!--  -->
 
     <div id="bookColumns" class="book-columns">
@@ -148,6 +147,28 @@
         </div>
     </div>
     
+
+        <!-- Login Warning Modal -->
+    <div id="loginWarningModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login Required</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>You must be logged in to use this feature.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='/login/'">Login</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         document.getElementById('logoutButton').addEventListener('click', function() {

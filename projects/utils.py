@@ -42,6 +42,8 @@ class BookService:
         
         elif function_type == 2:
             data = self.user_data_getter.get_user_reading_persona()
+            print("XXXXXXXXXXXXXXXXXXXXXX")
+            print(data)
             return ChatGptCall.RecommendWithReadingPersona(data)
         elif function_type == 3:
             data = self.request.POST.get('self_description')

@@ -69,13 +69,13 @@ $(document).ready(function() {
     var recommendationButton = $('#recBtn');
     var paragraphRecommendationButton = $('#paraBtn');
     var quickRecommendationButton = $('#quickRecBtn');
-    var clickDelay = 300; // 5 minutes in milliseconds
+    var clickDelay = 300000; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
     var buttonClicked = false;
     var isAuthenticated = false; // Variable to store authentication status
 
     // Function to check authentication status
-    function checkAuthentication() {
+    function checkAuthentication(callback) {
         $.ajax({
             headers: { "X-CSRFToken": csrfToken },
             type: 'GET',
@@ -83,10 +83,16 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 isAuthenticated = response.is_authenticated;
+                if (!isAuthenticated) {
+                    quickRecommendationButton.prop('disabled', true);
+                }
+                if (callback) callback();
             },
             error: function(xhr, status, error) {
                 console.error("Failed to check authentication status", status, error);
                 isAuthenticated = false;
+                quickRecommendationButton.prop('disabled', true);
+                if (callback) callback();
             }
         });
     }
@@ -97,21 +103,27 @@ $(document).ready(function() {
     }
 
     function fetchCachedBooks() {
-        if (!buttonClicked) { // Only fetch cached books if the button is not clicked
-            $.ajax({
-                headers: { "X-CSRFToken": csrfToken },
-                type: 'GET',
-                url: '/get_cached_books/', // URL for fetching cached books
-                dataType: 'json',
-                success: function(response) {
-                    displayBooks(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX call failed", status, error);
-                    console.error("Error details:", xhr.responseText);
-                }
-            });
-        }
+        checkAuthentication(function() {
+            if (!isAuthenticated) {
+                // Do not fetch cached books if the user is not authenticated
+                return;
+            }
+            if (!buttonClicked) { // Only fetch cached books if the button is not clicked
+                $.ajax({
+                    headers: { "X-CSRFToken": csrfToken },
+                    type: 'GET',
+                    url: '/get_cached_books/', // URL for fetching cached books
+                    dataType: 'json',
+                    success: function(response) {
+                        displayBooks(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX call failed", status, error);
+                        console.error("Error details:", xhr.responseText);
+                    }
+                });
+            }
+        });
     }
 
     if (cooldownActive()) {
@@ -131,60 +143,61 @@ $(document).ready(function() {
     });
 
     $('#recommendationForm, #paragraphForm, #quickRecommendationForm').submit(function(event) {
+        event.preventDefault();
+
         if (cooldownActive()) {
-            event.preventDefault();
             alert('Please wait for 5 minutes before requesting again!');
             return;
         }
 
-        // Check if user is authenticated
-        if (!isAuthenticated && $(this).attr('id') === 'quickRecommendationForm') {
-            event.preventDefault();
-            alert('You must be logged in to use this feature!');
-            return;
-        }
+        var form = $(this);
 
-        event.preventDefault();
-        buttonClicked = true;
-        console.log('Submitting form:', $(this).attr('id')); // Debugging: Log form submission
-        var currentTime = new Date().getTime();
-        localStorage.setItem('lastClickedTime', currentTime.toString());
-        recommendationButton.prop('disabled', true);
-        paragraphRecommendationButton.prop('disabled', true);
-        quickRecommendationButton.prop('disabled', true);
-
-        $('#loading').show();
-
-        $.ajax({
-            headers: { "X-CSRFToken": csrfToken },
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(response) {
-                console.log("Success!", response);
-                displayBooks(response);
-                buttonClicked = false;
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX call failed", status, error);
-                console.error("Error details:", xhr.responseText);
-                buttonClicked = false;
-            },
-            complete: function() {
-                $('#loading').hide();
-                setTimeout(function() {
-                    recommendationButton.prop('disabled', false);
-                    paragraphRecommendationButton.prop('disabled', false);
-                    quickRecommendationButton.prop('disabled', false);
-                }, clickDelay);
+        checkAuthentication(function() {
+            // Check if user is authenticated
+            if (!isAuthenticated && form.attr('id') === 'quickRecommendationForm') {
+                $('#loginWarningModal').modal('show');
+                return;
             }
+
+            buttonClicked = true;
+            console.log('Submitting form:', form.attr('id')); // Debugging: Log form submission
+            var currentTime = new Date().getTime();
+            localStorage.setItem('lastClickedTime', currentTime.toString());
+            recommendationButton.prop('disabled', true);
+            paragraphRecommendationButton.prop('disabled', true);
+            quickRecommendationButton.prop('disabled', true);
+
+            $('#loading').show();
+
+            $.ajax({
+                headers: { "X-CSRFToken": csrfToken },
+                type: 'POST',
+                url: form.attr('action'),
+                data: form.serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    console.log("Success!", response);
+                    displayBooks(response);
+                    buttonClicked = false;
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX call failed", status, error);
+                    console.error("Error details:", xhr.responseText);
+                    buttonClicked = false;
+                },
+                complete: function() {
+                    $('#loading').hide();
+                    setTimeout(function() {
+                        recommendationButton.prop('disabled', false);
+                        paragraphRecommendationButton.prop('disabled', false);
+                        quickRecommendationButton.prop('disabled', false);
+                    }, clickDelay);
+                }
+            });
         });
     });
 
-    checkAuthentication(); // Check authentication status on page load
-    fetchCachedBooks(); // Fetch cached books on page load
-
+    checkAuthentication(fetchCachedBooks); // Check authentication status and fetch cached books on page load
 });
 
 function displayBooks(response) {
@@ -194,9 +207,9 @@ function displayBooks(response) {
         var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
         var bookElement = $('<div class="book">').append(
             $('<h3 class="title">').text(book.name),
-            book.cover_image_url ? $('<img> class="img"').attr('src', book.cover_image_url) : '',
-            $('<p> class="author"').text('Author: ' + book.author),
-            $('<p> class="explanation"').text(book.explanation),
+            book.cover_image_url ? $('<img class="img">').attr('src', book.cover_image_url) : '',
+            $('<h3 class="author"> ').text(book.author),
+            $('<h3 class="explanation"> ').text(book.explanation),
             bookDetailLink
         );
         if (index % 2 === 0) {
@@ -206,6 +219,11 @@ function displayBooks(response) {
         }
     });
 }
+
+
+
+
+
 
 
 
