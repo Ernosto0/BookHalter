@@ -1,3 +1,4 @@
+from calendar import c
 from projects.models import Books
 from django.db import IntegrityError, transaction
 from fuzzywuzzy import process, fuzz
@@ -40,6 +41,7 @@ def add_books(book_list):
                                 description=book.get('description', ''),
                                 cover_image_url=book.get('cover_image', ''),
                                 googlebooks_link=book.get('googlebooks_link', ''),
+                                categories=book.get('categories', '')
                             )
                             logger.info(f"Added book: {book['title']} by {book['author'][0]}")
                     except IntegrityError as e:

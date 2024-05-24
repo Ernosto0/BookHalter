@@ -3,7 +3,7 @@
 
 :root {
   --maincolor: #4CAF50;
-  --navbarcolor : #222222;
+  --navbarcolor: #222222;
   --hover: rgb(9, 123, 143);
 }
 
@@ -21,6 +21,13 @@ header .fa-bars {
   cursor: pointer;
 }
 
+header .fa-xmark {
+  display: none;
+  font-size: 30px;
+  color: white;
+  cursor: pointer;
+}
+
 header {
   background-color: #222222;
   display: flex;
@@ -29,11 +36,11 @@ header {
   align-items: center;
   padding: 1rem 5rem;
   box-shadow: 3px 3px 5px 6px #ccc;
-  font-family: 'Poppins' , sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .logo a img {
-  height: 7rem;
+  height: 8rem;
   border-radius: 50%;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -42,6 +49,29 @@ header {
 .logo {
   display: flex;
   padding: .3rem 1rem;
+}
+
+header .selected {
+  display: flex;
+  position: absolute;
+  background-color: rgb(162, 162, 162);
+  width: 98vw;
+  height: 50vw;
+  top: 15rem;
+  left: 0;
+  z-index: 1;
+  text-align: center;
+  flex-direction: column;
+  justify-content: left;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  gap: 1rem;
+}
+
+header .selected ul {
+  flex-direction: column;
+  margin: 0;
 }
 
 header .links ul {
@@ -66,13 +96,41 @@ header .links ul li .active {
   padding: 2rem 2rem;
 }
 
-header .links ul li a:hover{
+header .links ul li a:hover {
   color: var(--hover);
 }
 
 header .links ul li a .active:hover {
   background-color: var(--hover);
 }
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1.5rem;
+}
+
+.login-button button,
+.register-button button,
+.logout-button button {
+  font-size: 15px;
+  padding: 10px;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: var(--navbarcolor);
+  border-radius: 4px;
+  transition: background-color 0 .3s, color 0.3s;
+  border: 2px solid #4CAF50;
+}
+
+.login-button button:hover,
+.register-button button:hover,
+.logout-button button:hover {
+  background-color: #3c8b3f;
+  border: 2px solid #3c8b3f;
+  color: white;
+}
+
 
 .title h2 {
   font-size: 24px;
@@ -86,22 +144,15 @@ header .links ul li a .active:hover {
 footer .container {
   display: flex;
   flex-direction: row;
-  padding: 0px 200px;
+  padding: 0px 100px;
   text-align: left;
-  gap:300px;
+  gap: 100px;
   background-color: rgb(34, 34, 34);
 }
 
 footer .container .section1 {
   display: flex;
-  flex-direction: row;
   align-items: center;
-}
-
-footer .container .section1 img {
-  height: 100px;
-  margin: 0px 30px;
-  margin-bottom: 30px;
 }
 
 footer .container .section1 a {
@@ -152,6 +203,10 @@ footer .container .section3 {
   flex-direction: column;
   justify-content: center;
   padding: 2rem;
+}
+
+footer .container .section3 .icons {
+  display: flex;
 
 }
 
@@ -166,6 +221,31 @@ footer .container .section3 .about p {
   padding-bottom: 2rem;
 }
 
+.cr {
+  min-height: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+   
+}
+
+.cr h4 {
+  font-size: 1rem;
+  padding: 0;
+  margin: 0;
+  color: white;
+}
+
+.cr p {
+  font-size: 0.7rem;
+  margin:0;
+  padding: 0 ;
+  color: white;
+  margin-top: 28px;
+}
+
+
 @media (max-width: 1250px) {
   header .links ul li a {
     font-size: 1.2rem;
@@ -175,7 +255,84 @@ footer .container .section3 .about p {
     gap: 1.2rem;
   }
 
-  header .logo a img {
-    height: 7rem;
+  .logo {
+    padding: .3rem 0rem;
   }
+
+  .logo a img {
+    height: 5rem;
+  }
+}
+
+@media (max-width: 820px) {
+
+  .login-button button,
+  .register-button button,
+  .logout-button button {
+    display: none;
+  }
+
+  header {
+    padding: 1rem .5rem;
+  }
+
+  header .links ul {
+    gap: .7rem;
+    margin-left: 0rem;
+  }
+
+  header .links ul li a {
+    font-size: 1rem;
+  }
+
+  header .fa-bars {
+    display: inline-block;
+  }
+
+  header .links ul li .active {
+    background-color: #4CAF50;
+    padding: 1.3rem 1.3rem;
+  }
+
+  footer .container {
+    flex-direction: column;
+    padding: 50px 100px;
+    text-align: center;
+    gap: 50px;
+    background-color: rgb(34, 34, 34);
+  }
+
+  footer .container .section1 .links {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+  }
+
+  footer .container .section2 {
+    display: flex;
+    gap: 40px;
+    margin: auto
+  }
+
+  footer .container .section2 .box .links {
+    display: flex;
+    flex-direction: column;
+  }
+
+  footer .container .section3 {
+    padding: 0rem;
+  }
+
+  footer .container .section3 .icons {
+    margin: auto;
+  }
+
+  footer .container .section3 .icons i{
+    font-size: 30px;
+  }
+
+  footer .container .section3 .about {
+    width: 100%;
+  }
+
 }

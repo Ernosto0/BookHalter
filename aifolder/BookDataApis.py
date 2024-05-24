@@ -2,10 +2,12 @@ from regex import F
 import requests
 import concurrent.futures
 from fuzzywuzzy import fuzz
+import re
+import time
 
 def search_book_by_title_and_author(title, author):
     search_url = "https://www.googleapis.com/books/v1/volumes"
-    search_params = {'q': f'intitle:{title}+inauthor:{author}', 'maxResults': 1, 'langRestrict': 'tr'}
+    search_params = {'q': f'intitle:{title}+inauthor:{author}', 'maxResults': 1, 'langRestrict': 'en'}
 
     response = requests.get(search_url, params=search_params)
 
@@ -20,9 +22,11 @@ def search_book_by_title_and_author(title, author):
             author = volume_info.get('authors')
             year = volume_info.get('publishedDate', '').split('-')[0]  # Get only the year part
             description = volume_info.get('description', 'No description available.')
-            cover_image = volume_info.get('imageLinks', {}).get('thumbnail', 'No cover image available.')
-            # id_amazon = 10000
-            googlebooks_link = book.get('saleInfo', '').get('buyLink', 'No buy link.')  # New variable for Google Books link
+            categories = volume_info.get('categories', ['No categories available'])
+            image_links = volume_info.get('imageLinks', {})
+            cover_image = image_links.get('thumbnail', '') or 'No cover image available.'
+            googlebooks_link = book.get('saleInfo', '').get('buyLink', 'No buy link.')  
+
             return {
                 'title': title,
                 'author': author,
@@ -31,6 +35,7 @@ def search_book_by_title_and_author(title, author):
                 'cover_image': cover_image,
                 # 'id_amazon': id_amazon,
                 'googlebooks_link': googlebooks_link,
+                'categories': ', '.join(categories),
             }
         else:
             return f"No results found for '{title}'."

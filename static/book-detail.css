@@ -1,6 +1,80 @@
+body {
+  overflow-x: hidden;
+}
+
+/* ! Topbar */
+
+.topbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.topbar .info {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.topbar .info i {
+  font-size: 2rem;
+  background-color: var(--maincolor);
+  padding: .8rem 1rem;
+  border-radius: 50%;
+  color: white;
+  border: 2px solid black;
+}
+
+.topbar .info a:hover i {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+}
+
+/* ! Topbar */
+
+/*! LOGIN REGISTER BUTTONS */
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1.5rem;
+}
+
+.login-button button,
+.register-button button,
+.logout-button button {
+  font-size: 15px;
+  padding: 10px;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: var(--navbarcolor);
+  border-radius: 4px;
+  transition: background-color 0 .3s, color 0.3s;
+  border: 2px solid #4CAF50;
+}
+
+.login-button button:hover,
+.register-button button:hover,
+.logout-button button:hover {
+  background-color: #3c8b3f;
+  border: 2px solid #3c8b3f;
+  color: white;
+}
+
+@media (max-width : 1250px) {
+
+  .login-button button,
+  .register-button button,
+  .logout-button button {
+    padding: 7px;
+    margin: 5px;
+  }
+}
+
+/*! LOGIN REGISTER BUTTONS */
+
 .page {
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto;
   background: #f9f9f9;
   border-radius: 10px;
 }
@@ -10,13 +84,10 @@
   background: #1e3a52;
   color: #fff;
   padding: 25px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
-  width: 150%; /* Add this line to make the header expand horizontally */
-  width: 250x;
+  width: 100%; /* Add this line to make the header expand horizontally */
 }
 
 .header h2 {
@@ -28,25 +99,41 @@
 .book-detail {
   display: flex;
   background: #fff;
-  padding: 20px;
+  padding: 3rem 2rem;
   border-bottom: 1px solid #ddd;
 }
 
-.book-detail img {
-  max-width: 220px;
-  max-height: 400px; /* Ensure the image has a maximum height */
-  width: 155%;
-  height: 155%;
-  margin-right: 30px;
-  object-fit: cover; /* Ensure the image covers the area properly */
-  border-radius: 5px; /* Optional: to match the rounded container style */
-  padding-right: 50px;
+.book-detail .bookleft {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 60rem; /* Adjusted max-width */
+  max-height: 70rem; /* Adjusted max-height */
+  width: 100%; /* Ensure the container takes up the full width */
+  height: auto; /* Adjust the height automatically */
+}
+
+.book-detail .bookleft img {
+  width: auto;
+  height: 500px; /* Fixed height for the image */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Ensure the image scales without distortion */
+  border-radius: 5px;
+}
+
+.bookleft {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .book-info {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-right: 60px;
 }
 
 .book-title h1 {
@@ -56,6 +143,7 @@
 
 .book-author, .book-description, .book-published, .book-buy-link {
   margin: 10px 0;
+
 }
 
 .book-author {
@@ -64,7 +152,7 @@
 
 .book-description {
   font-size: 16px;
-  width: 150%;
+  width: 90%;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -80,7 +168,8 @@
 
 .buy-button {
   display: inline-block;
-  background-color: #4caf50; /* Green background */
+  width: 23rem;
+  background-color: #248127; /* Green background */
   color: white; /* White text */
   padding: 10px 20px; /* Padding for size */
   border-radius: 25px; /* Rounded corners */
@@ -89,6 +178,7 @@
   font-weight: bold; /* Make text bold */
   text-align: center; /* Center the text */
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  justify-content: center;
 }
 
 .buy-button:hover {
@@ -98,12 +188,14 @@
 .genres {
   display: flex;
   flex-wrap: wrap;
+  font-size: 10px;
 }
 
 .genre {
   margin-right: 10px;
   color: #0066c0;
   text-decoration: none;
+  
 }
 
 /* Star Rating */
@@ -114,7 +206,7 @@
 }
 
 .star-rating span {
-  font-size: 24px;
+  font-size: 45px;
   color: #f8ce0b;
 }
 
@@ -127,7 +219,9 @@
 .voting-section {
   text-align: center;
   margin: 20px 0;
-  padding-right: 275px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .vote-button {
@@ -142,13 +236,20 @@
 .vote-up {
   background: #4caf50;
   color: #fff;
- 
+  font-size: 1.5rem;
+}
+
+.vote-up:active {
+  background-color: var(--navbarcolor);
+}
+.vote-down:active {
+  background-color: var(--navbarcolor);
 }
 
 .vote-down {
   background: #f44336;
   color: #fff;
-
+  font-size: 1.5rem;
 }
 
 .vote p {
@@ -166,11 +267,13 @@
 
 .comments-textarea {
   width: 100%;
+  height: 7rem;
   padding: 10px;
   box-sizing: border-box;
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  resize: none;
 }
 
 .comment-section {
@@ -224,7 +327,7 @@
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
-  margin-top: 20px;
+  margin-top: 10px;
   display: inline-block;
   text-decoration: none;
   transition: background-color 0.3s, transform 0.2s;
@@ -237,4 +340,29 @@
   background: #007ba7;
   transform: scale(1.05);
   outline: none;
+}
+
+@media (max-width : 1250px) {
+  .star-rating {
+    display: flex;
+    flex-direction: column;
+  }
+  .book-detail {
+    display: flex;
+    background: #fff;
+    padding: 3rem 3rem;
+    border-bottom: 1px solid #ddd;
+  }
+}
+
+@media (max-width : 772px) {
+ .book-detail {
+  flex-direction: column-reverse;
+  gap: 1rem;
+ }
+ .buy-button {
+  width: 100%;
+  font-size: 15px;
+  font-weight: 200;
+ }
 }

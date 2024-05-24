@@ -9,15 +9,13 @@
     <title>BookAi - Your Intelligent Book Assistant</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link rel="stylesheet" href="{% static 'responsive.css' %}">
 </head>
 <body>
     <!-- Display the form -->
-    <h1>Welcome to BookAi</h1>
+    <h1 class="home-header">Welcome to BookHalter</h1>
         <!-- Check if the user is authenticated and display their username -->
-    {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}!</p>
-    {% else %}
-    {% endif %}
+    <p class="home-desc">Lets find your next read by answering four simple questions or opt to use our reading persona feature for an even more personalized experience. Our AI, powered by the latest advancements in language technology, will recommend ten perfectly matched books, each accompanied by a concise explanation. Whether you're exploring new genres or diving deeper into your favorite themes, BookPalAI is here to curate your next great read. Ready to begin? Share a little about your latest favorites or let us analyze your reading personality based on the books you've upvoted.</p>
     <!-- <div class="rectangle">
         Your long text goes here. 
     </div> -->
@@ -33,7 +31,8 @@
             <a href="#" data-description="Use this form to describe your reading preferences in a paragraph." onclick="selectForm('form2', 'Form with Paragraph')">Form with Paragraph</a>
             <!-- Add more form options as needed -->
         </div>
-    </div> 
+    </div>
+    <div id="cooldownMessage" class="cooldown-message" style="display: none;">Please wait for 5 minutes before requesting again!</div> 
     <div id="form1" class="form-container">
         <form id="recommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
@@ -47,23 +46,18 @@
             <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
             <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
             <button type="submit" id="recBtn">Get Book Recommendations</button>
+            <div class="quick-recommendation">  
+                <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
+                    <h1>Quick Book Recommendation</h1>
+                    <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="by_personality">
+                    <button type="submit" id="quickRecBtn">Surprise Me!</button>
+                </form>
+            </div>
         </form>
         
     </div>
-    
-    </div>
-    <div class="box">
-        <body data-get-read-books-url="{% url 'get_read_books' %}"></body>
-    <div class="read-books-container" id="readBooksList">
-        <!-- Books will be loaded here by JavaScript -->
-    </div>
-    <!-- Loading spinner -->
-    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100;">
-        <div class="loader">Loading...</div>
-    </div>
-    </div>
-    
-    
     <div id="form2" class="form-container" style="display: none;">
         <form id="paragraphForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
@@ -73,46 +67,60 @@
             <button type="submit" id="paraBtn">Get Book Recommendations</button>
         </form>
     </div>
+    
+    </div>
+    <div class="box">
+        <body data-get-read-books-url="{% url 'get_read_books' %}"></body>
+        <h1 class="readedbooktext">Readed Books</h1>
+    <div class="read-books-container" id="readBooksList">
+        <!-- Books will be loaded here by JavaScript -->
+    </div>
+    <!-- Loading spinner -->
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100;">
+        <div class="loader">Loading...</div>
+    </div>
+    
+    </div>
+        
 </div>
 
-<div class="quick-recommendation">
-            <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="by_personality">
-                <button type="submit" id="quickRecBtn">Surprise Me!</button>
-            </form>
-        </div>
-<!--  -->
+        
 
     <div id="bookColumns" class="book-columns">
         <div id="column1" class="book-column"></div>
         <div id="column2" class="book-column"></div>
     </div>
     <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form id="loginForm" method="post" action="{% url 'users:ajax_login' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="login-button">Login</button>
-                </div>
-                <div id="login-message" style="color: green;"></div> <!-- Success message placeholder -->
-                <div id="login-error" style="color: red;"></div> <!-- Error message placeholder -->
-            </form>
-        </div>
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="loginForm" method="post" action="{% url 'users:ajax_login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="remember_me">Remember me</label>
+                <input type="checkbox" id="remember_me" name="remember_me">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="login-button">Login</button>
+            </div>
+            <div id="login-message" style="color: green;"></div> <!-- Success message placeholder -->
+            <div id="login-error" style="color: red;"></div> <!-- Error message placeholder -->
+        </form>
     </div>
+</div>
+
+
+
     <!-- Text for Result -->
     <p id="resultText"></p>
-
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
@@ -169,6 +177,11 @@
         </div>
     </div>
 
+    <!--  cookie banner -->
+    <div id="cookie-consent-banner">
+        This website uses cookies to ensure you get the best experience. 
+        <button onclick="acceptCookies()">Accept</button>
+    </div>
 
     <script>
         document.getElementById('logoutButton').addEventListener('click', function() {

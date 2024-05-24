@@ -89,24 +89,24 @@ WSGI_APPLICATION = 'arabalar.wsgi.application'
 # }
 
 # Local Mysqldb
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'myprojectdb',
-#         'USER': 'root',
-#         'PASSWORD': """12345""",  
-#         'HOST': 'localhost',  # Or the IP Address of the MySQL server
-#         'PORT': '3306',
-#     }
-# }
-
-# Baran bunu kullan
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myprojectdb',
+        'USER': 'root',
+        'PASSWORD': """12345""",  
+        'HOST': 'localhost',  # Or the IP Address of the MySQL server
+        'PORT': '3306',
     }
 }
+
+# # Baran bunu kullan
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
