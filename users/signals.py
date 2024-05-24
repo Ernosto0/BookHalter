@@ -7,3 +7,7 @@ from .models import UserBookData
 def create_user_book_data(sender, instance, created, **kwargs):
     if created:
         UserBookData.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.book_data.save()

@@ -76,6 +76,7 @@ class BookService:
                 'vote_ratio': book.vote_ratio if hasattr(book, 'vote_ratio') else "N/A",
                 'published_year': book.published_year if hasattr(book, 'published_year') else "Unknown",
                 'description': book.description if hasattr(book, 'description') else "Description not available.",
+                'categories': book.categories if hasattr(book, 'categories') else "No categories available.",
                 'id': book.id,
                 'detail_url': reverse('book-detail', args=[str(book.id)])
             }
@@ -110,7 +111,6 @@ class BookService:
                     current_vote.delete()
                     if vote_type == 'up':
                         book.vote_total -= 1
-                        UpdateVoteCount.decrease_vote_count(self.request)
                         if book.upvotes_count is not None:
                             book.upvotes_count -= 1
                     else:
@@ -139,7 +139,7 @@ class BookService:
                     UpdateVoteCount.increase_vote_count(self.request)
                 else:
                     book.vote_total -= 1
-                    UpdateVoteCount.decrease_vote_count(self.request)
+
             book.save()
             
             # Calculate the ratio

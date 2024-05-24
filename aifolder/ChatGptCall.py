@@ -17,7 +17,7 @@ messages = [
                    "informative response to the user, incorporating these suggestions. Your book recommendations "
                    "should be in the format: 'title by author': explanation. Avoid suggesting the same author's books repeatedly. "
                    "Do not use quotation marks around book names, and do not use 'and' between book names. Each book "
-                   "name should be followed by a period."
+                   "name should be followed by a period. Always answer in English"
     }
 ]
 
@@ -67,7 +67,7 @@ def RecommendWithAnswers(user_queries, upvoted_books):
                             "narratives that take their time to unfold?",
                 "answer": user_queries[3]
             }},
-            "user_liked_books": "Martin eden"
+            "user_liked_books": ""
     }
     preferences_summary = " ".join([f"{pref['question']} {pref['answer']}" for pref in user_preferences["questions"].values()])
 

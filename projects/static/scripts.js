@@ -201,16 +201,21 @@ $(document).ready(function() {
 });
 
 function displayBooks(response) {
+    $('#bookColumns').css('display', 'flex');
     var col1 = $('#column1').empty();
     var col2 = $('#column2').empty();
     response.books.forEach(function(book, index) {
         var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
+        var bookInfoGroup = $('<div class="book-info">')
+            .append(
+                $('<h3 class="title">').text(book.name),
+                $('<h3 class="author">').text(book.author),
+                $('<h3 class="explanation">').text(book.explanation),
+                bookDetailLink
+            );
         var bookElement = $('<div class="book">').append(
-            $('<h3 class="title">').text(book.name),
             book.cover_image_url ? $('<img class="img">').attr('src', book.cover_image_url) : '',
-            $('<h3 class="author"> ').text(book.author),
-            $('<h3 class="explanation"> ').text(book.explanation),
-            bookDetailLink
+            bookInfoGroup
         );
         if (index % 2 === 0) {
             col1.append(bookElement);

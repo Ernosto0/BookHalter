@@ -7,11 +7,42 @@
       <link rel="stylesheet" type="text/css" href="{% static 'book-detail.css' %}">
     </head>
     <div class="header">
-    
       <button onclick="window.history.back();" class="go-back-button">Go Back</button>
     </div>
     <div class="book-detail">
-      <img src="{{ book.cover_image_url }}" alt="Cover image for {{ book.name }}">
+      <div class="bookleft">
+        <img src="{{ book.cover_image_url }}" alt="Cover image for {{ book.name }}">
+        {% if book.googlebooks_link != "No buy link." %}
+        <p class="book-buy-link"><a href="{{ book.googlebooks_link }}" class="buy-button">Want to read</a></p>
+      {% else %}
+        <p class="book-buy-link">Buy: Not available</p>
+      {% endif %}
+      <div class="voting-section">
+        <form id="vote-form" method="post" action="{% url 'vote' book.id %}">
+          {% csrf_token %}
+          <button type="submit" name="vote" value="up" class="vote-button vote-up"><i class="fa-solid fa-thumbs-up"></i></button>
+          <button type="submit" name="vote" value="down" class="vote-button vote-down"><i class="fa-solid fa-thumbs-down"></i></button>
+        </form>
+      </div>
+      <p id="vote-total">Votes: {{ book.vote_total }}</p>
+          <p id="vote-ratio">Rating: {{ book.vote_ratio }}%</p>
+      <div class="comment-section">
+        <h3>Add a Comment</h3>
+        <form method="POST" action="{% url 'post_comment' book.id %}" class="comment-form">
+          {% csrf_token %}
+          <textarea name="comment" class="comments-textarea" placeholder="Write your comment here..."></textarea>
+          <button type="submit" class="comments-submit">Add comment</button>
+        </form>
+        <div class="comments-list">
+          {% for comment in book.comment_set.all %}
+            <div class="comment">
+              <p class="comment-user">{{ comment.user.username|default:"Anonymous" }} says:</p>
+              <p class="comment-body">{{ comment.body }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      </div>
       <div class="book-info">
         <div class="book-title">
           <h1>{{ book.name }}</h1>
@@ -24,28 +55,14 @@
         <p class="book-description">{{ book.description }}</p>
         <p class="book-published">Published: {{ book.published_year }}</p>
         <div class="genres">
-          <a href="#" class="genre">Fiction</a>
-          <a href="#" class="genre">Fantasy</a>
-          <a href="#" class="genre">Classics</a>
-          <a href="#" class="genre">Adventure</a>
-          <a href="#" class="genre">Magical Realism</a>
-          <a href="#" class="genre">Novels</a>
-          <a href="#" class="genre">Literature</a>
+          <p>Genres:</p>
+          <ul>
+            {% for genre in book.genres.all %}
+              <li>{{ genre.categories }}</li>
+            {% endfor %}
+          </ul>
         </div>
-        {% if book.googlebooks_link != "No buy link." %}
-          <p class="book-buy-link"><a href="{{ book.googlebooks_link }}" class="buy-button">Want to read</a></p>
-        {% else %}
-          <p class="book-buy-link">Buy: Not available</p>
-        {% endif %}
-        <div class="voting-section">
-          <form id="vote-form" method="post" action="{% url 'vote' book.id %}">
-            {% csrf_token %}
-            <button type="submit" name="vote" value="up" class="vote-button vote-up">Vote Up</button>
-            <button type="submit" name="vote" value="down" class="vote-button vote-down">Vote Down</button>
-          </form>
-          <p id="vote-total">Votes: {{ book.vote_total }}</p>
-          <p id="vote-ratio">Rating: {{ book.vote_ratio }}%</p>
-        </div>
+        
         <!-- Read button -->
         <form method="POST" id="toggle_read_status-form">
           {% csrf_token %}
@@ -58,22 +75,7 @@
           </button>
         </form>
         <!-- Comment form -->
-        <div class="comment-section">
-          <h3>Add a Comment</h3>
-          <form method="POST" action="{% url 'post_comment' book.id %}" class="comment-form">
-            {% csrf_token %}
-            <textarea name="comment" class="comments-textarea" placeholder="Write your comment here..."></textarea>
-            <button type="submit" class="comments-submit">Add comment</button>
-          </form>
-          <div class="comments-list">
-            {% for comment in book.comment_set.all %}
-              <div class="comment">
-                <p class="comment-user">{{ comment.user.username|default:"Anonymous" }} says:</p>
-                <p class="comment-body">{{ comment.body }}</p>
-              </div>
-            {% endfor %}
-          </div>
-        </div>
+        
       </div>
     </div>
   </div>

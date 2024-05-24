@@ -17,5 +17,4 @@ urlpatterns = [
     path('get_cached_books/', views.get_cached_books, name='get_cached_books'),
     path('check_authentication/', views.check_authentication, name='check_authentication'),
     path('quickrecommended_books/', views.quickrecommended_books, name='quickrecommended_books'),
-
 ]

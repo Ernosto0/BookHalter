@@ -8,7 +8,9 @@
     <title>BookAi - Your Intelligent Book Assistant</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'title.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -23,13 +25,11 @@
             <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
     </div>
-    
     <header>
-        <i class="fa-solid fa-bars"></i>
         <div class="links">
             <ul>
-                <li><a href="#" class="active">Home</a></li>
-                <li><a href="#">Saved</a></li>
+                <li><a href="{% url 'projects' %}" class="active">Home</a></li>
+                <li><a href="{% url 'projects' %}">Saved</a></li>
                 <li><a href="#">Topic</a></li>
             </ul>
         </div>
@@ -40,19 +40,18 @@
             <div class="register-button">
                 <button id="registerBtn">REGISTER</button>
             </div>
-    
             <!-- Logout button -->
             {% if user.is_authenticated %}
             <div class="logout-button">
                 <button type="button" class="logout-button" id="logoutButton">LOGOUT</button>
             </div>
-        {% endif %}
-        <div id="logout-message" style="color: green;"></div> <!-- Logout message placeholder -->
-    
+            {% endif %}
+            <div id="logout-message" style="color: green;"></div> <!-- Logout message placeholder -->
+           
         </div>
-
+        <i class="fa-solid fa-bars"></i>
+        <i class="fa-solid fa-xmark"></i>
     </header>
-
     {% block content %}
     <!-- The content of your specific page will go here -->
     {% endblock %}
@@ -60,9 +59,6 @@
     <footer>
         <div class="container">
             <div class="section1">
-                <div class="logo">
-                    <img src="../staticfiles/imagies/logo.jpg" alt="">
-                </div>
                 <div class="links">
                     <a href="#">Home</a>
                     <a href="#">Log-in</a>
@@ -71,23 +67,15 @@
             </div>
             <div class="section2">
                 <div class="box">
-                    <div class="heading">
-                        <h3>Links</h3>
-                    </div>
-                    <div class="links">
-                        <a href="#">Lorem.</a>
-                        <a href="#">Lorem.</a>
-                        <a href="#">Lorem.</a>
-                    </div>
                 </div>
                 <div class="box">
                     <div class="heading">
-                        <h3>Links</h3>
+                        <h3>Contact us</h3>
                     </div>
                     <div class="links">
-                        <a href="#">Lorem.</a>
-                        <a href="#">Lorem.</a>
-                        <a href="#">Lorem.</a>
+                        <a href="mailto:contact@bookhalter.com">contact@bookhalter.com</a>
+                        <a href="mailto:ernosto20.03@gmail.com">ernosto20.03@gmail.com</a>
+                        <a href="https://github.com/Ernosto0">My GitHub</a>
                     </div>
                 </div>
             </div>
@@ -103,9 +91,40 @@
                         reiciendis architecto neque provident, corporis commodi.</p>
                 </div>
             </div>
+            <div class="cr">
+                <h4>© 2024 All Rights Reserved BookHalter</h4>
+                <p>designed by <a href="https://github.com/bbarankaraa" target="_blank">bbarankaraa</a></p>
+            </div>
         </div>
+        
     </footer>
-
+    
+<script>
+    var bar = document.querySelector(".fa-bars");
+    var xmark = document.querySelector(".fa-xmark");
+    var links = document.querySelector(".button-container");
+    var login = document.querySelector(".login-button button");
+    var register = document.querySelector(".register-button button");
+    var logout = document.querySelector(".logout-button button");
+    bar.addEventListener("click", () => {
+    login.style.display = "inline-block";
+    register.style.display = "inline-block";
+    logout.style.display = "inline-block";
+    links.classList.add("selected");
+    bar.style.display = "none";
+    xmark.style.display = "inline-block";
+    document.body.style.overflow = 'hidden';
+    xmark.addEventListener("click", () => {
+    login.style.display = "none";
+    register.style.display = "none";
+    logout.style.display = "none";
+    document.body.style.overflow = 'scroll';
+        links.classList.remove("selected");
+        bar.style.display = "inline-block";
+        xmark.style.display = "none";
+    });
+});
+</script>
 </body>
 
 </html>

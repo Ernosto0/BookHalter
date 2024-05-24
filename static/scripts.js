@@ -60,100 +60,73 @@ document.querySelectorAll('.dropdown-content a').forEach(function(link) {
 });
 
 
-
-
-
 $(document).ready(function() {
     console.log("Document ready!");
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     var recommendationButton = $('#recBtn');
     var paragraphRecommendationButton = $('#paraBtn');
     var quickRecommendationButton = $('#quickRecBtn');
-    var clickDelay = 300; // 5 minutes in milliseconds
+    var clickDelay = 30000; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
+    console.log('Initial lastClickedTime:', lastClickedTime);
     var buttonClicked = false;
     var isAuthenticated = false; // Variable to store authentication status
 
-    // Function to check authentication status
-    function checkAuthentication(callback) {
-        $.ajax({
-            headers: { "X-CSRFToken": csrfToken },
-            type: 'GET',
-            url: '/check_authentication/', // URL for checking authentication status
-            dataType: 'json',
-            success: function(response) {
-                isAuthenticated = response.is_authenticated;
-                if (!isAuthenticated) {
+    function checkAuthentication() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                headers: { "X-CSRFToken": csrfToken },
+                type: 'GET',
+                url: '/check_authentication/', // URL for checking authentication status
+                dataType: 'json',
+                success: function(response) {
+                    isAuthenticated = response.is_authenticated;
+                    console.log('Authentication status:', isAuthenticated);
+                    if (!isAuthenticated) {
+                        quickRecommendationButton.prop('disabled', true);
+                    }
+                    resolve();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Failed to check authentication status", status, error);
+                    isAuthenticated = false;
                     quickRecommendationButton.prop('disabled', true);
+                    resolve(); // Still resolve to allow flow to continue
                 }
-                if (callback) callback();
-            },
-            error: function(xhr, status, error) {
-                console.error("Failed to check authentication status", status, error);
-                isAuthenticated = false;
-                quickRecommendationButton.prop('disabled', true);
-                if (callback) callback();
-            }
+            });
         });
     }
 
     function cooldownActive() {
         var currentTime = new Date().getTime();
-        return lastClickedTime && (currentTime - lastClickedTime < clickDelay);
+        console.log('Current time:', currentTime);
+        console.log('Last clicked time:', lastClickedTime);
+        var cooldown = lastClickedTime && (currentTime - lastClickedTime < clickDelay);
+        console.log('Cooldown active:', cooldown);
+        return cooldown;
     }
 
-    function fetchCachedBooks() {
-        checkAuthentication(function() {
-            if (!isAuthenticated) {
-                // Do not fetch cached books if the user is not authenticated
-                return;
-            }
-            if (!buttonClicked) { // Only fetch cached books if the button is not clicked
-                $.ajax({
-                    headers: { "X-CSRFToken": csrfToken },
-                    type: 'GET',
-                    url: '/get_cached_books/', // URL for fetching cached books
-                    dataType: 'json',
-                    success: function(response) {
-                        displayBooks(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX call failed", status, error);
-                        console.error("Error details:", xhr.responseText);
-                    }
-                });
-            }
-        });
-    }
-
-    if (cooldownActive()) {
-        recommendationButton.prop('disabled', true);
-        paragraphRecommendationButton.prop('disabled', true);
-        quickRecommendationButton.prop('disabled', true);
+    function showCooldownMessage(message) {
+        var $cooldownMessage = $('#cooldownMessage');
+        $cooldownMessage.text(message).show();
         setTimeout(function() {
-            recommendationButton.prop('disabled', false);
-            paragraphRecommendationButton.prop('disabled', false);
-            quickRecommendationButton.prop('disabled', false);
-            alert('You can now request recommendations again.');
-        }, clickDelay - (new Date().getTime() - lastClickedTime));
+            $cooldownMessage.hide();
+        }, 5000); // Hide after 5 seconds
     }
-
-    $('#formSelectBtn').click(function() {
-        toggleDropdown();
-    });
 
     $('#recommendationForm, #paragraphForm, #quickRecommendationForm').submit(function(event) {
         event.preventDefault();
+        console.log('Form submitted:', $(this).attr('id')); // Debugging: Log form submission event
 
         if (cooldownActive()) {
-            alert('Please wait for 5 minutes before requesting again!');
+            showCooldownMessage('Please wait for 5 minutes before requesting again.');
+            console.log('Cooldown active, skipping form submission.'); // Debugging: Log cooldown
             return;
         }
 
         var form = $(this);
 
-        checkAuthentication(function() {
-            // Check if user is authenticated
+        checkAuthentication().then(() => {
             if (!isAuthenticated && form.attr('id') === 'quickRecommendationForm') {
                 $('#loginWarningModal').modal('show');
                 return;
@@ -163,6 +136,7 @@ $(document).ready(function() {
             console.log('Submitting form:', form.attr('id')); // Debugging: Log form submission
             var currentTime = new Date().getTime();
             localStorage.setItem('lastClickedTime', currentTime.toString());
+            console.log('Setting lastClickedTime:', currentTime); // Debugging: Log lastClickedTime setting
             recommendationButton.prop('disabled', true);
             paragraphRecommendationButton.prop('disabled', true);
             quickRecommendationButton.prop('disabled', true);
@@ -176,8 +150,12 @@ $(document).ready(function() {
                 data: form.serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    console.log("Success!", response);
-                    displayBooks(response);
+                    if (response.error) {
+                        showCooldownMessage(response.error);
+                    } else {
+                        console.log("Success!", response);
+                        displayBooks(response);
+                    }
                     buttonClicked = false;
                 },
                 error: function(xhr, status, error) {
@@ -197,34 +175,67 @@ $(document).ready(function() {
         });
     });
 
-    checkAuthentication(fetchCachedBooks); // Check authentication status and fetch cached books on page load
-});
+    if (cooldownActive()) {
+        recommendationButton.prop('disabled', true);
+        paragraphRecommendationButton.prop('disabled', true);
+        quickRecommendationButton.prop('disabled', true);
+        setTimeout(function() {
+            recommendationButton.prop('disabled', false);
+            paragraphRecommendationButton.prop('disabled', false);
+            quickRecommendationButton.prop('disabled', false);
+            $('#cooldownMessage').hide();
+        }, clickDelay - (new Date().getTime() - lastClickedTime));
+    }
 
-function displayBooks(response) {
-    var col1 = $('#column1').empty();
-    var col2 = $('#column2').empty();
-    response.books.forEach(function(book, index) {
-        var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
-        var bookElement = $('<div class="book">').append(
-            $('<h3 class="title">').text(book.name),
-            book.cover_image_url ? $('<img class="img">').attr('src', book.cover_image_url) : '',
-            $('<h3 class="author"> ').text(book.author),
-            $('<h3 class="explanation"> ').text(book.explanation),
-            bookDetailLink
-        );
-        if (index % 2 === 0) {
-            col1.append(bookElement);
-        } else {
-            col2.append(bookElement);
-        }
+    checkAuthentication().then(() => {
+        fetchCachedBooks();
     });
-}
 
+    function fetchCachedBooks() {
+        if (!isAuthenticated) {
+            console.log('User not authenticated, skipping fetchCachedBooks');
+            return;
+        }
+        if (!buttonClicked) { // Only fetch cached books if the button is not clicked
+            $.ajax({
+                headers: { "X-CSRFToken": csrfToken },
+                type: 'GET',
+                url: '/get_cached_books/', // URL for fetching cached books
+                dataType: 'json',
+                success: function(response) {
+                    displayBooks(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX call failed", status, error);
+                    console.error("Error details:", xhr.responseText);
+                }
+            });
+        }
+    }
 
-
-
-
-
+    function displayBooks(response) {
+        var col1 = $('#column1').empty();
+        var col2 = $('#column2').empty();
+        response.books.forEach(function(book, index) {
+            $('#bookColumns').css('display', 'flex');
+            var bookDetailLink = $('<a>').attr('href', book.detail_url).text('View Details').addClass('book-detail-link');
+            var bookInfoGroup = $('<div class="book-info">')
+                .append(
+                    $('<h3 class="title">').text(book.name),
+                    $('<h3 class="author">').text(book.author),
+                    $('<h3 class="explanation">').text(book.explanation),
+                    bookDetailLink
+                );
+            var bookElement = $('<div class="book">').append(
+                book.cover_image_url ? $('<img class="img">').attr('src', book.cover_image_url) : '',
+                bookInfoGroup
+            );
+            if (index % 2 === 0) {
+                col1.append(bookElement);
+            } else {
+                col2.append(bookElement);
+            }
+        })};
 
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -268,7 +279,7 @@ function displayBooks(response) {
 
         console.log("BOOOKSSS YEAAAH");
         });
-        
+    });
         
 // login modal script
 // Get the modal
@@ -323,7 +334,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         console.error('Error:', error);
     });
 });
-
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -505,6 +515,19 @@ document.getElementById('logoutButton').addEventListener('click', function() {
         logoutMessageDiv.style.color = 'red';  // Change color to red for errors
     });
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!localStorage.getItem('cookieConsent')) {
+        document.getElementById('cookie-consent-banner').style.display = 'block';
+    }
+});
+
+function acceptCookies() {
+    localStorage.setItem('cookieConsent', 'true');
+    document.getElementById('cookie-consent-banner').style.display = 'none';
+}
+
 
 
 console.log("Script loaded successfully.");

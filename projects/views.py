@@ -1,32 +1,26 @@
-from math import log
 import re
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
-from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django_ratelimit.decorators import ratelimit
-from .management import AddBooks, GetBook, GetUpvotedBooks, UpdateVoteCount
+from .management import GetUpvotedBooks, UpdateVoteCount
 from users.models import UserBookData
 from aifolder import CreateUserReadingPersona
 from .models import Books, Comment, Vote
-from .management import CheckBooks
 from .management.GetUserData import UserDataGetter
 from .utils import BookService
 from MyTest import testcontext
 from django.core.cache import cache
-
+from datetime import timedelta
 import logging
 
 logger = logging.getLogger(__name__)
 
-
-def set_cookie(request):
-    response = HttpResponse("Cookie has been set")
-    response.set_cookie('example_cookie', 'example_value', max_age=3600)  # Cookie expires in 1 hour
-    return response
 
 def get_read_books(request):
     print("get_read_books")
@@ -104,6 +98,7 @@ def book_detail(request, book_id):
 
 
 def get_cached_books(request):
+
     logger.info("get_cached_books view called")
     cache_key = 'recommended_books_cache'
     cached_data = cache.get(cache_key)
