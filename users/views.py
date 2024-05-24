@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import logging
+
+from users.models import UserBookData
 from .forms import RegistrationForm
 
 
@@ -16,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 class MyLoginView(LoginView):
     template_name = 'users/login.html'
-
 
 
 
@@ -53,9 +54,17 @@ def ajax_login(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        remember_me = request.POST.get('remember_me') == 'on'
+        
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            
+            if remember_me:
+                request.session.set_expiry(1209600)  # 2 weeks in seconds
+            else:
+                request.session.set_expiry(0)  # Browser session
+
             return JsonResponse({'success': True})
         else:
             return JsonResponse({'success': False, 'error': 'Invalid username or password'})
