@@ -1,6 +1,37 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Automatically select the default form on page load
     selectForm('form1', 'Form with Questions', 'Use this form to answer specific questions about your reading preferences.');
+
+    // Attach event listener to the form select button to toggle dropdown
+    document.getElementById("formSelectBtn").addEventListener('click', toggleDropdown);
+
+    // Attach event listeners to dropdown links
+    document.querySelectorAll('.dropdown-content a').forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            var formId = link.getAttribute('onclick').match(/selectForm\('([^']+)'\)/)[1];
+            var formName = link.textContent;
+            var formDescription = link.getAttribute('data-description');
+            selectForm(formId, formName, formDescription);
+        });
+
+        link.addEventListener('mouseover', function() {
+            var description = link.getAttribute('data-description');
+            document.getElementById('formDescription').textContent = description;
+        });
+
+        link.addEventListener('mouseout', function() {
+            // Reset to the selected form's description
+            var selectedForm = document.getElementById("formSelectBtn").textContent;
+            if (selectedForm === "Form with Questions") {
+                document.getElementById('formDescription').textContent = "Use this form to answer specific questions about your reading preferences.";
+            } else if (selectedForm === "Form with Paragraph") {
+                document.getElementById('formDescription').textContent = "Use this form to describe your reading preferences in a paragraph.";
+            } else {
+                document.getElementById('formDescription').textContent = 'Select a form to see more details.';
+            }
+        });
+    });
 });
 
 function selectForm(formId, formName, formDescription) {
@@ -40,6 +71,7 @@ window.onclick = function(event) {
     }
 }
 
+
 // Show description on hover
 document.querySelectorAll('.dropdown-content a').forEach(function(link) {
     link.addEventListener('mouseover', function() {
@@ -66,7 +98,7 @@ $(document).ready(function() {
     var recommendationButton = $('#recBtn');
     var paragraphRecommendationButton = $('#paraBtn');
     var quickRecommendationButton = $('#quickRecBtn');
-    var clickDelay = 30000; // 5 minutes in milliseconds
+    var clickDelay = 300; // 5 minutes in milliseconds
     var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
     console.log('Initial lastClickedTime:', lastClickedTime);
     var buttonClicked = false;
@@ -119,8 +151,8 @@ $(document).ready(function() {
         console.log('Form submitted:', $(this).attr('id')); // Debugging: Log form submission event
 
         if (cooldownActive()) {
-            showCooldownMessage('Please wait for 5 minutes before requesting again.');
             console.log('Cooldown active, skipping form submission.'); // Debugging: Log cooldown
+            showCooldownMessage('Please wait for 5 minutes before requesting again.');
             return;
         }
 
@@ -141,7 +173,7 @@ $(document).ready(function() {
             paragraphRecommendationButton.prop('disabled', true);
             quickRecommendationButton.prop('disabled', true);
 
-            $('#loading').show();
+            $('#loadingOverlay').show(); // Show the loading overlay
 
             $.ajax({
                 headers: { "X-CSRFToken": csrfToken },
@@ -164,7 +196,7 @@ $(document).ready(function() {
                     buttonClicked = false;
                 },
                 complete: function() {
-                    $('#loading').hide();
+                    $('#loadingOverlay').hide(); // Hide the loading overlay
                     setTimeout(function() {
                         recommendationButton.prop('disabled', false);
                         paragraphRecommendationButton.prop('disabled', false);
@@ -235,7 +267,10 @@ $(document).ready(function() {
             } else {
                 col2.append(bookElement);
             }
-        })};
+        });
+    }
+});
+
 
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -271,7 +306,7 @@ $(document).ready(function() {
                         container.innerHTML = '<p>You haven\'t marked any books as read yet.</p>';
                     }
                 } else {
-                    container.innerHTML = `<p>${data.error || 'You need to login to see read books.'}</p>`;
+                    container.innerHTML = `<p>You need to login to see your read books.</p>`;
                 }
             })
             .catch(error => console.error('Error loading the books:', error));
@@ -279,7 +314,6 @@ $(document).ready(function() {
 
         console.log("BOOOKSSS YEAAAH");
         });
-    });
         
 // login modal script
 // Get the modal
@@ -443,43 +477,6 @@ window.onclick = function(event) {
 
 
 
-
-
-// Loader
-// $(document).ready(function() {
-//     var csrfToken = $('body').data('csrf-token');
-//     var actionUrl = $('body').data('url');
-
-//     $('#recommendationForm').submit(function(event) {
-//         event.preventDefault();
-//         $('#loading').show(); // Show the loader
-
-//         $.ajax({
-//             headers: { "X-CSRFToken": csrfToken },
-//             type: 'POST',
-//             url: actionUrl,
-//             data: $(this).serialize(),
-//             dataType: 'json',
-//             success: function(response) {
-//                 try {
-//                     var jsonData = JSON.parse(response);
-//                     console.log("Success!", jsonData);
-//                 } catch (e) {
-//                     console.error("Failed to parse JSON:", response);
-//                 }
-//             },
-//             error: function(xhr, status, error) {
-//                 console.error("AJAX call failed", status, error);
-//             },
-//             complete: function() {
-//                 $('#loading').hide(); // Hide the loader
-//                 console.log("Loader hidden.");
-//             }
-//         });
-//     });
-// });
-
-
 // Logout script
 document.getElementById('logoutButton').addEventListener('click', function() {
     // Directly use the CSRF token provided by Django
@@ -528,6 +525,22 @@ function acceptCookies() {
     document.getElementById('cookie-consent-banner').style.display = 'none';
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("info Document loaded!");
+    var infoIcon = document.getElementById('infoIcon');
+    var infoSection = document.getElementById('infoSection');
 
+    if (infoIcon) {
+        infoIcon.addEventListener('click', function() {
+            if (infoSection.style.display === 'none' || infoSection.style.display === '') {
+                infoSection.style.display = 'block';
+            } else {
+                infoSection.style.display = 'none';
+            }
+        });
+    } else {
+        console.error("infoIcon not found in the DOM");
+    }
+});
 
 console.log("Script loaded successfully.");
