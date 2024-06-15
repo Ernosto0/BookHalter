@@ -6,26 +6,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookAi - Your Intelligent Book Assistant</title>
+    <title>BookHalter - Your Intelligent Book Assistant</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link rel="stylesheet" href="{% static 'responsive.css' %}">
 </head>
 <body>
-    <!-- Display the form -->
-    <h1 class="home-header">Welcome to BookHalter</h1>
-        <!-- Check if the user is authenticated and display their username -->
-    <p class="home-desc">Lets find your next read by answering four simple questions or opt to use our reading persona feature for an even more personalized experience. Our AI, powered by the latest advancements in language technology, will recommend ten perfectly matched books, each accompanied by a concise explanation. Whether you're exploring new genres or diving deeper into your favorite themes, BookPalAI is here to curate your next great read. Ready to begin? Share a little about your latest favorites or let us analyze your reading personality based on the books you've upvoted.</p>
-    <!-- <div class="rectangle">
-        Your long text goes here. 
-    </div> -->
+    <div class="header-container">
     
-
+    <h1 class="home-header">Welcome to BookHalter</h1>
+    <h1 class='demo-text'>Demo</h1>
+    </div>
+    <p class="home-desc">
+        Discover your next read with BookHalter! Answer the questions or use our reading persona feature for personalized book recommendations. Our AI suggests ten books with concise explanations based on your preferences or upvoted books. Ready to begin?
+    </p>
+    
+<!-- Display the form -->
 <div class="forms">
     <div class="box">
     <div class="dropdown">
         <div id="formDescription" class="form-description">Select a form to see more details.</div>
-        <button id="formSelectBtn" class="dropbtn" >Form with Questions</button>
+        <button id="formSelectBtn" class="dropbtn" >Get recommendations with Questions</button>
         <div id="formDropdown" class="dropdown-content">
             <a href="#" data-description="Use this form to answer specific questions about your reading preferences." onclick="selectForm('form1', 'Form with Questions')">Form with Questions</a>
             <a href="#" data-description="Use this form to describe your reading preferences in a paragraph." onclick="selectForm('form2', 'Form with Paragraph')">Form with Paragraph</a>
@@ -47,14 +48,57 @@
             <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
             <button type="submit" id="recBtn">Get Book Recommendations</button>
             <div class="quick-recommendation">  
-                <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
-                    <h1>Quick Book Recommendation</h1>
-                    <p>Don't want to answer questions? Let us surprise you with a book recommendation based on your curated book personality!</p>
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="by_personality">
-                    <button type="submit" id="quickRecBtn">Surprise Me!</button>
-                </form>
+                <div class="quick-recommendation">  
+                    <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
+                        <h1>Quick Book Recommendation</h1>
+                        <p></p>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="by_personality">
+                        <button type="submit" id="quickRecBtn">Surprise Me!</button>
+                        <span class="info-icon" id="infoIcon"><img src="{% static 'images/info.png' %}" alt="Info">
+                            <div class="tooltip" id="infoTooltip">
+                                <p class="tooltiptext">This feature will provide you with a book recommendation based on your reading persona that created by BookHalter without requiring you to answer any specific questions. You need to upvote at least 5 book to create your own reading persona. You need to login to use this feature.</p>
+                            </div>
+                        </span>
+                    </form>
+                </div>
+                
+                <div id="infoSection" class="info-section">
+                    
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            console.log("info Document loaded!");
+                            var infoIcon = document.getElementById('infoIcon');
+                            var infoTooltip = document.getElementById('infoTooltip');
+                
+                            if (infoIcon) {
+                                console.log("infoIcon found");
+                                infoIcon.addEventListener('click', function(event) {
+                                    event.stopPropagation();
+                                    if (infoTooltip.style.display === 'none' || infoTooltip.style.display === '') {
+                                        infoTooltip.style.display = 'block';
+                                    } else {
+                                        infoTooltip.style.display = 'none';
+                                    }
+                                });
+                                
+                                // Close tooltip if clicked outside
+                                document.addEventListener('click', function() {
+                                    infoTooltip.style.display = 'none';
+                                });
+                
+                                // Prevent closing when clicking inside the tooltip
+                                infoTooltip.addEventListener('click', function(event) {
+                                    event.stopPropagation();
+                                });
+                            } else {
+                                console.error("infoIcon not found in the DOM");
+                            }
+                        });
+                    </script>
+                </div>
             </div>
+            
         </form>
         
     </div>
@@ -78,6 +122,10 @@
     <!-- Loading spinner -->
     <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100;">
         <div class="loader">Loading...</div>
+    </div>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div id="loading" class="loader"></div>
     </div>
     
     </div>

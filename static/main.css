@@ -226,10 +226,30 @@ h1 {
   text-shadow: 0px 0px 10px #072b3a;
 }
 
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
 .home-header {
-  color: #fdfefd;
-  text-shadow: 0px 0px 5px #072b3a, 0px 0px 10px #072b3a, 0px 0px 10px #072b3a,
-    0px 0px 20px #072b3a;
+  margin-right: 10px; /* Adjust spacing as needed */
+}
+
+.demo-text {
+  font-size: 0.9em; /* Adjust size as needed to differentiate from the main header */
+  color:  #6ea70c ; /* Adjust color as needed */
+  position: relative;
+  top: 30px; /* Adjust this value to lower the text */
+  vertical-align: middle;
+  right: 8px;
+  text-shadow: 0px 0px 0px #ffffff; /* Adjust shadow color as needed */
+}
+
+.home-desc {
+  text-align: center;
+  margin-top: 20px; /* Adjust spacing as needed to ensure it appears below the header */
 }
 
 .quick-recommendation h1 {
@@ -496,18 +516,7 @@ h1 {
   cursor: pointer;
 }
 
-/* loader */
 
-.loader {
-  border: 16px solid #f3f3f3;
-  /* Light grey */
-  border-top: 16px solid #3498db;
-  /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-}
 
 @keyframes spin {
   0% {
@@ -758,4 +767,91 @@ button {
   z-index: 1000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   font-size: 16px;
+}
+
+/* loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.button-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-icon {
+  cursor: pointer;
+  margin-left: 10px;
+  vertical-align: middle; /* Ensure the icon is vertically aligned */
+  position: relative;
+}
+
+.info-icon img {
+  width: 20px; /* Set your desired width */
+  height: 20px; /* Set your desired height */
+}
+
+.tooltip {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 250px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-size: 14px; /* Change this value to adjust the font size */
+}
+
+.tooltip:before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #ddd transparent;
+}
+
+.tooltip:after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #f9f9f9 transparent;
+}
+
+.tooltiptext {
+  font-size: 13px;
+  margin-top: -5px;
+  padding: 5px;
 }

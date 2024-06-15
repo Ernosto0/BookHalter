@@ -1,7 +1,9 @@
+from math import log
 import socket
 
 from pathlib import Path
 import os
+from venv import logger
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -150,8 +152,8 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/imagies')
-MEDIA_URL = '/imagies/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/images')
+MEDIA_URL = '/images/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -213,6 +215,7 @@ if is_redis_available():
             }
         }
     }
+    logger.info("Using Redis cache")
 else:
     cache_location = os.path.abspath(os.path.join('/var', 'tmp', 'django_cache'))
     
@@ -222,3 +225,4 @@ else:
             'LOCATION': cache_location,  # Use the absolute path
         }
     }
+    logger.info("Using file-based cache")
