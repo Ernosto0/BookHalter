@@ -1,6 +1,10 @@
 body {
   overflow-x: hidden;
+  background-color: rgb(244,241,234);
+  
 }
+
+
 
 /* ! Topbar */
 
@@ -71,17 +75,17 @@ body {
   }
 }
 
-/*! LOGIN REGISTER BUTTONS */
+
 
 .page {
   margin: 2rem auto;
-  background: #f9f9f9;
+  background: rgb(244,241,234);
   border-radius: 10px;
 }
 
 /* Header */
 .header {
-  background: #1e3a52;
+  background: #fff;
   color: #fff;
   padding: 25px;
   display: flex;
@@ -116,8 +120,8 @@ body {
 .book-detail .bookleft img {
   width: auto;
   height: 500px; /* Fixed height for the image */
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 120%;
+  max-height: 120%;
   object-fit: contain; /* Ensure the image scales without distortion */
   border-radius: 5px;
 }
@@ -137,8 +141,10 @@ body {
 }
 
 .book-title h1 {
-  font-size: 36px;
+  font-size: 3.6rem;
   margin: 0;
+  font-family: Copernicus,"Libre Baskerville",Georgia,serif;
+  padding-bottom: 25px;
 }
 
 .book-author, .book-description, .book-published, .book-buy-link {
@@ -147,13 +153,47 @@ body {
 }
 
 .book-author {
-  font-size: 25px;
+  font-size:  2rem;
+  font-family: Copernicus,"Libre Baskerville",Georgia,serif;
 }
 
 .book-description {
-  font-size: 16px;
-  width: 90%;
-  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  width: 120%;
+  position: relative;
+  font: 400 1rem/1.4375 "Proxima Nova",Montserrat,Arial,sans-serif;
+  line-height: 1.4375;
+}
+
+.short-description {
+  max-height: 100px; /* Adjust this value as needed */
+  overflow: hidden;
+}
+
+.full-description {
+  display: none;
+}
+
+.read-more-button {
+  display: block;
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.read-more-button .arrow {
+  margin-left: 5px;
+  transition: transform 0.3s;
+}
+
+.read-more-button.active .arrow {
+  transform: rotate(180deg); /* Rotate the arrow */
 }
 
 .book-published {
@@ -179,6 +219,7 @@ body {
   text-align: center; /* Center the text */
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
   justify-content: center;
+  max-width: 225px;
 }
 
 .buy-button:hover {
@@ -271,13 +312,15 @@ body {
   padding: 10px;
   box-sizing: border-box;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid rgb(236, 234, 230);
   border-radius: 5px;
   resize: none;
 }
 
 .comment-section {
   margin-top: 30px;
+  max-width: 600px;
+  margin-right: 10px;
 }
 
 .comment-form {
@@ -316,31 +359,6 @@ body {
   margin-top: 5px;
 }
 
-/* Buttons */
-.read-button,
-.go-back-button {
-  background: #008cba;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin-top: 10px;
-  display: inline-block;
-  text-decoration: none;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.read-button:hover,
-.read-button:focus,
-.go-back-button:hover,
-.go-back-button:focus {
-  background: #007ba7;
-  transform: scale(1.05);
-  outline: none;
-}
 
 @media (max-width : 1250px) {
   .star-rating {
@@ -365,4 +383,66 @@ body {
   font-size: 15px;
   font-weight: 200;
  }
+}
+
+.bookpage_gridcontainer {
+  background-color: rgb(244,241,234);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;  /* Reduced the gap between columns */
+  margin: 20px auto;  /* Center the container */
+  max-width: 1200px;  /* Set a maximum width for the container */
+  padding: 10px;  /* Add some padding */
+}
+
+.bookpage_leftcolumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;  /* Adjust gap between elements */
+ 
+}
+
+.bookpage_rightcolumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;  /* Adjust gap between elements */
+  max-width: 600px;
+}
+
+
+
+.read-button {
+  background-color: #FFFFFF;
+  border: 0;
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: "Inter var",ui-sans-serif,system-ui,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: .75rem 1rem;
+  text-align: center;
+  text-decoration: none #D1D5DB solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-top: 20px;
+}
+
+.read-button:hover {
+  background-color: rgb(198, 218, 238);
+}
+
+.read-button:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.read-button:focus-visible {
+  box-shadow: none;
 }

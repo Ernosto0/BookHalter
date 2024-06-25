@@ -10,30 +10,59 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link rel="stylesheet" href="{% static 'responsive.css' %}">
+
+    <!-- Google Ads Conversion Tracking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXX"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'AW-XXXXXXXXXX');
+    </script>
+
+    <!-- Event snippet for tracking conversion -->
+    <script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-XXXXXXXXXX/o24rCOLRyrsZEPi4_vI9',
+          'value': 1.0,
+          'currency': 'TRY',
+          'event_callback': callback
+      });
+      return false;
+    }
+    </script>
 </head>
+
 <body>
     <div class="header-container">
-    
+
     <h1 class="home-header">Welcome to BookHalter</h1>
     <h1 class='demo-text'>Demo</h1>
     </div>
     <p class="home-desc">
         Discover your next read with BookHalter! Answer the questions or use our reading persona feature for personalized book recommendations. Our AI suggests ten books with concise explanations based on your preferences or upvoted books. Ready to begin?
     </p>
-    
+
 <!-- Display the form -->
 <div class="forms">
     <div class="box">
     <div class="dropdown">
         <div id="formDescription" class="form-description">Select a form to see more details.</div>
-        <button id="formSelectBtn" class="dropbtn" >Get recommendations with Questions</button>
+        <button class="button-17" id="formSelectBtn" class="dropbtn" >Get recommendations with Questions</button>
         <div id="formDropdown" class="dropdown-content">
             <a href="#" data-description="Use this form to answer specific questions about your reading preferences." onclick="selectForm('form1', 'Form with Questions')">Form with Questions</a>
             <a href="#" data-description="Use this form to describe your reading preferences in a paragraph." onclick="selectForm('form2', 'Form with Paragraph')">Form with Paragraph</a>
             <!-- Add more form options as needed -->
         </div>
     </div>
-    <div id="cooldownMessage" class="cooldown-message" style="display: none;">Please wait for 5 minutes before requesting again!</div> 
+    <div id="cooldownMessage" class="cooldown-message" style="display: none;">Please wait for 5 minutes before requesting again!</div>
     <div id="form1" class="form-container">
         <form id="recommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
@@ -46,15 +75,16 @@
             <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
             <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
             <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
-            <button type="submit" id="recBtn">Get Book Recommendations</button>
-            <div class="quick-recommendation">  
-                <div class="quick-recommendation">  
+            <button class="button-74" type="submit" id="recBtn" onclick="gtag_report_conversion()">Get Book Recommendations</button>
+
+            <div class="quick-recommendation">
+                <div class="quick-recommendation">
                     <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
                         <h1>Quick Book Recommendation</h1>
                         <p></p>
                         {% csrf_token %}
                         <input type="hidden" name="action" value="by_personality">
-                        <button type="submit" id="quickRecBtn">Surprise Me!</button>
+                        <button class="button-74" type="submit" id="quickRecBtn">Surprise Me!</button>
                         <span class="info-icon" id="infoIcon"><img src="{% static 'images/info.png' %}" alt="Info">
                             <div class="tooltip" id="infoTooltip">
                                 <p class="tooltiptext">This feature will provide you with a book recommendation based on your reading persona that created by BookHalter without requiring you to answer any specific questions. You need to upvote at least 5 book to create your own reading persona. You need to login to use this feature.</p>
@@ -62,15 +92,15 @@
                         </span>
                     </form>
                 </div>
-                
+
                 <div id="infoSection" class="info-section">
-                    
+
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             console.log("info Document loaded!");
                             var infoIcon = document.getElementById('infoIcon');
                             var infoTooltip = document.getElementById('infoTooltip');
-                
+
                             if (infoIcon) {
                                 console.log("infoIcon found");
                                 infoIcon.addEventListener('click', function(event) {
@@ -81,12 +111,12 @@
                                         infoTooltip.style.display = 'none';
                                     }
                                 });
-                                
+
                                 // Close tooltip if clicked outside
                                 document.addEventListener('click', function() {
                                     infoTooltip.style.display = 'none';
                                 });
-                
+
                                 // Prevent closing when clicking inside the tooltip
                                 infoTooltip.addEventListener('click', function(event) {
                                     event.stopPropagation();
@@ -98,9 +128,9 @@
                     </script>
                 </div>
             </div>
-            
+
         </form>
-        
+
     </div>
     <div id="form2" class="form-container" style="display: none;">
         <form id="paragraphForm" method="POST" action="{% url 'recommended_books' %}">
@@ -108,10 +138,10 @@
             <input type="hidden" name="action" value="by_paragraph">
             <label for="self_description">Describe yourself and your reading preferences:</label><br>
             <textarea id="self_description" name="self_description" placeholder="Write your description here..." rows="5" cols="40"></textarea><br>
-            <button type="submit" id="paraBtn">Get Book Recommendations</button>
+            <button class="button-74" type="submit" id="paraBtn">Get Book Recommendations</button>
         </form>
     </div>
-    
+
     </div>
     <div class="box">
         <body data-get-read-books-url="{% url 'get_read_books' %}"></body>
@@ -127,12 +157,12 @@
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div id="loading" class="loader"></div>
     </div>
-    
+
     </div>
-        
+
 </div>
 
-        
+
 
     <div id="bookColumns" class="book-columns">
         <div id="column1" class="book-column"></div>
@@ -144,19 +174,19 @@
         <span class="close">&times;</span>
         <form id="loginForm" method="post" action="{% url 'users:ajax_login' %}">
             {% csrf_token %}
-            <div class="form-group">
+            <div class="form-group_username">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            <div class="form-group">
+            <div class="form-group_password">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <div class="form-group">
+            <div class="form-group_rememberme">
                 <label for="remember_me">Remember me</label>
                 <input type="checkbox" id="remember_me" name="remember_me">
             </div>
-            <div class="form-group">
+            <div class="form-group_button">
                 <button type="submit" class="login-button">Login</button>
             </div>
             <div id="login-message" style="color: green;"></div> <!-- Success message placeholder -->
@@ -202,7 +232,7 @@
             </form>
         </div>
     </div>
-    
+
 
         <!-- Login Warning Modal -->
     <div id="loginWarningModal" class="modal" tabindex="-1" role="dialog">
@@ -227,7 +257,7 @@
 
     <!--  cookie banner -->
     <div id="cookie-consent-banner">
-        This website uses cookies to ensure you get the best experience. 
+        This website uses cookies to ensure you get the best experience.
         <button onclick="acceptCookies()">Accept</button>
     </div>
 
@@ -236,10 +266,10 @@
             // Directly use the CSRF token provided by Django
             const csrfToken = '{{ csrf_token }}';
             console.log("CSRF Token:", csrfToken);  // Log the CSRF token for debugging
-        
+
             // Define the URL directly
             const logoutUrl = '{% url "logout" %}';
-        
+
             // Perform the fetch request
             fetch(logoutUrl, {
                 method: 'POST',
@@ -267,10 +297,10 @@
             });
         });
         </script>
-        
+
 
     <script src="{% static 'scripts.js' %}"></script>
-    
+
 </body>
 </html>
 {% endblock %}

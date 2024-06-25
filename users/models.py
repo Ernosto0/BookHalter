@@ -10,7 +10,7 @@ class UserBookData(models.Model):
     read_books = models.ManyToManyField(Books, related_name='read_by', blank=True, help_text="User's read books")
     user_reading_persona = models.TextField(blank=True, help_text="User's reading persona")
     vote_count = models.IntegerField(default=0, null=True, blank=True, help_text="Count user's votes, reset every 20 books.")
-    last_recommendation_time = models.DateTimeField(null=True, blank=True)
+    last_recommendation_time = models.DateTimeField(default=None, null=True, blank=True)
     
     def __str__(self):
         return f"{self.user.username}'s book data"

@@ -120,7 +120,7 @@ def recommended_books(request):
         action = request.POST.get('action')
         function_type = book_service.get_function_type(action)
         print("function_type", function_type)
-
+        
       
 
         try:

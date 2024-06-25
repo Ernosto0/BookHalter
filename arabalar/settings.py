@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'arabalar.wsgi.application'
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'ernosto1$default',
 #         'USER': 'ernosto1',
-#         'PASSWORD': '8,jk7axm}?SSEdT',
+#         'PASSWORD': '8jk7axm}?SSEdT',
 #         'HOST': 'ernosto1.mysql.pythonanywhere-services.com',  # e.g., yourusername.mysql.pythonanywhere-services.com
 #         'PORT': '',
 #     }
@@ -226,3 +226,6 @@ else:
         }
     }
     logger.info("Using file-based cache")
+
+
+
