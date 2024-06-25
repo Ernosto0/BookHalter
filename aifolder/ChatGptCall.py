@@ -4,6 +4,9 @@ import json
 from aifolder.ExtractBookData import extract_books_info
 from projects.management import AddBooks
 from projects.management import GetBook
+import logging
+
+logger = logging.getLogger(__name__)
 
 with open("C:/BookPalAi/aifolder/openaikey.txt", 'r') as file:
 
@@ -44,7 +47,7 @@ def make_suggestion(prompt):
         
 
 def RecommendWithAnswers(user_queries, upvoted_books):
-    print(user_queries)
+    logger.info(f"RecommendWithAnswers called: {user_queries}")
     user_preferences = {
         "questions": {
             "recent_reads": {
@@ -97,6 +100,9 @@ def RecommendWithReadingPersona(user_reading_personality):
     return extracted_data
 
 def RecommendWithParagraph(user_paraghraph):
+    logger.info(f"RecommendWithParagraph called: {user_paraghraph}")
+
+
     prompt = f"""Please make 10 book suggestions based on the user's book preferences paraghraph: {user_paraghraph}
         Explain the each book why you suggested it with 20-30 words. Each book must be on this format: 'title by author: 
         explanation'. Dont add any extra text. just book name, author and explanations about why did you suggest that 

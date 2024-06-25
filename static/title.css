@@ -37,19 +37,10 @@ header {
   padding: 1rem 5rem;
   box-shadow: 3px 3px 5px 6px #ccc;
   font-family: 'Poppins', sans-serif;
+  padding-bottom: 10px;
+  margin-top: 1px;
 }
 
-.logo a img {
-  height: 8rem;
-  border-radius: 50%;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.logo {
-  display: flex;
-  padding: .3rem 1rem;
-}
 
 header .selected {
   display: flex;
@@ -64,9 +55,10 @@ header .selected {
   flex-direction: column;
   justify-content: left;
   text-align: center;
-  padding: 0;
+  padding-top: 10px;
   margin: 0;
   gap: 1rem;
+  
 }
 
 header .selected ul {
@@ -104,6 +96,18 @@ header .links ul li a .active:hover {
   background-color: var(--hover);
 }
 
+
+.headerlogo {
+  height: 6rem;
+  border-radius: 50%;
+  margin-top: 2px;  
+  margin-bottom: 2px;
+  display: flex;
+  padding: .1rem 1rem;
+}
+
+
+
 .button-container {
   display: flex;
   justify-content: space-evenly;
@@ -113,7 +117,7 @@ header .links ul li a .active:hover {
 .login-button button,
 .register-button button,
 .logout-button button {
-  font-size: 15px;
+  font-size: 17px;
   padding: 10px;
   text-decoration: none;
   color: #ffffff;
@@ -129,6 +133,7 @@ header .links ul li a .active:hover {
   background-color: #3c8b3f;
   border: 2px solid #3c8b3f;
   color: white;
+  
 }
 
 
