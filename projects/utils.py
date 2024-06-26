@@ -1,3 +1,4 @@
+from turtle import update
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.urls import reverse
 from django.utils import timezone
@@ -81,8 +82,20 @@ class BookService:
                 'detail_url': reverse('book-detail', args=[str(book.id)])
             }
             books_data.append(book_dict)
+            
         return books_data
 
+    def update_recommended_count(self, books):
+        for book in books:
+            book_id = book.get('id')
+            if book_id:
+                book_obj = get_object_or_404(Books, id=book_id)
+                if book_obj.recommended_count is not None:
+                    book_obj.recommended_count += 1
+                book_obj.save()
+        
+        
+        
     def get_read_books_list(self):
         if not self.is_authenticated:
             return []
