@@ -35,7 +35,9 @@
         
             </ul>
         </div>
+        
         <div class="button-container">
+
             <div class="login-button">
                 <button id="loginBtn">Sign in</button>
             </div>
@@ -55,16 +57,246 @@
         <i class="fa-solid fa-xmark"></i>
     </header>
     {% block content %}
-    <!-- The content of your specific page will go here -->
     {% endblock %}
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span id="close-login-modal" class="close">&times;</span>
+                <form id="loginForm" method="post" action="{% url 'users:ajax_login' %}">
+                    {% csrf_token %}
+                    <div class="form-group_username">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group_password">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group_rememberme">
+                        <label for="remember_me" class="rememberme_text">Remember me</label>
+                        <input type="checkbox" id="remember_me" name="remember_me" class="rememberme_box">
+                    </div>
+                    <div class="form-group_button">
+                        <button type="submit" class="login-button">Login</button>
+                    </div>
+                    <div id="login-message" style="color: green;"></div>
+                    <div id="login-error" style="color: red;"></div>
+                </form>
+            </div>
+        </div>
+    
+        <!-- Register Modal -->
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span id="close-register-modal" class="close-register">&times;</span>
+                <form id="registerForm" method="post" action="{% url 'users:register' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username-register">Username:</label>
+                        <input type="text" id="username-register" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-register">Email:</label>
+                        <input type="email" id="email-register" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password1-register">Password:</label>
+                        <input type="password" id="password1-register" name="password1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password2-register">Confirm Password:</label>
+                        <input type="password" id="password2-register" name="password2" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="register-button">Register</button>
+                    </div>
+                    <div id="register-error" style="color: red;"></div>
+                    <div id="register-success" style="color: green;"></div>
+                </form>
+            </div>
+        </div>
+    <script>
+       document.addEventListener('DOMContentLoaded', function () {
+    // Login Modal Elements
+    var loginModal = document.getElementById('loginModal');
+    var loginBtn = document.getElementById('loginBtn');
+    var closeLoginSpan = document.getElementById('close-login-modal');
+
+    // Register Modal Elements
+    var registerModal = document.getElementById('registerModal');
+    var registerBtn = document.getElementById('registerBtn');
+    var closeRegisterSpan = document.getElementById('close-register-modal');
+
+    // Show Login Modal
+    loginBtn.onclick = function () {
+        loginModal.style.display = "block";
+    }
+
+    // Close Login Modal
+    closeLoginSpan.onclick = function () {
+        loginModal.style.display = "none";
+    }
+
+    // Show Register Modal
+    registerBtn.onclick = function () {
+        registerModal.style.display = "block";
+    }
+
+    // Close Register Modal
+    closeRegisterSpan.onclick = function () {
+        registerModal.style.display = "none";
+    }
+
+    // Close Modals When Clicking Outside
+    window.onclick = function (event) {
+        if (event.target == loginModal) {
+            loginModal.style.display = "none";
+        }
+        if (event.target == registerModal) {
+            registerModal.style.display = "none";
+        }
+    }
+
+    // Login Form Submission
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();  // Prevent the default form submission
+        var form = event.target;
+        var formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            var errorDiv = document.getElementById('login-error');
+            var messageDiv = document.getElementById('login-message');
+            if (data.success) {
+                errorDiv.textContent = '';  // Clear any previous errors
+                messageDiv.textContent = 'Login successful!';
+                setTimeout(() => {
+                    window.location.reload();  // Optionally reload the page after a short delay
+                }, 2000);  // Adjust delay as needed
+            } else {
+                messageDiv.textContent = '';  // Clear any previous success messages
+                errorDiv.textContent = data.error;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    // Register Form Submission
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();  // Prevent the default form submission
+        var form = event.target;
+        var formData = new FormData(form);
+
+        // Convert FormData to URLSearchParams
+        var urlParams = new URLSearchParams();
+        formData.forEach((value, key) => {
+            urlParams.append(key, value);
+        });
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',  // Ensure X-Requested-With header is set
+                'Content-Type': 'application/x-www-form-urlencoded'  // Ensure content type is correct
+            },
+            body: urlParams.toString()  // Send data as URL-encoded string
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var errorDiv = document.getElementById('register-error');
+            var successDiv = document.getElementById('register-success');
+            if (data.success) {
+                errorDiv.textContent = '';  // Clear any previous errors
+                successDiv.textContent = 'Registration successful!';
+                setTimeout(() => {
+                    registerModal.style.display = 'none';
+                    successDiv.textContent = '';  // Clear success message after closing modal
+                }, 2000);  // Adjust delay as needed
+            } else {
+                successDiv.textContent = '';  // Clear any previous success messages
+                errorDiv.innerHTML = '';  // Clear previous error messages
+                // Check if data.error is a string and handle it
+                if (typeof data.error === 'string') {
+                    var p = document.createElement('p');
+                    p.textContent = data.error;
+                    errorDiv.appendChild(p);
+                } else {
+                    // Iterate through errors and display them
+                    for (let field in data.error) {
+                        if (data.error.hasOwnProperty(field)) {
+                            data.error[field].forEach(error => {
+                                var p = document.createElement('p');
+                                p.textContent = `${field}: ${error}`;
+                                errorDiv.appendChild(p);
+                            });
+                        }
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);  // Log fetch errors
+            var errorDiv = document.getElementById('register-error');
+            errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+        });
+    });
+
+    // Logout script
+    document.getElementById('logoutButton').addEventListener('click', function () {
+        const csrfToken = '{{ csrf_token }}';
+        const logoutUrl = '{% url "logout" %}';
+
+        fetch(logoutUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded'  // Ensure content type is correct
+            },
+            body: ''  // Empty body for POST request
+        }).then(response => {
+            var logoutMessageDiv = document.getElementById('logout-message');
+            if (response.ok) {
+                logoutMessageDiv.textContent = 'You have been logged out successfully.';
+                setTimeout(() => {
+                    location.reload();  // Optionally reload the page after a short delay
+                }, 2000);  // Adjust delay as needed
+            } else {
+                return response.text().then(text => { throw new Error(text) });
+            }
+        }).catch(error => {
+            var logoutMessageDiv = document.getElementById('logout-message');
+            logoutMessageDiv.style.color = 'red';  // Change color to red for errors
+        });
+    });
+});
+        </script>
+    
 
     <footer>
         <div class="container">
             <div class="section1">
                 <div class="links">
-                    <a href="#">Home</a>
-                    <a href="#">Sign in</a>
-                    <a href="#">Sing up</a>
+                    <a class="link1"href="#">Home</a>
+                    <a class="link2"href="#">Sign in</a>
+                    <a class="link3"href="#">Sing up</a>
                 </div>
             </div>
             <div class="section2">
@@ -92,7 +324,6 @@
             </div>
             <div class="cr">
                 <h4>© 2024 All Rights Reserved BookHalter</h4>
-                <p>designed by <a href="https://github.com/bbarankaraa" target="_blank">bbarankaraa</a></p>
             </div>
         </div>
         

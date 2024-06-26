@@ -34,6 +34,7 @@ class Books(models.Model):
     amazon_id = models.IntegerField(default=0, null=True, blank=True)
     googlebooks_link = models.URLField(max_length=250, null=True, blank=True)
     categories = models.CharField(max_length=150, null=True, blank=True)
+    recommended_count = models.IntegerField(default=0, null=True, blank=True)   
 
     class Meta:
         unique_together = ('name', 'author')

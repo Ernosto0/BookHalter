@@ -1,3 +1,4 @@
+from math import log
 import re
 from django.urls import reverse
 from django.utils import timezone
@@ -47,9 +48,15 @@ def get_read_books(request):
 
 
 
+
+def GetMostRecommendedBooks(request):
+    logger.info("GetMostRecommendedBooks view called")
+    most_recommended_books = Books.objects.order_by('-recommended_count')[:5]
+    return most_recommended_books
+
 def projects(request):
     logger.info("Home view called")
-    
+    most_recommended_books = GetMostRecommendedBooks(request)
     read_books_list = []
 
     user_data_getter = UserDataGetter(request)
@@ -69,8 +76,8 @@ def projects(request):
     
        
 
-
-    return render(request,'projects/projects.html')
+    return render(request, 'projects/projects.html', {'most_recommended_books': most_recommended_books})
+    # return render(request,'projects/projects.html')
 
 # def home(request):
 
@@ -136,6 +143,7 @@ def recommended_books(request):
             books = book_service.get_books_with_explanations(context)
             books_data = book_service.format_books_data(books)
             read_books_list = book_service.get_read_books_list()
+            book_service.update_recommended_count(books_data)
 
             response_data = {'books': books_data, 'read_books': read_books_list}
             cache.set('recommended_books_cache', response_data, timeout=1200) # Cache the response for 20 minutes
@@ -171,6 +179,7 @@ def quickrecommended_books(request):
             books = book_service.get_books_with_explanations(context)
             books_data = book_service.format_books_data(books)
             read_books_list = book_service.get_read_books_list()
+            book_service.update_recommended_count(books_data)
 
             response_data = {'books': books_data, 'read_books': read_books_list}
             cache.set('recommended_books_cache', response_data, timeout=1200) # Cache the response for 20 minutes
