@@ -40,7 +40,7 @@ def add_books(book_list):
                                 published_year=book.get('year', None),
                                 description=book.get('description', ''),
                                 cover_image_url=book.get('cover_image', ''),
-                                googlebooks_link=book.get('googlebooks_link', ''),
+                                googlebooks_link=f"{create_affiliate_link(title, author)}",
                                 categories=book.get('categories', '')
                             )
                             logger.info(f"Added book: {book['title']} by {book['author'][0]}")
@@ -74,3 +74,11 @@ def find_fuzzy_match(new_title, new_author, threshold=90):
         return False
     
 
+def create_affiliate_link(book_title, author, associate_tag="bookhalter0b-20"):
+    # Construct the search URL
+    search_url = f"https://www.amazon.com/s?k={book_title.replace(' ', '+')}+{author.replace(' ', '+')}"
+
+    # Append the affiliate tag to the URL
+    affiliate_link = f"{search_url}&tag={associate_tag}"
+
+    return affiliate_link

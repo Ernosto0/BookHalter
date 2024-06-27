@@ -1,13 +1,9 @@
 body {
   overflow-x: hidden;
   background-color: rgb(244,241,234);
-  
 }
 
-
-
-/* ! Topbar */
-
+/* Topbar */
 .topbar {
   display: flex;
   justify-content: space-around;
@@ -34,10 +30,7 @@ body {
   color: black;
 }
 
-/* ! Topbar */
-
-/*! LOGIN REGISTER BUTTONS */
-
+/* Login Register Buttons */
 .button-container {
   display: flex;
   justify-content: space-evenly;
@@ -65,8 +58,7 @@ body {
   color: white;
 }
 
-@media (max-width : 1250px) {
-
+@media (max-width: 1250px) {
   .login-button button,
   .register-button button,
   .logout-button button {
@@ -74,8 +66,6 @@ body {
     margin: 5px;
   }
 }
-
-
 
 .page {
   margin: 2rem auto;
@@ -91,7 +81,7 @@ body {
   display: flex;
   justify-content: right;
   align-items: center;
-  width: 100%; /* Add this line to make the header expand horizontally */
+  width: 100%;
 }
 
 .header h2 {
@@ -111,18 +101,18 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 60rem; /* Adjusted max-width */
-  max-height: 70rem; /* Adjusted max-height */
-  width: 100%; /* Ensure the container takes up the full width */
-  height: auto; /* Adjust the height automatically */
+  max-width: 60rem;
+  max-height: 70rem;
+  width: 100%;
+  height: auto;
 }
 
 .book-detail .bookleft img {
   width: auto;
-  height: 500px; /* Fixed height for the image */
+  height: 500px;
   max-width: 120%;
   max-height: 120%;
-  object-fit: contain; /* Ensure the image scales without distortion */
+  object-fit: contain;
   border-radius: 5px;
 }
 
@@ -147,13 +137,15 @@ body {
   padding-bottom: 25px;
 }
 
-.book-author, .book-description, .book-published, .book-buy-link {
+.book-author,
+.book-description,
+.book-published,
+.book-buy-link {
   margin: 10px 0;
-
 }
 
 .book-author {
-  font-size:  2rem;
+  font-size: 2rem;
   font-family: Copernicus,"Libre Baskerville",Georgia,serif;
 }
 
@@ -166,7 +158,7 @@ body {
 }
 
 .short-description {
-  max-height: 100px; /* Adjust this value as needed */
+  max-height: 100px;
   overflow: hidden;
 }
 
@@ -193,13 +185,12 @@ body {
 }
 
 .read-more-button.active .arrow {
-  transform: rotate(180deg); /* Rotate the arrow */
+  transform: rotate(180deg);
 }
 
 .book-published {
   font-size: 22px;
 }
-
 
 .book-buy-link {
   font-size: 20px;
@@ -209,22 +200,23 @@ body {
 .buy-button {
   display: inline-block;
   width: 23rem;
-  background-color: #248127; /* Green background */
-  color: white; /* White text */
-  padding: 10px 20px; /* Padding for size */
-  border-radius: 25px; /* Rounded corners */
-  text-decoration: none; /* Remove underline */
-  font-size: 16px; /* Adjust font size */
-  font-weight: bold; /* Make text bold */
-  text-align: center; /* Center the text */
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  background-color: #248127;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s ease;
   justify-content: center;
   max-width: 225px;
 }
 
 .buy-button:hover {
-  background-color: #388e3c; /* Darker green on hover */
+  background-color: #388e3c;
 }
+
 /* Genres */
 .genres {
   display: flex;
@@ -236,7 +228,6 @@ body {
   margin-right: 10px;
   color: #0066c0;
   text-decoration: none;
-  
 }
 
 /* Star Rating */
@@ -271,7 +262,6 @@ body {
   border-radius: 5px;
   cursor: pointer;
   margin-right: 10px;
-
 }
 
 .vote-up {
@@ -283,6 +273,7 @@ body {
 .vote-up:active {
   background-color: var(--navbarcolor);
 }
+
 .vote-down:active {
   background-color: var(--navbarcolor);
 }
@@ -359,58 +350,162 @@ body {
   margin-top: 5px;
 }
 
-
-@media (max-width : 1250px) {
+/* Responsive adjustments */
+@media (max-width: 1250px) {
   .star-rating {
     display: flex;
     flex-direction: column;
   }
+  
   .book-detail {
     display: flex;
-    background: #fff;
+    flex-direction: column;
     padding: 3rem 3rem;
     border-bottom: 1px solid #ddd;
   }
 }
 
-@media (max-width : 772px) {
- .book-detail {
-  flex-direction: column-reverse;
-  gap: 1rem;
- }
- .buy-button {
-  width: 100%;
-  font-size: 15px;
-  font-weight: 200;
- }
+@media (max-width: 772px) {
+  .book-detail {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+
+  .buy-button {
+    width: 100%;
+    font-size: 15px;
+    font-weight: 200;
+  }
+
+  .book-info {
+    padding-right: 0;
+  }
+  
+  .book-title h1 {
+    font-size: 2rem;
+  }
+  
+  .book-author {
+    font-size: 1.5rem;
+  }
+
+  .book-description {
+    font-size: 16px;
+    max-width: 240px;
+  }
+
+  .star-rating span {
+    font-size: 30px;
+  }
+
+  .rating-value {
+    font-size: 20px;
+  }
+  
+  .vote-up, .vote-down {
+    font-size: 1rem;
+  }
+  
+  .vote p {
+    font-size: 12px;
+  }
+
+  .comments h3 {
+    font-size: 14px;
+  }
+
+  .comments-submit {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 15px;
+  }
+  
+  .header h2 {
+    font-size: 20px;
+  }
+
+  .book-detail {
+    padding: 2rem 1rem;
+  }
+  
+  .book-info {
+    padding-right: 0;
+  }
+  
+  .book-title h1 {
+    font-size: 1.8rem;
+  }
+  
+  .book-author {
+    font-size: 1.2rem;
+  }
+
+  .book-description {
+    font-size: 10px;
+  }
+
+  .star-rating span {
+    font-size: 25px;
+  }
+
+  .rating-value {
+    font-size: 18px;
+  }
+  
+  .vote-up, .vote-down {
+    font-size: 0.9rem;
+  }
+  
+  .vote p {
+    font-size: 10px;
+  }
+
+  .comments h3 {
+    font-size: 12px;
+  }
+
+  .comments-submit {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .comment-section {
+    padding: 0 10px;
+  }
+  
+  .comment {
+    font-size: 12px;
+  }
 }
 
 .bookpage_gridcontainer {
   background-color: rgb(244,241,234);
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 40px;  /* Reduced the gap between columns */
-  margin: 20px auto;  /* Center the container */
-  max-width: 1200px;  /* Set a maximum width for the container */
-  padding: 10px;  /* Add some padding */
+  gap: 40px;
+  margin: 20px auto;
+  max-width: 1200px;
+  padding: 10px;
 }
 
 .bookpage_leftcolumn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;  /* Adjust gap between elements */
- 
+  gap: 20px;
 }
 
 .bookpage_rightcolumn {
   display: flex;
   flex-direction: column;
-  gap: 20px;  /* Adjust gap between elements */
+  gap: 20px;
   max-width: 600px;
 }
-
-
 
 .read-button {
   background-color: #FFFFFF;

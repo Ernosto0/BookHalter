@@ -347,121 +347,108 @@ footer .container .section3 .about p {
 }
 
 
-.form-group_username {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  max-width: 180px;
-  margin-left: 180px;
-  font-size: 16px;
-}
-
-.form-group_password {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  max-width: 180px;
-  margin-left: 180px;
-}
-
-.form-group_rememberme {
-  position: relative;
-  display: grid;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  max-width: 180px;
-  margin-left:180px;
-  gap: 0px;
-  grid-template-columns: 1fr;
-}
-
-.rememberme_box{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  max-width: 15px;
-  max-height: 15px;
-}
-
-
-.form-group_button {
-  position: relative;
-  margin-bottom: 1.5rem;
-  font-size: 20px;
-  text-align: center;
-  max-width: 180px;
-  margin-left: 180px;
-  
-}
-
 /* The Modal (background) */
 .modal {
-  display: none;
-  /* Hidden by default */
-  position: fixed;
-  /* Stay in place */
-  z-index: 1;
-  /* Sit on top */
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
   left: 0;
   top: 0;
-  width: 100%;
-  /* Full width */
-  height: 100%;
-  /* Full height */
-  overflow: auto;
-  /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0);
-  /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4);
-  /* Black w/ opacity */
-  font-size: 25px;
-  
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
 .modal-content {
   background-color: #ebdbbc;
-  margin: 15% auto;
-  /* 15% from the top and centered */
-  padding: 10px;
+  margin: 5% auto; /* 5% from the top and centered */
+  padding: 20px;
   border: 1px solid #888;
-  width: 30%;
-  /* Could be more or less, depending on screen size */
-  font-size: 25px;
+  width: 90%; /* Default width */
+  max-width: 400px; /* Maximum width */
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
 /* The Close Button */
-.close {
+.close, .close-register {
   color: #aaa;
   float: right;
   font-size: 40px;
   font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+.close:hover, .close:focus,
+.close-register:hover, .close-register:focus {
   color: black;
   text-decoration: none;
   cursor: pointer;
 }
 
-.close-register {
-  color: #aaa;
-  float: right;
-  font-size: 40px;
-  font-weight: bold;
+/* Form group styles */
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.close-register:hover,
-.close-register:focus {
-  color: black;
-  text-decoration: none;
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-group_button button {
+  width: 100%;
+  padding: 10px;
+  font-size: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
   cursor: pointer;
+}
+
+.form-group_button button:hover {
+  background-color: #45a049;
+}
+
+/* Specific adjustments for login form */
+.form-group_username,
+.form-group_password,
+.form-group_rememberme,
+.form-group_button {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .modal-content {
+      width: 95%; /* Slightly narrower for small screens */
+      font-size: 14px; /* Slightly smaller font size */
+  }
+
+  .form-group input {
+      font-size: 14px; /* Slightly smaller input text size */
+  }
+
+  .form-group_button button {
+      font-size: 18px; /* Slightly smaller button text size */
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .modal-content {
+      width: 80%; /* Adjust width for tablet screens */
+  }
 }
 
 .link1,
