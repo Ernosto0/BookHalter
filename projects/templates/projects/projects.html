@@ -10,6 +10,8 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link rel="stylesheet" href="{% static 'responsive.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
 
     <!-- Google Ads Conversion Tracking -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXX"></script>
@@ -67,17 +69,40 @@
         <form id="recommendationForm" method="POST" action="{% url 'recommended_books' %}">
             {% csrf_token %}
             <input type="hidden" name="action" value="by_answers">
-            <label for="recent_reads">Books or authors you've recently enjoyed:</label><br>
-            <input type="text" id="recent_reads" name="recent_reads" placeholder="Recent Reads"><br>
-            <label for="desired_feeling">How you want to feel with your next book:</label><br>
-            <input type="text" id="desired_feeling" name="desired_feeling" placeholder="Desired Feeling"><br>
-            <label for="character_plot_preferences">Preferences for characters and plot:</label><br>
-            <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="Character/Plot Preferences"><br>
-            <label for="pacing_narrative_style">Your pacing and narrative style preferences:</label><br>
-            <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="Pacing/Narrative Style"><br>
-            <button class="button-74" type="submit" id="recBtn" onclick="gtag_report_conversion()">Get Book Recommendations</button>
+    
+    <label for="recent_reads"><i class="fas fa-book"></i> Books or authors you enjoyed:
+        <span class="unique-tooltip"><i class="fas fa-info-circle"></i>
+            <span class="unique-tooltiptext">Mention a book or author you've enjoyed recently. </span>
+        </span>
+    </label><br>
+    <input type="text" id="recent_reads" name="recent_reads" placeholder="e.g., Harry Potter by J.K. Rowling"><br>
+    
+    <label for="desired_feeling"><i class="fas fa-smile"></i> How do you want to feel?
+        <span class="unique-tooltip"><i class="fas fa-info-circle"></i>
+            <span class="unique-tooltiptext">Describe the feeling you want from the next book. </span>
+        </span>
+    </label><br>
+    <input type="text" id="desired_feeling" name="desired_feeling" placeholder="e.g., Excited, Inspired, Relaxed"><br>
+    
+    <label for="character_plot_preferences"><i class="fas fa-users"></i> Character and plot preferences:
+        <span class="unique-tooltip"><i class="fas fa-info-circle"></i>
+            <span class="unique-tooltiptext">State your preferences for characters and plot. </span>
+        </span>
+    </label><br>
+    <input type="text" id="character_plot_preferences" name="character_plot_preferences" placeholder="e.g., Strong female lead, Mystery"><br>
+    
+    <label for="pacing_narrative_style"><i class="fas fa-tachometer-alt"></i> Pacing and style preferences:
+        <span class="unique-tooltip"><i class="fas fa-info-circle"></i>
+            <span class="unique-tooltiptext">Indicate your preferred pacing and narrative style. </span>
+        </span>
+    </label><br>
+    <input type="text" id="pacing_narrative_style" name="pacing_narrative_style" placeholder="e.g., Fast-paced, Descriptive"><br>
+    
+    <button class="button-74" type="submit" id="recBtn" onclick="gtag_report_conversion()">
+        <i class="fas fa-book-reader"></i> Get Book Recommendations
+    </button>
 
-            <div class="quick-recommendation">
+                    <div class="quick-recommendation">
                 <div class="quick-recommendation">
                     <form id="quickRecommendationForm" method="POST" action="{% url 'quickrecommended_books' %}">
                         <h1>Quick Book Recommendation</h1>
@@ -160,7 +185,7 @@
 
     </div>
     <div class="mostrecommendedbooksbox">
-        <h1 class="mostrecommendedbookstext">Most Recommended Books</h1>
+        <h1 class="mostrecommendedbookstext">Most Recommended Books by AI</h1>
         <div class="mostrecommendedbookscontainer" id="mostRecommendedBooksList">
             {% for book in most_recommended_books %}
             <div class="mostrecommendedbook">
