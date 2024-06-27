@@ -534,12 +534,12 @@ h1 {
 .read-books-container {
   background-color: #ece6d9;
   /* Matches the form and other containers */
-  max-width: 400px;
+  max-width: 280px;
   /* Maximum width of the container */
-  width: 400px;
-  margin: 20px auto;
+  width: 280px;
+  margin: 15px auto;
   /* Centers the container and adds vertical spacing */
-  padding: 50px;
+  padding: 25px;
   /* Padding inside the container */
   border-radius: 8px;
   /* Rounded corners like the forms */
@@ -547,13 +547,28 @@ h1 {
   /* Soft shadow for depth */
   text-align: left;
   /* Aligns text to the left */
-  height: 540px;
+  height: 400px;
   /* Adjusted fixed height to fit exactly 4 books */
   overflow-y: scroll;
   /* Always shows vertical scrollbar */
   overflow-x: hidden;
   /* Disables horizontal scrolling */
 }
+
+
+@media (max-width: 600px) {
+  .read-books-container {
+    max-width: 100%;
+    width: 100%;
+    margin: 15px 0;
+    padding: 15px;
+    height: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 200px;
+  }
+}
+
 
 /* Styling for individual book entries in the list */
 .read-book {
@@ -983,7 +998,7 @@ button {
   box-sizing: border-box;
   position: absolute;
   right: 0;
-  top: 120px;
+  top: 100px;
   bottom: 0;
   margin-left: auto;
   max-width: 180px;
@@ -1004,7 +1019,7 @@ button {
 }
 
 .mostrecommendedbook {
-  width: 150px;
+  width: 170px;
   padding: 4px;
   background-color: #ece6d9;
   border: 1px solid #ddd;
@@ -1028,4 +1043,31 @@ button {
   .mostrecommendedbooksbox {
       display: none;
   }
+}
+
+
+.unique-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.unique-tooltip .unique-tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.unique-tooltip:hover .unique-tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
