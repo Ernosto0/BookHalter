@@ -82,7 +82,7 @@ def RecommendWithAnswers(user_queries, upvoted_books):
         book."""
     reply = make_suggestion(prompt)
     extracted_data = extract_books_info(reply)
-    print(extracted_data)
+    print("extracted data:", extracted_data)
     return extracted_data
 
 

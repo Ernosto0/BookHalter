@@ -1,4 +1,5 @@
 from turtle import update
+from venv import logger
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.urls import reverse
 from django.utils import timezone
@@ -20,21 +21,27 @@ class BookService:
 
     def get_function_type(self, action):
         if action == 'by_personality':
+            print("SELECTED 2")
             return 2
         if action == 'by_paragraph':
+            print("SELECTED 3")
             return 3
         if action == 'by_answers':
+            print("SELECTED 1")
             return 1
 
     
 
     def get_context_based_on_function_type(self, function_type):
+        print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFunction type:", function_type)
         upvoted_books = []
         if function_type == 1:
             recent_reads = self.request.POST.get('recent_reads')
             desired_feeling = self.request.POST.get('desired_feeling')
             character_plot_preferences = self.request.POST.get('character_plot_preferences')
             pacing_narrative_style = self.request.POST.get('pacing_narrative_style')
+            print("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+            print(f"User answers: {recent_reads}, {desired_feeling}, {character_plot_preferences}, {pacing_narrative_style}")
 
             if self.is_authenticated:
                 upvoted_books = GetUpvotedBooks.get_upvoted_books_by_user(self.request.user)
@@ -42,12 +49,16 @@ class BookService:
             return ChatGptCall.RecommendWithAnswers([recent_reads, desired_feeling, character_plot_preferences, pacing_narrative_style], upvoted_books)
         
         elif function_type == 2:
+            
             data = self.user_data_getter.get_user_reading_persona()
             print("XXXXXXXXXXXXXXXXXXXXXX")
             print(data)
+
             return ChatGptCall.RecommendWithReadingPersona(data)
         elif function_type == 3:
             data = self.request.POST.get('self_description')
+            logger.info(f"User self description: {data}")
+
             return ChatGptCall.RecommendWithParagraph(data)
         return []
 
