@@ -122,8 +122,7 @@ def main(titles):
         #         else:
         #             # Update the error message if the title already exists in the book_data
         #             book_data[(title, '')]['error'] = str(e)
-    print(":::::::::::::::::::::::::::::::::")
-    print(book_data)
+    
     return list(book_data.values())
 
 
