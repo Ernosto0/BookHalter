@@ -94,19 +94,20 @@ document.querySelectorAll('.dropdown-content a').forEach(function(link) {
 
 $(document).ready(function() {
     console.log("Document ready!");
+
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     var recommendationButton = $('#recBtn');
     var paragraphRecommendationButton = $('#paraBtn');
     var quickRecommendationButton = $('#quickRecBtn');
-    var clickDelay = 300; // 5 minutes in milliseconds
-    var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime'));
+    var clickDelay = 30000; // 5 minutes in milliseconds
+    var lastClickedTime = parseInt(localStorage.getItem('lastClickedTime')) || 0; // Initialize lastClickedTime
     console.log('Initial lastClickedTime:', lastClickedTime);
     var buttonClicked = false;
     var isAuthenticated = false; // Variable to store authentication status
 
     function checkAuthentication() {
         return new Promise((resolve, reject) => {
-            $.ajax({
+            $.ajax({ 
                 headers: { "X-CSRFToken": csrfToken },
                 type: 'GET',
                 url: '/check_authentication/', // URL for checking authentication status
@@ -145,8 +146,69 @@ $(document).ready(function() {
             $cooldownMessage.hide();
         }, 5000); // Hide after 5 seconds
     }
+    $('#recommendationForm').submit(function(event) {
+        event.preventDefault();
+        console.log('Form submitted:', $(this).attr('id')); // Debugging: Log form submission event
+    
+        if (cooldownActive()) {
+            console.log('Cooldown active, skipping form submission.'); // Debugging: Log cooldown
+            showCooldownMessage('Please wait for 5 minutes before requesting again.');
+            return;
+        }
+    
+        var form = $(this);
+        var action = form.find('input[name="action"]').val(); // Ensure action is correctly set in the form
+    
+        checkAuthentication().then(() => {
+            if (!isAuthenticated && action === 'by_personality') {
+                $('#loginWarningModal').modal('show');
+                return;
+            }
+    
+            buttonClicked = true;
+            console.log('Submitting form:', form.attr('id')); // Debugging: Log form submission
+            var currentTime = new Date().getTime();
+            localStorage.setItem('lastClickedTime', currentTime.toString());
+            console.log('Setting lastClickedTime:', currentTime); // Debugging: Log lastClickedTime setting
+            recommendationButton.prop('disabled', true);
+            paragraphRecommendationButton.prop('disabled', true);
+            quickRecommendationButton.prop('disabled', true);
+    
+            $('#loadingOverlay').show(); // Show the loading overlay
+    
+            $.ajax({
+                headers: { "X-CSRFToken": csrfToken },
+                type: 'POST',
+                url: form.attr('action'),
+                data: form.serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.error) {
+                        showCooldownMessage(response.error);
+                    } else {
+                        console.log("Success!", response);
+                        displayBooks(response);
+                    }
+                    buttonClicked = false;
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX call failed", status, error);
+                    buttonClicked = false;
+                },
+                complete: function() {
+                    $('#loadingOverlay').hide(); // Hide the loading overlay
+                    setTimeout(function() {
+                        recommendationButton.prop('disabled', false);
+                        paragraphRecommendationButton.prop('disabled', false);
+                        quickRecommendationButton.prop('disabled', false);
+                    }, clickDelay);
+                }
+            });
+        });
+    });
 
-    $('#recommendationForm, #paragraphForm, #quickRecommendationForm').submit(function(event) {
+        
+    $('#paragraphForm, #quickRecommendationForm').submit(function(event) {
         event.preventDefault();
         console.log('Form submitted:', $(this).attr('id')); // Debugging: Log form submission event
 
@@ -188,14 +250,12 @@ $(document).ready(function() {
                         console.log("Success!", response);
                         displayBooks(response);
                     }
-                    buttonClicked = false;
                 },
                 error: function(xhr, status, error) {
                     console.error("AJAX call failed", status, error);
-                    console.error("Error details:", xhr.responseText);
-                    buttonClicked = false;
                 },
                 complete: function() {
+                    buttonClicked = false;
                     $('#loadingOverlay').hide(); // Hide the loading overlay
                     setTimeout(function() {
                         recommendationButton.prop('disabled', false);
@@ -207,6 +267,7 @@ $(document).ready(function() {
         });
     });
 
+    // Initial state based on cooldown
     if (cooldownActive()) {
         recommendationButton.prop('disabled', true);
         paragraphRecommendationButton.prop('disabled', true);
@@ -219,30 +280,29 @@ $(document).ready(function() {
         }, clickDelay - (new Date().getTime() - lastClickedTime));
     }
 
+    // Check authentication status initially and fetch cached books
     checkAuthentication().then(() => {
         fetchCachedBooks();
     });
 
     function fetchCachedBooks() {
-        if (!isAuthenticated) {
-            console.log('User not authenticated, skipping fetchCachedBooks');
+        if (!isAuthenticated || buttonClicked) {
+            console.log('Skipping fetchCachedBooks:', isAuthenticated, buttonClicked);
             return;
         }
-        if (!buttonClicked) { // Only fetch cached books if the button is not clicked
-            $.ajax({
-                headers: { "X-CSRFToken": csrfToken },
-                type: 'GET',
-                url: '/get_cached_books/', // URL for fetching cached books
-                dataType: 'json',
-                success: function(response) {
-                    displayBooks(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX call failed", status, error);
-                    console.error("Error details:", xhr.responseText);
-                }
-            });
-        }
+
+        $.ajax({
+            headers: { "X-CSRFToken": csrfToken },
+            type: 'GET',
+            url: '/get_cached_books/', // URL for fetching cached books
+            dataType: 'json',
+            success: function(response) {
+                displayBooks(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX call failed", status, error);
+            }
+        });
     }
 
     function displayBooks(response) {
