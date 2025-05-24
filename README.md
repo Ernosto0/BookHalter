@@ -37,7 +37,7 @@ BookHalter is a Django-based web application that helps users discover their nex
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/BookHalter.git
+   git clone https://github.com/Ernosto0/BookHalter.git
    cd BookHalter
    ```
 
